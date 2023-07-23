@@ -1,60 +1,65 @@
 import { BooleanInput } from '@angular/cdk/coercion';
 import { NgClass, NgIf } from '@angular/common';
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, Input, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
+import {
+    ChangeDetectionStrategy,
+    ChangeDetectorRef,
+    Component,
+    DestroyRef,
+    Input,
+    OnInit,
+    ViewEncapsulation,
+    inject,
+} from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatIconModule } from '@angular/material/icon';
 import { MatMenuModule } from '@angular/material/menu';
 import { Router } from '@angular/router';
-import { UserService } from 'app/core/user/user.service';
-import { User } from 'app/core/user/user.types';
-import { Subject, takeUntil } from 'rxjs';
+import { AuthService } from 'app/core/auth/auth.service';
+import { UserService } from 'app/services/user/user.service';
+import { User } from 'app/services/user/user.types';
 
 @Component({
-    selector       : 'user',
-    templateUrl    : './user.component.html',
-    encapsulation  : ViewEncapsulation.None,
+    selector: 'user',
+    templateUrl: './user.component.html',
+    encapsulation: ViewEncapsulation.None,
     changeDetection: ChangeDetectionStrategy.OnPush,
-    exportAs       : 'user',
-    standalone     : true,
-    imports        : [MatButtonModule, MatMenuModule, NgIf, MatIconModule, NgClass, MatDividerModule],
+    exportAs: 'user',
+    standalone: true,
+    imports: [
+        MatButtonModule,
+        MatMenuModule,
+        NgIf,
+        MatIconModule,
+        NgClass,
+        MatDividerModule,
+    ],
 })
-export class UserComponent implements OnInit, OnDestroy
-{
+export class UserComponent implements OnInit {
     /* eslint-disable @typescript-eslint/naming-convention */
     static ngAcceptInputType_showAvatar: BooleanInput;
     /* eslint-enable @typescript-eslint/naming-convention */
 
     @Input() showAvatar: boolean = true;
+
     user: User;
+    destroyRef = inject(DestroyRef);
 
-    private _unsubscribeAll: Subject<any> = new Subject<any>();
+    private _changeDetectorRef = inject(ChangeDetectorRef);
+    private _router = inject(Router);
+    private _userService = inject(UserService);
+    private _authService = inject(AuthService);
 
-    /**
-     * Constructor
-     */
-    constructor(
-        private _changeDetectorRef: ChangeDetectorRef,
-        private _router: Router,
-        private _userService: UserService,
-    )
-    {
-    }
-
-    // -----------------------------------------------------------------------------------------------------
-    // @ Lifecycle hooks
-    // -----------------------------------------------------------------------------------------------------
+    constructor() {}
 
     /**
      * On init
      */
-    ngOnInit(): void
-    {
-        // Subscribe to user changes
+    ngOnInit(): void {
         this._userService.user$
-            .pipe(takeUntil(this._unsubscribeAll))
-            .subscribe((user: User) =>
-            {
+            .pipe(takeUntilDestroyed(this.destroyRef))
+            .subscribe((user: User) => {
                 this.user = user;
 
                 // Mark for check
@@ -63,44 +68,27 @@ export class UserComponent implements OnInit, OnDestroy
     }
 
     /**
-     * On destroy
-     */
-    ngOnDestroy(): void
-    {
-        // Unsubscribe from all subscriptions
-        this._unsubscribeAll.next(null);
-        this._unsubscribeAll.complete();
-    }
-
-    // -----------------------------------------------------------------------------------------------------
-    // @ Public methods
-    // -----------------------------------------------------------------------------------------------------
-
-    /**
      * Update the user status
      *
      * @param status
      */
-    updateUserStatus(status: string): void
-    {
-        // Return if user is not available
-        if ( !this.user )
-        {
+    updateUserStatus(status: string): void {
+        if (!this.user) {
             return;
         }
 
-        // Update the user
-        this._userService.update({
-            ...this.user,
-            status,
-        }).subscribe();
+        this._userService.update({ ...this.user, status }).subscribe();
     }
 
     /**
      * Sign out
      */
-    signOut(): void
-    {
-        this._router.navigate(['/sign-out']);
+    signOut(): void {
+        this._authService
+            .signOut()
+            .pipe(takeUntilDestroyed(this.destroyRef))
+            .subscribe(() => {
+                this._router.navigate(['/sign-out']);
+            });
     }
 }

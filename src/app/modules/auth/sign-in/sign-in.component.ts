@@ -18,6 +18,7 @@ import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { fuseAnimations } from '@fuse/animations';
 import { FuseAlertComponent, FuseAlertType } from '@fuse/components/alert';
 import { AuthService } from 'app/core/auth/auth.service';
+import { AuthWelcomeComponent } from 'app/shared/auth-welcome/auth-welcome.component';
 
 @Component({
     selector: 'auth-sign-in',
@@ -37,6 +38,7 @@ import { AuthService } from 'app/core/auth/auth.service';
         MatIconModule,
         MatCheckboxModule,
         MatProgressSpinnerModule,
+        AuthWelcomeComponent,
     ],
 })
 export class AuthSignInComponent implements OnInit {
@@ -49,9 +51,6 @@ export class AuthSignInComponent implements OnInit {
     signInForm: UntypedFormGroup;
     showAlert: boolean = false;
 
-    /**
-     * Constructor
-     */
     constructor(
         private _activatedRoute: ActivatedRoute,
         private _authService: AuthService,
@@ -70,10 +69,10 @@ export class AuthSignInComponent implements OnInit {
         // Create the form
         this.signInForm = this._formBuilder.group({
             email: [
-                'hughes.brian@company.com',
+                'gaelmusi0@gmail.com',
                 [Validators.required, Validators.email],
             ],
-            password: ['admin', Validators.required],
+            password: ['Password123', Validators.required],
             rememberMe: [''],
         });
     }
@@ -98,37 +97,32 @@ export class AuthSignInComponent implements OnInit {
         this.showAlert = false;
 
         // Sign in
-        this._authService.signIn(this.signInForm.value).subscribe(
-            () => {
-                // Set the redirect url.
-                // The '/signed-in-redirect' is a dummy url to catch the request and redirect the user
-                // to the correct page after a successful sign in. This way, that url can be set via
-                // routing file and we don't have to touch here.
+        this._authService.signIn(this.signInForm.value).subscribe({
+            complete: () => {
                 const redirectURL =
                     this._activatedRoute.snapshot.queryParamMap.get(
                         'redirectURL'
                     ) || '/signed-in-redirect';
 
-                console.log('redirectURL: ', redirectURL);
                 // Navigate to the redirect url
                 this._router.navigateByUrl(redirectURL);
             },
-            (response) => {
+            error: (response) => {
                 // Re-enable the form
                 this.signInForm.enable();
 
                 // Reset the form
-                this.signInNgForm.resetForm();
+                // this.signInNgForm.resetForm();
 
                 // Set the alert
                 this.alert = {
                     type: 'error',
-                    message: 'Wrong email or password',
+                    message: response.error ?? 'Invalid credentials',
                 };
 
                 // Show the alert
                 this.showAlert = true;
-            }
-        );
+            },
+        });
     }
 }
