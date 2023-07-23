@@ -1,0 +1,17 @@
+<div class="w-full flex flex-col">
+    <div class="w-full">
+        <app-toolbar [title]="'Templates'">
+            <div>
+                <button
+                    mat-icon-button
+                    aria-label="Example icon-button with a menu"
+                >
+                    <mat-icon>more_vert</mat-icon>
+                </button>
+            </div>
+        </app-toolbar>
+    </div>
+    <div class="w-full p-3">
+        <win-table [columns]="columns" [data]="data"></win-table>
+    </div>
+</div>

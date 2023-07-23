@@ -1,0 +1,69 @@
+<div class="table__container">
+    <caption *ngIf="caption !== ''">
+        {{
+            caption
+        }}
+    </caption>
+    <table>
+        <thead>
+            <tr>
+                <th *ngFor="let column of columns">{{ column.title }}</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr *ngFor="let row of data">
+                <ng-container *ngFor="let column of columns">
+                    <ng-container
+                        *ngTemplateOutlet="
+                            column.template ? column.template : tableRow;
+                            context: { row: row, column: column }
+                        "
+                    ></ng-container>
+                </ng-container>
+            </tr>
+        </tbody>
+    </table>
+</div>
+
+<ng-template let-row="row" let-column="column" #tableRow>
+    <td
+        [style]="column.style ?? ''"
+        [class]="column.customClass ?? ''"
+        [ngClass]="{ 'cursor-pointer': column.clickEvent }"
+        (click)="onRowClick(row, column)"
+    >
+        <ng-container
+            *ngIf="column.pipe"
+            [winDynamicDirective]="column.directive"
+        >
+            <div *ngIf="!column.safeHtml">
+                {{
+                    row
+                        | winNestedValue : column.key
+                        | winDynamicPipe : column.pipe.class : column.pipe.args
+                }}
+            </div>
+            <div
+                *ngIf="column.safeHtml"
+                [innerHTML]="
+                    row
+                        | winNestedValue : column.key
+                        | winDynamicPipe : column.pipe.class : column.pipe.args
+                        | winSafeHtml
+                "
+            ></div>
+        </ng-container>
+        <ng-container
+            *ngIf="!column.pipe"
+            [winDynamicDirective]="column.directive"
+        >
+            <div *ngIf="!column.safeHtml">
+                {{ row | winNestedValue : column.key }}
+            </div>
+            <div
+                *ngIf="column.safeHtml"
+                [innerHtml]="row | winNestedValue : column.key | winSafeHtml"
+            ></div>
+        </ng-container>
+    </td>
+</ng-template>

@@ -13,9 +13,9 @@
     <!-- Navigation header hook -->
     <ng-container fuseVerticalNavigationContentHeader>
         <!-- Logo -->
-        <div class="flex items-center justify-center h-20 mt-3 mb-4">
+        <div class="flex items-center justify-center h-16 mt-0 mb-16">
             <img
-                class="w-10"
+                class="w-full"
                 src="assets/images/logo/winshasa_logo.png"
                 alt="Logo image"
             />
@@ -38,10 +38,10 @@
             <languages></languages>
             <fuse-fullscreen class="hidden md:block"></fuse-fullscreen>
             <search [appearance]="'bar'"></search>
-            <shortcuts></shortcuts>
+            <!-- <shortcuts></shortcuts>
             <messages></messages>
-            <notifications></notifications>
-            <button
+            <notifications></notifications> -->
+            <!-- <button
                 class="lg:hidden"
                 mat-icon-button
                 (click)="quickChat.toggle()"
@@ -49,7 +49,7 @@
                 <mat-icon
                     [svgIcon]="'heroicons_outline:chat-bubble-left-right'"
                 ></mat-icon>
-            </button>
+            </button> -->
             <user></user>
         </div>
     </div>
@@ -66,10 +66,10 @@
         class="relative flex flex-0 items-center justify-start w-full h-14 px-4 md:px-6 z-49 border-t bg-card dark:bg-transparent print:hidden"
     >
         <span class="font-medium text-secondary"
-            >Fuse &copy; {{ currentYear }}</span
+            >Winshasa &copy; {{ currentYear }}</span
         >
     </div>
 </div>
 
 <!-- Quick chat -->
-<quick-chat #quickChat="quickChat"></quick-chat>
+<!-- <quick-chat #quickChat="quickChat"></quick-chat> -->

@@ -95,9 +95,9 @@ export const appRoutes: Route[] = [
         },
         children: [
             {
-                path: 'example',
+                path: 'templates',
                 loadChildren: () =>
-                    import('app/modules/admin/example/example.routes'),
+                    import('app/modules/template/template.routes'),
             },
         ],
     },
