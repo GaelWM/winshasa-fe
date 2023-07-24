@@ -17,8 +17,8 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { fuseAnimations } from '@fuse/animations';
 import { FuseAlertComponent, FuseAlertType } from '@fuse/components/alert';
-import { AuthService } from 'app/core/auth/auth.service';
-import { AuthWelcomeComponent } from 'app/shared/auth-welcome/auth-welcome.component';
+import { AuthService } from 'app/services/auth.service';
+import { AuthWelcomeComponent } from 'app/shared/components/auth-welcome/auth-welcome.component';
 
 @Component({
     selector: 'auth-sign-in',

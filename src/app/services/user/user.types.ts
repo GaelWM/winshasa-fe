@@ -9,4 +9,9 @@ export interface User {
     address?: string;
     avatar?: string;
     status?: string;
+    details?: UserDetails;
+}
+
+export interface UserDetails {
+    settings?: any;
 }

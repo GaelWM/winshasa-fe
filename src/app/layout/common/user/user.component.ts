@@ -16,7 +16,7 @@ import { MatDividerModule } from '@angular/material/divider';
 import { MatIconModule } from '@angular/material/icon';
 import { MatMenuModule } from '@angular/material/menu';
 import { Router } from '@angular/router';
-import { AuthService } from 'app/core/auth/auth.service';
+import { AuthService } from 'app/services/auth.service';
 import { UserService } from 'app/services/user/user.service';
 import { User } from 'app/services/user/user.types';
 

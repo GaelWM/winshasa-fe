@@ -1,5 +1,5 @@
 import { HttpClient } from '@angular/common/http';
-import { Injectable } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
 import { BaseService } from 'app/services/base.service';
 import { UserService } from 'app/services/user/user.service';
 import { catchError, Observable, of, switchMap, throwError } from 'rxjs';
@@ -7,12 +7,11 @@ import { catchError, Observable, of, switchMap, throwError } from 'rxjs';
 @Injectable({ providedIn: 'root' })
 export class AuthService extends BaseService {
     private _authenticated: boolean = false;
+    private _httpClient = inject(HttpClient);
+    private _userService = inject(UserService);
 
-    constructor(
-        protected _httpClient: HttpClient,
-        private _userService: UserService
-    ) {
-        super('auth', _httpClient);
+    constructor() {
+        super('auth');
     }
 
     /**
