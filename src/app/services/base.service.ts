@@ -1,6 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
-import { toSignal } from '@angular/core/rxjs-interop';
+import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { ActivatedRoute, Params } from '@angular/router';
 import { ApiResult } from 'app/shared/models';
 import { environment } from 'environments/environment';
@@ -31,9 +31,10 @@ export class BaseService {
         .pipe(debounceTime(300), distinctUntilChanged());
 
     private queries$: Observable<Params> = combineLatest([
-        this.route.queryParams,
+        this.route.queryParamMap.pipe(map((params) => params['params'])),
         this.searchQuery$,
     ]).pipe(
+        takeUntilDestroyed(),
         map(([params, searchQuery]) => {
             const page = params.page;
             const limit = params.limit;

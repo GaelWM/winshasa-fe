@@ -1,0 +1,47 @@
+<div class="w-full flex flex-col">
+    <div class="w-full">
+        <app-toolbar [title]="'Templates'">
+            <div>
+                <button
+                    mat-button
+                    color="primary"
+                    aria-label="Add template"
+                    (click)="onAddTemplate($event)"
+                >
+                    <mat-icon>add</mat-icon> Add a template
+                </button>
+            </div>
+        </app-toolbar>
+    </div>
+    <div class="w-full p-3">
+        <win-table [columns]="columns" [data]="templates().data"></win-table>
+        <div class="flex justify-center items-center py-2">
+            <win-paginator
+                [meta]="templates().meta"
+                (pageChange)="onPageChange($event)"
+            >
+            </win-paginator>
+        </div>
+    </div>
+</div>
+
+<ng-template #actionsTpl let-row="row">
+    <div class="flex items-center gap-2">
+        <button
+            mat-button
+            color="primary"
+            aria-label="Edit template"
+            (click)="onEditTemplate($event, row)"
+        >
+            <mat-icon class="text-blue-500">edit</mat-icon> Edit
+        </button>
+        <button
+            mat-button
+            color="warn"
+            aria-label="Delete template"
+            (click)="onDeleteTemplate($event, row)"
+        >
+            <mat-icon class="text-red-500">delete</mat-icon> Delete
+        </button>
+    </div>
+</ng-template>

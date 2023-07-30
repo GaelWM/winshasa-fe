@@ -1,9 +1,9 @@
 import { Routes } from '@angular/router';
-import { TemplateComponent } from './template.component';
+import { TemplatesComponent } from './templates.component';
 
 export default [
     {
         path: '',
-        component: TemplateComponent,
+        component: TemplatesComponent,
     },
 ] as Routes;

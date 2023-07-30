@@ -1,0 +1,12 @@
+<mat-paginator
+    *ngIf="meta"
+    #paginator
+    [length]="meta.total"
+    [pageIndex]="meta.current_page - 1"
+    [pageSize]="perPage ?? meta.per_page"
+    [pageSizeOptions]="pageSizeOptions"
+    showFirstLastButtons="true"
+    (page)="onPageChange($event)"
+    aria-label="Select page"
+>
+</mat-paginator>

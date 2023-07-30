@@ -1,0 +1,134 @@
+<form
+    #templateNgForm="ngForm"
+    (ngSubmit)="onSubmitNewTemplate(templateNgForm)"
+    [formGroup]="templateForm"
+>
+    <div
+        class="flex flex-col flex-auto md:w-160 md:min-w-160 max-h-160 -m-6 overflow-y-auto"
+    >
+        <div
+            class="flex flex-0 items-center justify-between h-16 pr-3 sm:pr-5 pl-6 sm:pl-8 bg-primary text-on-primary"
+        >
+            <div class="text-lg font-medium">{{ data.title }}</div>
+            <button
+                mat-icon-button
+                (click)="onCloseModal($event)"
+                [tabIndex]="-1"
+            >
+                <mat-icon
+                    class="text-current"
+                    [svgIcon]="'heroicons_outline:x'"
+                ></mat-icon>
+            </button>
+        </div>
+
+        <div
+            class="flex flex-col flex-0 items-start w-full p-6 sm:p-8 space-y-6 overflow-y-auto"
+        >
+            <fuse-alert
+                [type]="'error'"
+                *ngIf="this.errorMessage !== ''"
+                class="w-full"
+            >
+                <span fuseAlertTitle>Error</span>
+                {{ errorMessage }}
+            </fuse-alert>
+            <mat-form-field [ngClass]="formFieldHelpers" class="w-full">
+                <mat-label>Template Name</mat-label>
+                <input
+                    name="name"
+                    formControlName="name"
+                    matInput
+                    required
+                    [placeholder]="'Template name'"
+                />
+                <mat-hint>Please type in the template name</mat-hint>
+            </mat-form-field>
+
+            <mat-form-field class="w-full">
+                <mat-label>Entity type</mat-label>
+                <mat-select
+                    [placeholder]="'Entity type'"
+                    name="type"
+                    formControlName="type"
+                    required
+                >
+                    <mat-option [value]="'Site'">Site</mat-option>
+                    <mat-option [value]="'Product'">Product</mat-option>
+                </mat-select>
+                <mat-hint>Please select the entity type</mat-hint>
+            </mat-form-field>
+            <ng-container formGroupName="details">
+                <div class="flex flex-row gap-2" formGroupName="uiSettings">
+                    <mat-form-field class="w-full">
+                        <mat-label>Grid type</mat-label>
+                        <mat-select
+                            [placeholder]="'Grid type'"
+                            name="gridType"
+                            formControlName="gridType"
+                        >
+                            <mat-option [value]="'rows'">Row</mat-option>
+                            <mat-option [value]="'cols'">Column</mat-option>
+                        </mat-select>
+                    </mat-form-field>
+                    <mat-form-field
+                        class="w-full"
+                        *ngIf="
+                            templateForm.value.details.uiSettings.gridType !==
+                            ''
+                        "
+                    >
+                        <mat-label
+                            >No. of
+                            {{
+                                templateForm.value.details.uiSettings.gridType
+                            }}</mat-label
+                        >
+                        <input
+                            name="noGridType"
+                            formControlName="noGridType"
+                            matInput
+                            [placeholder]="
+                                'Number of ' +
+                                templateForm.value.details.uiSettings.gridType
+                            "
+                        />
+                    </mat-form-field>
+                    <mat-form-field class="w-full">
+                        <mat-label>Grid Flow</mat-label>
+                        <mat-select
+                            [placeholder]="'Grid Flow'"
+                            name="gridFlow"
+                            formControlName="gridFlow"
+                        >
+                            <mat-option [value]="'row'">Row</mat-option>
+                            <mat-option [value]="'col'">Column</mat-option>
+                        </mat-select>
+                    </mat-form-field>
+                </div>
+                <mat-checkbox
+                    class="w-full justify-center"
+                    [color]="'primary'"
+                    name="expandAllGroups"
+                    formControlName="expandAllGroups"
+                >
+                    Expand All groups
+                </mat-checkbox>
+            </ng-container>
+        </div>
+        <div
+            class="flex items-center justify-end border-t px-8 py-5 bg-gray-50 dark:bg-gray-700"
+        >
+            <button mat-button (click)="onCloseModal($event)">Close</button>
+            <button
+                type="submit"
+                class="px-6 ml-3"
+                mat-flat-button
+                [color]="'primary'"
+                [disabled]="!templateForm.valid"
+            >
+                Save
+            </button>
+        </div>
+    </div>
+</form>

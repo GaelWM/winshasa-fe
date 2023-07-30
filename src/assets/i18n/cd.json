@@ -1,11 +1,11 @@
 {
-    "welcome-back": "Welcome Back!",
+    "welcome-back": "Boyeyi Malamu!",
     "Project": "Project",
     "Analytics": "Analytics",
     "common": {
-        "add": "Add",
-        "cancel": "Cancel",
-        "description": "Description",
+        "add": "Bakisa",
+        "cancel": "Tika",
+        "description": "Yimbola",
         "delete": "Delete",
         "edit": "Edit",
         "faq": "FAQ",

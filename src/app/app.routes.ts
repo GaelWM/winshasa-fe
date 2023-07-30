@@ -96,7 +96,7 @@ export const appRoutes: Route[] = [
             {
                 path: 'templates',
                 loadChildren: () =>
-                    import('app/modules/template/template.routes'),
+                    import('app/modules/templates/templates.routes'),
             },
         ],
     },

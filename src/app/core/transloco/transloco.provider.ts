@@ -27,8 +27,12 @@ export const provideTransloco = (): Array<Provider | EnvironmentProviders> => {
                         label: 'English',
                     },
                     {
-                        id: 'tr',
-                        label: 'Turkish',
+                        id: 'fr',
+                        label: 'French',
+                    },
+                    {
+                        id: 'cd',
+                        label: 'Lingala',
                     },
                 ],
                 defaultLang: 'en',

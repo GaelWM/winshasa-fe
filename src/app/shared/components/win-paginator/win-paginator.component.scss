@@ -1,0 +1,6 @@
+.mat-mdc-paginator {
+    @apply bg-transparent border border-gray-700 rounded #{!important};
+    .mat-mdc-paginator-container {
+        @apply p-0 #{!important};
+    }
+}
