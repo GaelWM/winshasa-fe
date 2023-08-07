@@ -46,12 +46,13 @@ export class Template implements ITemplate {
 }
 
 export type TemplateDetails = {
-    expandAllGroups: boolean;
+    description?: string;
+    expandAllGroups?: boolean;
     uiClassesOverride?: string;
     uiSettings?: {
         gridType?: 'rows' | 'cols';
         gridFlow?: 'row' | 'col';
-        noGridType: number;
+        noGridType?: number;
     };
 };
 

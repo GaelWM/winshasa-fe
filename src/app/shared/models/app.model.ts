@@ -51,6 +51,11 @@ export interface ConnectionObject {
     slug: string;
 }
 
+export interface FormError {
+    field: string;
+    message: string;
+}
+
 export const DARK_MODE_MAP_STYLES = [
     { elementType: 'geometry', stylers: [{ color: '#242f3e' }] },
     { elementType: 'labels.text.stroke', stylers: [{ color: '#242f3e' }] },

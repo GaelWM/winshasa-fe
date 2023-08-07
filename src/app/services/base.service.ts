@@ -88,7 +88,7 @@ export class BaseService {
 
     patch<T>(id: string, body: any, params?: any): Observable<ApiResult<T>> {
         return this.http.patch<ApiResult<T>>(
-            `${this.apiUrl}/${id}`,
+            `${this.apiUrl}/${id}/patch`,
             { ...body },
             { ...(params && { params }) }
         );

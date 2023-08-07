@@ -42,16 +42,6 @@ export class TemplateGroupField implements ITemplateGroupField {
     }
 }
 
-export type TemplateDetails = {
-    expandAllGroups: boolean;
-    uiClassesOverride?: string;
-    uiSettings?: {
-        gridType?: 'rows' | 'cols';
-        gridFlow?: 'row' | 'col';
-        noGridType: number;
-    };
-};
-
 export enum FieldType {
     Text = 'text',
     Password = 'password',

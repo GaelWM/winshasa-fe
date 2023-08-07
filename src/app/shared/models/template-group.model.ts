@@ -96,16 +96,6 @@ export interface ITemplateGroupField {
     updated_by?: string;
 }
 
-export type TemplateDetails = {
-    expandAllGroups: boolean;
-    uiClassesOverride?: string;
-    uiSettings?: {
-        gridType?: 'rows' | 'cols';
-        gridFlow?: 'row' | 'col';
-        noGridType: number;
-    };
-};
-
 export enum FieldType {
     Text = 'text',
     Password = 'password',

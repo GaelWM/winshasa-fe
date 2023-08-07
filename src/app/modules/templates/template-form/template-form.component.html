@@ -23,7 +23,7 @@
         </div>
 
         <div
-            class="flex flex-col flex-0 items-start w-full p-6 sm:p-8 space-y-6 overflow-y-auto"
+            class="flex flex-col flex-1 items-start w-full p-3 sm:p-8 space-y-6 overflow-y-auto"
         >
             <fuse-alert
                 [type]="'error'"
@@ -43,6 +43,16 @@
                     [placeholder]="'Template name'"
                 />
                 <mat-hint>Please type in the template name</mat-hint>
+                <mat-error
+                    *ngIf="
+                        templateForm.controls.name.invalid &&
+                        templateForm.controls.name.touched
+                    "
+                >
+                    <span *ngIf="errors()?.[0]?.message">
+                        {{ errors()?.[0]?.message }}</span
+                    >
+                </mat-error>
             </mat-form-field>
 
             <mat-form-field class="w-full">
@@ -59,6 +69,18 @@
                 <mat-hint>Please select the entity type</mat-hint>
             </mat-form-field>
             <ng-container formGroupName="details">
+                <mat-form-field class="w-full">
+                    <mat-label>Description</mat-label>
+                    <textarea
+                        matInput
+                        [placeholder]="'Description'"
+                        name="description"
+                        formControlName="description"
+                        [rows]="2"
+                    >
+                    </textarea>
+                    <mat-hint>Please enter the template description</mat-hint>
+                </mat-form-field>
                 <div class="flex flex-row gap-2" formGroupName="uiSettings">
                     <mat-form-field class="w-full">
                         <mat-label>Grid type</mat-label>

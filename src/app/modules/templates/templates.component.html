@@ -29,6 +29,15 @@
     <div class="flex items-center gap-2">
         <button
             mat-button
+            color="secondary"
+            aria-label="Edit template"
+            (click)="onEditTemplate($event, row)"
+        >
+            <mat-icon class="text-primary-100">visibility</mat-icon>
+            <span class="text-primary-100">View</span>
+        </button>
+        <button
+            mat-button
             color="primary"
             aria-label="Edit template"
             (click)="onEditTemplate($event, row)"

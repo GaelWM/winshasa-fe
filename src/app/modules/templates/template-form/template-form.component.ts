@@ -1,5 +1,13 @@
 import { CommonModule } from '@angular/common';
-import { Component, DestroyRef, Inject, OnInit, inject } from '@angular/core';
+import {
+    Component,
+    DestroyRef,
+    Inject,
+    OnInit,
+    WritableSignal,
+    inject,
+    signal,
+} from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import {
     FormBuilder,
@@ -16,7 +24,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 import { TemplatesService } from 'app/services/templates.service';
-import { ApiResult, Template } from 'app/shared/models';
+import { ApiResult, FormError, Template } from 'app/shared/models';
 
 @Component({
     selector: 'app-template-form',
@@ -38,10 +46,12 @@ import { ApiResult, Template } from 'app/shared/models';
 export class TemplateFormComponent implements OnInit {
     formFieldHelpers: string = '';
     submitted: boolean = false;
+    errors: WritableSignal<FormError[]> = signal([]);
     templateForm = this._formBuilder.group({
         name: ['', [Validators.required]],
         type: ['', [Validators.required]],
         details: this._formBuilder.group({
+            description: [''],
             expandAllGroups: [false],
             uiClassesOverride: [''],
             uiSettings: this._formBuilder.group({
@@ -64,11 +74,13 @@ export class TemplateFormComponent implements OnInit {
     ) {}
 
     ngOnInit(): void {
+        console.log('errors: ', this.errors());
         if (this.data.template) {
             this.templateForm.setValue({
                 name: this.data.template.name,
                 type: this.data.template.type,
                 details: {
+                    description: this.data.template.details?.description ?? '',
                     expandAllGroups:
                         this.data.template.details?.expandAllGroups ?? false,
                     uiClassesOverride:
@@ -117,23 +129,18 @@ export class TemplateFormComponent implements OnInit {
                         this.dialogRef.close();
                     }
                 },
-                error: (error) => {
-                    console.log('error: ', error.error.errors);
-                    this.errorMessage =
-                        error.error.errors &&
-                        error.error.errors
-                            .map((e: any) => {
-                                return e.message;
-                            })
-                            .join('\n ');
-                    console.log('this.errorMessage: ', this.errorMessage);
+                error: (err) => {
+                    this.errors.set(err?.error?.errors ?? []);
+                    this.errorMessage = err?.error?.errors
+                        ?.map((e: any) => e.message)
+                        .join('\n ');
                 },
             });
     }
 
     private editTemplate(formValue: any): void {
         this._templateService
-            .put<Template>(this.data.template.id, formValue)
+            .patch<Template>(this.data.template.id, formValue)
             .pipe(takeUntilDestroyed(this.destroyRef))
             .subscribe({
                 next: (response: ApiResult<Template>) => {
@@ -144,14 +151,11 @@ export class TemplateFormComponent implements OnInit {
                         this.dialogRef.close();
                     }
                 },
-                error: (error) => {
-                    this.errorMessage =
-                        error.error.errors &&
-                        error.error.errors
-                            .map((e: any) => {
-                                return e.message;
-                            })
-                            .join('\n ');
+                error: (err) => {
+                    this.errors.set(err?.error?.errors ?? []);
+                    this.errorMessage = err?.error?.errors
+                        ?.map((e: any) => e.message)
+                        .join('\n ');
                 },
             });
     }
