@@ -1,3 +1,4 @@
+import { TemplateGroupField } from './template-group-field.model';
 export interface ITemplateGroup {
     id: string;
     name: string;
@@ -5,10 +6,10 @@ export interface ITemplateGroup {
     parentId?: string;
     order?: number;
     details?: string;
-    created_at?: Date;
-    created_by?: string;
-    updated_at?: Date;
-    updated_by?: string;
+    createdAt?: Date;
+    createdBy?: string;
+    updatedAt?: Date;
+    updatedBy?: string;
     fields?: TemplateGroupField[];
 }
 
@@ -31,10 +32,10 @@ export class TemplateGroup implements ITemplateGroup {
         this.parentId = templateGroup.parentId;
         this.name = templateGroup.name;
         this.order = templateGroup.order;
-        this.createdAt = templateGroup.created_at;
-        this.createdBy = templateGroup.created_by;
-        this.updatedAt = templateGroup.updated_at;
-        this.updatedBy = templateGroup.updated_by;
+        this.createdAt = templateGroup.createdAt;
+        this.createdBy = templateGroup.createdBy;
+        this.updatedAt = templateGroup.updatedAt;
+        this.updatedBy = templateGroup.updatedBy;
 
         if (templateGroup.fields) {
             this.fields = templateGroup.fields.map((templateGroupField) => {
@@ -46,54 +47,23 @@ export class TemplateGroup implements ITemplateGroup {
             });
         }
     }
-}
 
-// -----------------------------------------------------------------------------------------------------
-// @ TemplateGroupField
-// -----------------------------------------------------------------------------------------------------
-export class TemplateGroupField implements ITemplateGroupField {
-    id?: number;
-    slug?: string;
-    group?: { id?: number; name?: string; slug?: string };
-    parentId: string;
-    order: number;
-    name: string;
-    details?: JsonFormControls;
-    createdAt?: Date;
-    createdBy?: string;
-    updatedAt?: Date;
-    updatedBy?: string;
-
-    /**
-     * Constructor
-     */
-    constructor(templateGroupField: ITemplateGroupField) {
-        this.id = templateGroupField.id;
-        this.slug = templateGroupField.slug;
-        this.group = templateGroupField.group;
-        this.parentId = templateGroupField.parentId;
-        this.order = templateGroupField.order;
-        this.name = templateGroupField.name;
-        this.details = templateGroupField.details;
-        this.createdAt = templateGroupField.created_at;
-        this.createdBy = templateGroupField.created_by;
-        this.updatedAt = templateGroupField.updated_at;
-        this.updatedBy = templateGroupField.updated_by;
+    toJson(): { [key: string]: any } {
+        return {
+            id: this.id,
+            template: this.template,
+            parentId: this.parentId,
+            name: this.name,
+            order: this.order,
+            createdAt: this.createdAt,
+            createdBy: this.createdBy,
+            updatedAt: this.updatedAt,
+            updatedBy: this.updatedBy,
+            fields: this.fields?.map((templateGroupField) =>
+                templateGroupField.toJson()
+            ),
+        };
     }
-}
-
-export interface ITemplateGroupField {
-    id?: number;
-    slug?: string;
-    group?: { id?: number; name?: string; slug?: string };
-    parentId?: string;
-    order?: number;
-    name: string;
-    details?: JsonFormControls;
-    created_at?: Date;
-    created_by?: string;
-    updated_at?: Date;
-    updated_by?: string;
 }
 
 export enum FieldType {

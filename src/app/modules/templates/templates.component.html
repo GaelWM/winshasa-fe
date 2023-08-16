@@ -26,31 +26,30 @@
 </div>
 
 <ng-template #actionsTpl let-row="row">
-    <div class="flex items-center gap-2">
+    <div class="inline-flex items-center gap-1">
         <button
-            mat-button
+            mat-icon-button
             color="secondary"
             aria-label="Edit template"
             (click)="onEditTemplate($event, row)"
         >
             <mat-icon class="text-primary-100">visibility</mat-icon>
-            <span class="text-primary-100">View</span>
         </button>
         <button
-            mat-button
+            mat-icon-button
             color="primary"
             aria-label="Edit template"
             (click)="onEditTemplate($event, row)"
         >
-            <mat-icon class="text-blue-500">edit</mat-icon> Edit
+            <mat-icon class="text-blue-500">edit</mat-icon>
         </button>
         <button
-            mat-button
+            mat-icon-button
             color="warn"
             aria-label="Delete template"
             (click)="onDeleteTemplate($event, row)"
         >
-            <mat-icon class="text-red-500">delete</mat-icon> Delete
+            <mat-icon class="text-red-500">delete</mat-icon>
         </button>
     </div>
 </ng-template>

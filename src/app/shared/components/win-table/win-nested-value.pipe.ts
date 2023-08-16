@@ -2,6 +2,7 @@ import { Pipe, PipeTransform } from '@angular/core';
 
 @Pipe({
     name: 'winNestedValue',
+    standalone: true,
 })
 export class WinNestedValuePipe implements PipeTransform {
     transform(value: any, key: string | string[] | undefined): string {

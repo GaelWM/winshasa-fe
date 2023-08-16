@@ -1,10 +1,11 @@
 <form
+    *ngIf="templateForm() as templateForm"
     #templateNgForm="ngForm"
     (ngSubmit)="onSubmitNewTemplate(templateNgForm)"
     [formGroup]="templateForm"
 >
     <div
-        class="flex flex-col flex-auto md:w-160 md:min-w-160 max-h-160 -m-6 overflow-y-auto"
+        class="flex flex-col flex-auto md:w-160 md:min-w-160 max-h-240 -m-6 overflow-y-auto"
     >
         <div
             class="flex flex-0 items-center justify-between h-16 pr-3 sm:pr-5 pl-6 sm:pl-8 bg-primary text-on-primary"
@@ -25,14 +26,14 @@
         <div
             class="flex flex-col flex-1 items-start w-full p-3 sm:p-8 space-y-6 overflow-y-auto"
         >
-            <fuse-alert
+            <!-- <fuse-alert
                 [type]="'error'"
-                *ngIf="this.errorMessage !== ''"
+                *ngIf="errorMessage != null && errorMessage !== ''"
                 class="w-full"
             >
                 <span fuseAlertTitle>Error</span>
                 {{ errorMessage }}
-            </fuse-alert>
+            </fuse-alert> -->
             <mat-form-field [ngClass]="formFieldHelpers" class="w-full">
                 <mat-label>Template Name</mat-label>
                 <input
@@ -43,16 +44,12 @@
                     [placeholder]="'Template name'"
                 />
                 <mat-hint>Please type in the template name</mat-hint>
-                <mat-error
-                    *ngIf="
-                        templateForm.controls.name.invalid &&
-                        templateForm.controls.name.touched
-                    "
-                >
-                    <span *ngIf="errors()?.[0]?.message">
-                        {{ errors()?.[0]?.message }}</span
-                    >
-                </mat-error>
+
+                <app-error-form-template
+                    [form]="templateForm"
+                    field="name"
+                    name="Template name"
+                ></app-error-form-template>
             </mat-form-field>
 
             <mat-form-field class="w-full">
@@ -63,6 +60,7 @@
                     formControlName="type"
                     required
                 >
+                    <mat-option [value]="'Form'">Form</mat-option>
                     <mat-option [value]="'Site'">Site</mat-option>
                     <mat-option [value]="'Product'">Product</mat-option>
                 </mat-select>
@@ -81,7 +79,7 @@
                     </textarea>
                     <mat-hint>Please enter the template description</mat-hint>
                 </mat-form-field>
-                <div class="flex flex-row gap-2" formGroupName="uiSettings">
+                <!-- <div class="flex flex-row gap-2" formGroupName="uiSettings">
                     <mat-form-field class="w-full">
                         <mat-label>Grid type</mat-label>
                         <mat-select
@@ -135,7 +133,7 @@
                     formControlName="expandAllGroups"
                 >
                     Expand All groups
-                </mat-checkbox>
+                </mat-checkbox> -->
             </ng-container>
         </div>
         <div

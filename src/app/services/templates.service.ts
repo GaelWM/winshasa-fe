@@ -6,14 +6,10 @@ import {
     inject,
     signal,
 } from '@angular/core';
-import {
-    takeUntilDestroyed,
-    toObservable,
-    toSignal,
-} from '@angular/core/rxjs-interop';
+import { takeUntilDestroyed, toObservable } from '@angular/core/rxjs-interop';
 import { BaseService } from 'app/services/base.service';
 import { ApiResult, Template } from 'app/shared/models';
-import { Observable, ReplaySubject, switchMap, tap } from 'rxjs';
+import { switchMap } from 'rxjs';
 
 @Injectable({
     providedIn: 'root',

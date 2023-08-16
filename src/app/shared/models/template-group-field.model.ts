@@ -6,10 +6,10 @@ export interface ITemplateGroupField {
     order?: number;
     name: string;
     details?: JsonFormControls;
-    created_at?: Date;
-    created_by?: string;
-    updated_at?: Date;
-    updated_by?: string;
+    createdAt?: Date;
+    createdBy?: string;
+    updatedAt?: Date;
+    updatedBy?: string;
 }
 
 export class TemplateGroupField implements ITemplateGroupField {
@@ -35,10 +35,25 @@ export class TemplateGroupField implements ITemplateGroupField {
         this.order = templateGroupField.order;
         this.name = templateGroupField.name;
         this.details = templateGroupField.details;
-        this.createdAt = templateGroupField.created_at;
-        this.createdBy = templateGroupField.created_by;
-        this.updatedAt = templateGroupField.updated_at;
-        this.updatedBy = templateGroupField.updated_by;
+        this.createdAt = templateGroupField.createdAt;
+        this.createdBy = templateGroupField.createdBy;
+        this.updatedAt = templateGroupField.updatedAt;
+        this.updatedBy = templateGroupField.updatedBy;
+    }
+
+    toJson(): { [key: string]: any } {
+        return {
+            id: this.id,
+            group: this.group,
+            parentId: this.parentId,
+            order: this.order,
+            name: this.name,
+            details: this.details,
+            created_at: this.createdAt,
+            created_by: this.createdBy,
+            updated_at: this.updatedAt,
+            updated_by: this.updatedBy,
+        };
     }
 }
 

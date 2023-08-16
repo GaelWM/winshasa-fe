@@ -8,6 +8,7 @@ import {
 
 @Directive({
     selector: '[winDynamicDirective]',
+    standalone: true,
 })
 export class WinDynamicDirective implements OnInit, AfterViewInit {
     @Input() winDynamicDirective: any;

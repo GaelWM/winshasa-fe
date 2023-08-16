@@ -4,11 +4,12 @@ export interface ITemplate {
     id: string;
     name: string;
     type: string;
+    isActive: boolean;
     details?: TemplateDetails;
-    created_at?: Date;
-    created_by?: string;
-    updated_at?: Date;
-    updated_by?: string;
+    createdAt?: Date;
+    createdBy?: string;
+    updatedAt?: Date;
+    updatedBy?: string;
     groups?: TemplateGroup[];
 }
 
@@ -16,6 +17,7 @@ export class Template implements ITemplate {
     id: string;
     name: string;
     type: string;
+    isActive: boolean;
     details?: TemplateDetails;
     createdAt?: Date;
     createdBy?: string;
@@ -28,10 +30,10 @@ export class Template implements ITemplate {
         this.name = template.name;
         this.type = template.type;
         this.details = template.details;
-        this.createdAt = template.created_at;
-        this.createdBy = template.created_by;
-        this.updatedAt = template.updated_at;
-        this.updatedBy = template.updated_by;
+        this.createdAt = template.createdAt;
+        this.createdBy = template.createdBy;
+        this.updatedAt = template.updatedAt;
+        this.updatedBy = template.updatedBy;
 
         if (template.groups) {
             this.groups = template.groups.map((templateGroup) => {
@@ -42,6 +44,20 @@ export class Template implements ITemplate {
                 return templateGroup;
             });
         }
+    }
+
+    toJson(): { [key: string]: any } {
+        return {
+            id: this.id,
+            name: this.name,
+            type: this.type,
+            details: this.details,
+            createdAt: this.createdAt,
+            createdBy: this.createdBy,
+            updatedAt: this.updatedAt,
+            updatedBy: this.updatedBy,
+            groups: this.groups?.map((templateGroup) => templateGroup.toJson()),
+        };
     }
 }
 

@@ -2,9 +2,9 @@ import { CommonModule } from '@angular/common';
 import {
     Component,
     DestroyRef,
-    Inject,
-    OnInit,
     WritableSignal,
+    computed,
+    effect,
     inject,
     signal,
 } from '@angular/core';
@@ -23,7 +23,9 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
+import { FuseAlertComponent } from '@fuse/components/alert';
 import { TemplatesService } from 'app/services/templates.service';
+import { ErrorFormTemplateComponent } from 'app/shared/components/error-form-template/error-form-template.component';
 import { ApiResult, FormError, Template } from 'app/shared/models';
 
 @Component({
@@ -40,65 +42,45 @@ import { ApiResult, FormError, Template } from 'app/shared/models';
         MatInputModule,
         MatCheckboxModule,
         MatFormFieldModule,
+        FuseAlertComponent,
         ReactiveFormsModule,
+        ErrorFormTemplateComponent,
     ],
 })
-export class TemplateFormComponent implements OnInit {
+export class TemplateFormComponent {
+    private destroyRef = inject(DestroyRef);
+    private _templateService = inject(TemplatesService);
+    private _formBuilder = inject(FormBuilder);
+    private dialogRef = inject(MatDialogRef<TemplateFormComponent>);
+    private data = inject(MAT_DIALOG_DATA) as {
+        title: string;
+        template: Template;
+        action: string;
+    };
+
     formFieldHelpers: string = '';
     submitted: boolean = false;
     errors: WritableSignal<FormError[]> = signal([]);
-    templateForm = this._formBuilder.group({
-        name: ['', [Validators.required]],
-        type: ['', [Validators.required]],
-        details: this._formBuilder.group({
-            description: [''],
-            expandAllGroups: [false],
-            uiClassesOverride: [''],
-            uiSettings: this._formBuilder.group({
-                gridType: [''],
-                gridFlow: [''],
-                noGridType: [undefined],
+    templateForm = computed(() => {
+        const template = this.data.template;
+        return this._formBuilder.group({
+            id: [template?.id ?? ''],
+            name: [
+                template?.name ?? '',
+                [Validators.required, Validators.minLength(3)],
+            ],
+            type: [template?.type ?? '', [Validators.required]],
+            isActive: [template?.isActive ?? true],
+            details: this._formBuilder.group({
+                description: [template?.details?.description ?? ''],
             }),
-        }),
+        });
     });
-    errorMessage: string = '';
 
-    private destroyRef = inject(DestroyRef);
-
-    constructor(
-        @Inject(MAT_DIALOG_DATA)
-        public data: { title: string; template: Template; action: string },
-        public dialogRef: MatDialogRef<TemplateFormComponent>,
-        private _templateService: TemplatesService,
-        private _formBuilder: FormBuilder
-    ) {}
-
-    ngOnInit(): void {
-        console.log('errors: ', this.errors());
-        if (this.data.template) {
-            this.templateForm.setValue({
-                name: this.data.template.name,
-                type: this.data.template.type,
-                details: {
-                    description: this.data.template.details?.description ?? '',
-                    expandAllGroups:
-                        this.data.template.details?.expandAllGroups ?? false,
-                    uiClassesOverride:
-                        this.data.template.details?.uiClassesOverride ?? '',
-                    uiSettings: {
-                        gridType:
-                            this.data.template.details?.uiSettings?.gridType ??
-                            '',
-                        gridFlow:
-                            this.data.template.details?.uiSettings?.gridFlow ??
-                            '',
-                        noGridType:
-                            this.data.template.details?.uiSettings
-                                ?.noGridType ?? '',
-                    },
-                },
-            });
-        }
+    constructor() {
+        // effect(() => {
+        //     console.log('this.errors(): ', this.errors());
+        // });
     }
 
     onSubmitNewTemplate(templateForm: NgForm): void {
@@ -130,10 +112,7 @@ export class TemplateFormComponent implements OnInit {
                     }
                 },
                 error: (err) => {
-                    this.errors.set(err?.error?.errors ?? []);
-                    this.errorMessage = err?.error?.errors
-                        ?.map((e: any) => e.message)
-                        .join('\n ');
+                    this.errors.set(err?.error?.errors?.flat() ?? []);
                 },
             });
     }
@@ -152,10 +131,7 @@ export class TemplateFormComponent implements OnInit {
                     }
                 },
                 error: (err) => {
-                    this.errors.set(err?.error?.errors ?? []);
-                    this.errorMessage = err?.error?.errors
-                        ?.map((e: any) => e.message)
-                        .join('\n ');
+                    this.errors.set(err?.error?.errors?.flat() ?? []);
                 },
             });
     }

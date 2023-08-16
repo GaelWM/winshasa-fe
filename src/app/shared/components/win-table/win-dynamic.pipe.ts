@@ -3,6 +3,7 @@ import { DynamicPipeModel } from './win-table.model';
 
 @Pipe({
     name: 'winDynamicPipe',
+    standalone: true,
 })
 export class WinDynamicPipe implements PipeTransform {
     transform(
