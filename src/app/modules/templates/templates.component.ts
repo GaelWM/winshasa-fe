@@ -1,5 +1,6 @@
 import {
     Component,
+    DestroyRef,
     TemplateRef,
     ViewChild,
     effect,
@@ -10,7 +11,7 @@ import { ToolbarComponent } from 'app/shared/components/toolbar/toolbar.componen
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { ColumnSetting } from 'app/shared/components/win-table/win-table.model';
-import { toSignal } from '@angular/core/rxjs-interop';
+import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { TemplatesService } from '../../services/templates.service';
 import { UserService } from 'app/services/user/user.service';
 import { User } from 'app/services/user/user.types';
@@ -44,6 +45,7 @@ export class TemplatesComponent {
     private _router = inject(Router);
     private _dialog = inject(MatDialog);
     private _fuseConfirmationService = inject(FuseConfirmationService);
+    private destroyRef = inject(DestroyRef);
 
     @ViewChild('actionsTpl', { static: true }) actionsTpl!: TemplateRef<any>;
 
@@ -122,7 +124,10 @@ export class TemplatesComponent {
 
         confirmation.afterClosed().subscribe((result) => {
             if (result === 'confirmed') {
-                this._templatesService.updateUponDelete(template.id);
+                this._templatesService
+                    .deleteTemplate(template.id)
+                    .pipe(takeUntilDestroyed(this.destroyRef))
+                    .subscribe();
             }
         });
     }

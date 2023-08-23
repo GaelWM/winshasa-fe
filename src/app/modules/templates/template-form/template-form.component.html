@@ -26,14 +26,14 @@
         <div
             class="flex flex-col flex-1 items-start w-full p-3 sm:p-8 space-y-6 overflow-y-auto"
         >
-            <!-- <fuse-alert
+            <fuse-alert
                 [type]="'error'"
-                *ngIf="errorMessage != null && errorMessage !== ''"
+                *ngIf="errors().length > 0"
                 class="w-full"
             >
                 <span fuseAlertTitle>Error</span>
-                {{ errorMessage }}
-            </fuse-alert> -->
+                <span *ngFor="let error of errors()"> {{ error.message }}</span>
+            </fuse-alert>
             <mat-form-field [ngClass]="formFieldHelpers" class="w-full">
                 <mat-label>Template Name</mat-label>
                 <input
@@ -44,12 +44,18 @@
                     [placeholder]="'Template name'"
                 />
                 <mat-hint>Please type in the template name</mat-hint>
-
-                <app-error-form-template
-                    [form]="templateForm"
-                    field="name"
-                    name="Template name"
-                ></app-error-form-template>
+                <mat-error
+                    *ngIf="
+                        templateForm.controls?.name?.touched &&
+                        templateForm.controls?.name?.invalid
+                    "
+                >
+                    <app-error-form-template
+                        [form]="templateForm"
+                        field="name"
+                        name="Template name"
+                    ></app-error-form-template>
+                </mat-error>
             </mat-form-field>
 
             <mat-form-field class="w-full">
@@ -65,6 +71,18 @@
                     <mat-option [value]="'Product'">Product</mat-option>
                 </mat-select>
                 <mat-hint>Please select the entity type</mat-hint>
+                <mat-error
+                    *ngIf="
+                        templateForm.controls?.type?.touched &&
+                        templateForm.controls?.type?.invalid
+                    "
+                >
+                    <app-error-form-template
+                        [form]="templateForm"
+                        field="type"
+                        name="Template type"
+                    ></app-error-form-template>
+                </mat-error>
             </mat-form-field>
             <ng-container formGroupName="details">
                 <mat-form-field class="w-full">
@@ -79,61 +97,6 @@
                     </textarea>
                     <mat-hint>Please enter the template description</mat-hint>
                 </mat-form-field>
-                <!-- <div class="flex flex-row gap-2" formGroupName="uiSettings">
-                    <mat-form-field class="w-full">
-                        <mat-label>Grid type</mat-label>
-                        <mat-select
-                            [placeholder]="'Grid type'"
-                            name="gridType"
-                            formControlName="gridType"
-                        >
-                            <mat-option [value]="'rows'">Row</mat-option>
-                            <mat-option [value]="'cols'">Column</mat-option>
-                        </mat-select>
-                    </mat-form-field>
-                    <mat-form-field
-                        class="w-full"
-                        *ngIf="
-                            templateForm.value.details.uiSettings.gridType !==
-                            ''
-                        "
-                    >
-                        <mat-label
-                            >No. of
-                            {{
-                                templateForm.value.details.uiSettings.gridType
-                            }}</mat-label
-                        >
-                        <input
-                            name="noGridType"
-                            formControlName="noGridType"
-                            matInput
-                            [placeholder]="
-                                'Number of ' +
-                                templateForm.value.details.uiSettings.gridType
-                            "
-                        />
-                    </mat-form-field>
-                    <mat-form-field class="w-full">
-                        <mat-label>Grid Flow</mat-label>
-                        <mat-select
-                            [placeholder]="'Grid Flow'"
-                            name="gridFlow"
-                            formControlName="gridFlow"
-                        >
-                            <mat-option [value]="'row'">Row</mat-option>
-                            <mat-option [value]="'col'">Column</mat-option>
-                        </mat-select>
-                    </mat-form-field>
-                </div>
-                <mat-checkbox
-                    class="w-full justify-center"
-                    [color]="'primary'"
-                    name="expandAllGroups"
-                    formControlName="expandAllGroups"
-                >
-                    Expand All groups
-                </mat-checkbox> -->
             </ng-container>
         </div>
         <div

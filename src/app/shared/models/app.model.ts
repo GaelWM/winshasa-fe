@@ -54,6 +54,7 @@ export interface ConnectionObject {
 export interface FormError {
     field: string;
     message: string;
+    rule: string;
 }
 
 export const DARK_MODE_MAP_STYLES = [

@@ -4,7 +4,6 @@ import {
     DestroyRef,
     WritableSignal,
     computed,
-    effect,
     inject,
     signal,
 } from '@angular/core';
@@ -26,7 +25,7 @@ import { MatSelectModule } from '@angular/material/select';
 import { FuseAlertComponent } from '@fuse/components/alert';
 import { TemplatesService } from 'app/services/templates.service';
 import { ErrorFormTemplateComponent } from 'app/shared/components/error-form-template/error-form-template.component';
-import { ApiResult, FormError, Template } from 'app/shared/models';
+import { FormError, Template } from 'app/shared/models';
 
 @Component({
     selector: 'app-template-form',
@@ -77,12 +76,6 @@ export class TemplateFormComponent {
         });
     });
 
-    constructor() {
-        // effect(() => {
-        //     console.log('this.errors(): ', this.errors());
-        // });
-    }
-
     onSubmitNewTemplate(templateForm: NgForm): void {
         this.submitted = true;
         if (this.data.action === 'edit' && this.data.template.id) {
@@ -100,38 +93,28 @@ export class TemplateFormComponent {
 
     private addTemplate(formValue: any): void {
         this._templateService
-            .post<Template>(formValue)
+            .storeTemplate(formValue)
             .pipe(takeUntilDestroyed(this.destroyRef))
             .subscribe({
-                next: (response: ApiResult<Template>) => {
-                    if (response) {
-                        this._templateService.updateUponCreate(
-                            response.data as Template
-                        );
-                        this.dialogRef.close();
-                    }
+                next: () => {
+                    this.dialogRef.close();
                 },
                 error: (err) => {
-                    this.errors.set(err?.error?.errors?.flat() ?? []);
+                    this.errors.set(err?.error?.errors);
                 },
             });
     }
 
     private editTemplate(formValue: any): void {
         this._templateService
-            .patch<Template>(this.data.template.id, formValue)
+            .updateTemplate(this.data.template.id, formValue)
             .pipe(takeUntilDestroyed(this.destroyRef))
             .subscribe({
-                next: (response: ApiResult<Template>) => {
-                    if (response) {
-                        this._templateService.updateUponSave(
-                            response.data as Template
-                        );
-                        this.dialogRef.close();
-                    }
+                next: () => {
+                    this.dialogRef.close();
                 },
                 error: (err) => {
-                    this.errors.set(err?.error?.errors?.flat() ?? []);
+                    this.errors.set(err?.error?.errors);
                 },
             });
     }

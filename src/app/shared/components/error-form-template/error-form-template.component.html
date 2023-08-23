@@ -1,76 +1,72 @@
-<mat-error
-    *ngIf="form.controls?.[field]?.touched && form.controls?.[field]?.invalid"
+<span
+    *ngIf="
+        form.controls[field] &&
+        form.controls[field].errors &&
+        form.controls[field].errors.required
+    "
+    >{{ name ?? field }} is mandatory</span
 >
-    <span
-        *ngIf="
-            form.controls[field] &&
-            form.controls[field].errors &&
-            form.controls[field].errors.required
-        "
-        >{{ name ?? field }} is mandatory</span
-    >
-    <span
-        *ngIf="
-            form.controls[field] &&
-            form.controls[field].errors &&
-            form.controls[field].errors.min
-        "
-        >{{ name ?? field }} minimum value is
-        {{ form.controls[field].errors.min.min }}</span
-    >
-    <span
-        *ngIf="
-            form.controls[field] &&
-            form.controls[field].errors &&
-            form.controls[field].errors.max
-        "
-        >{{ name ?? field }} maximum value is
-        {{ form.controls[field].errors.max.max }}</span
-    >
-    <span
-        *ngIf="
-            form.controls[field] &&
-            form.controls[field].errors &&
-            form.controls[field].errors.minlength
-        "
-        >{{ name ?? field }} minimum length value is
-        {{ form.controls[field].errors.minlength.requiredLength }}
-    </span>
-    <span
-        *ngIf="
-            form.controls[field] &&
-            form.controls[field].errors &&
-            form.controls[field].errors.maxlength
-        "
-        >{{ name ?? field }} maximum length value is
-        {{ form.controls[field].errors.maxlength.requiredLength }}</span
-    >
-    <span
-        *ngIf="
-            form.controls[field] &&
-            form.controls[field].errors &&
-            form.controls[field].errors.pattern
-        "
-        >{{ name ?? field }} is invalid, please follow this rule "{{
-            this.getPatternName(
-                form.controls[field].errors.pattern.requiredPattern
-            )
-        }}"</span
-    >
-    <span
-        *ngIf="
-            form.controls[field] &&
-            form.controls[field].errors &&
-            form.controls[field].errors.nullValidator
-        "
-        >{{ name ?? field }} cannot be null</span
-    >
-    <span
-        *ngIf="
-            form.controls[field] &&
-            form.controls[field].errors &&
-            form.controls[field].errors.email
-        "
-        >{{ name ?? field }} is incorrect (example@test.com)</span
-    >
-</mat-error>
+<span
+    *ngIf="
+        form.controls[field] &&
+        form.controls[field].errors &&
+        form.controls[field].errors.min
+    "
+    >{{ name ?? field }} minimum value is
+    {{ form.controls[field].errors.min.min }}</span
+>
+<span
+    *ngIf="
+        form.controls[field] &&
+        form.controls[field].errors &&
+        form.controls[field].errors.max
+    "
+    >{{ name ?? field }} maximum value is
+    {{ form.controls[field].errors.max.max }}</span
+>
+<span
+    *ngIf="
+        form.controls[field] &&
+        form.controls[field].errors &&
+        form.controls[field].errors.minlength
+    "
+    >{{ name ?? field }} minimum length value is
+    {{ form.controls[field].errors.minlength.requiredLength }}
+</span>
+<span
+    *ngIf="
+        form.controls[field] &&
+        form.controls[field].errors &&
+        form.controls[field].errors.maxlength
+    "
+    >{{ name ?? field }} maximum length value is
+    {{ form.controls[field].errors.maxlength.requiredLength }}</span
+>
+<span
+    *ngIf="
+        form.controls[field] &&
+        form.controls[field].errors &&
+        form.controls[field].errors.pattern
+    "
+    >{{ name ?? field }} is invalid, please follow this rule "{{
+        this.getPatternName(
+            form.controls[field].errors.pattern.requiredPattern
+        )
+    }}"</span
+>
+<span
+    *ngIf="
+        form.controls[field] &&
+        form.controls[field].errors &&
+        form.controls[field].errors.nullValidator
+    "
+    >{{ name ?? field }} cannot be null</span
+>
+<span
+    *ngIf="
+        form.controls[field] &&
+        form.controls[field].errors &&
+        form.controls[field].errors.email
+    "
+    >{{ name ?? field }} is incorrect (example@test.com)</span
+>
