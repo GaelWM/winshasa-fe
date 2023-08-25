@@ -14,7 +14,13 @@
         </app-toolbar>
     </div>
     <div class="w-full p-3">
-        <win-table [columns]="columns" [data]="templates().data"></win-table>
+        <win-table
+            [columns]="columns"
+            [data]="templates().data"
+            [allowSort]="true"
+            [serverSideSorting]="true"
+            (sort)="onSort($event)"
+        ></win-table>
         <div class="flex justify-center items-center py-2">
             <win-paginator
                 [meta]="templates().meta"

@@ -15,7 +15,7 @@ import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { TemplatesService } from '../../services/templates.service';
 import { UserService } from 'app/services/user/user.service';
 import { User } from 'app/services/user/user.types';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { WinPaginatorComponent } from 'app/shared/components/win-paginator/win-paginator.component';
 import { PageEvent } from '@angular/material/paginator';
 import { ITemplate } from 'app/shared/models';
@@ -35,6 +35,7 @@ import { WinTableComponent } from 'app/shared/components/win-table/win-table.com
         MatIconModule,
         WinTableComponent,
         WinPaginatorComponent,
+        IsActivePipe,
     ],
     templateUrl: './templates.component.html',
     styleUrls: ['./templates.component.scss'],
@@ -43,6 +44,7 @@ export class TemplatesComponent {
     private _userService = inject(UserService);
     private _templatesService = inject(TemplatesService);
     private _router = inject(Router);
+    private _route = inject(ActivatedRoute);
     private _dialog = inject(MatDialog);
     private _fuseConfirmationService = inject(FuseConfirmationService);
     private destroyRef = inject(DestroyRef);
@@ -56,11 +58,23 @@ export class TemplatesComponent {
     constructor() {
         effect(() => {
             this.columns = [
-                { title: 'Name', key: 'name', customClass: 'w-3/12' },
-                { title: 'Type', key: 'type', customClass: 'w-3/12' },
+                {
+                    title: 'Name',
+                    key: 'name',
+                    customClass: 'w-3/12',
+                    clickEvent: true,
+                    sortKey: 'name',
+                },
+                {
+                    title: 'Type',
+                    key: 'type',
+                    customClass: 'w-3/12',
+                    clickEvent: true,
+                    sortKey: 'type',
+                },
                 {
                     title: 'Active',
-                    key: 'is_active',
+                    key: 'isActive',
                     customClass: 'w-3/12',
                     pipe: { class: { obj: IsActivePipe } },
                 },
@@ -81,6 +95,17 @@ export class TemplatesComponent {
                 perPage: event.pageSize,
             },
             queryParamsHandling: 'merge',
+        });
+    }
+
+    onSort(event: ColumnSetting): void {
+        this._router.navigate([], {
+            queryParams: {
+                sortBy: event.sortKey,
+                sortOrder: event.sortOrder,
+            },
+            queryParamsHandling: 'merge',
+            relativeTo: this._route,
         });
     }
 

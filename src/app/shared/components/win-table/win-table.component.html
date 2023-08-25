@@ -7,7 +7,33 @@
     <table>
         <thead>
             <tr>
-                <th *ngFor="let column of columns">{{ column.title }}</th>
+                <th *ngFor="let column of columns">
+                    <button
+                        class="w-full flex justify-between items-center gap-2"
+                        (click)="
+                            column.clickEvent && allowSort && onSort(column)
+                        "
+                    >
+                        <span>{{ column.title }}</span>
+                        <a
+                            mat-icon-button
+                            type="button"
+                            color="secondary"
+                            *ngIf="column.clickEvent && allowSort"
+                        >
+                            <mat-icon
+                                *ngIf="column.sortOrder === 'asc'"
+                                class="text-md"
+                                >arrow_upward</mat-icon
+                            >
+                            <mat-icon
+                                *ngIf="column.sortOrder === 'desc'"
+                                class="text-md"
+                                >arrow_downward</mat-icon
+                            >
+                        </a>
+                    </button>
+                </th>
             </tr>
         </thead>
         <tbody>

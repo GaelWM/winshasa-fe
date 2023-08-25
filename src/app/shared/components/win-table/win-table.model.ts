@@ -1,4 +1,4 @@
-import { TemplateRef } from "@angular/core";
+import { TemplateRef } from '@angular/core';
 export interface DynamicPipeModel {
     obj: any;
     constructor?: any;
@@ -8,6 +8,7 @@ export class ColumnSetting {
     key!: string;
     divider?: boolean;
     sortKey?: string;
+    sortOrder?: 'asc' | 'desc' = 'desc';
     clickEvent?: boolean = false;
     pipe?: { class: DynamicPipeModel; args?: any };
     directive?: any;
@@ -16,4 +17,3 @@ export class ColumnSetting {
     safeHtml?: boolean;
     template?: TemplateRef<any>;
 }
-  

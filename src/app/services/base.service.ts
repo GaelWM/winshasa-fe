@@ -1,5 +1,5 @@
 import { HttpClient } from '@angular/common/http';
-import { Injectable, inject } from '@angular/core';
+import { Injectable, WritableSignal, inject, signal } from '@angular/core';
 import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { ActivatedRoute, Params } from '@angular/router';
 import { ApiResult } from 'app/shared/models';
@@ -31,7 +31,7 @@ export class BaseService {
         .pipe(debounceTime(300), distinctUntilChanged());
 
     private queries$: Observable<Params> = combineLatest([
-        this.route.queryParamMap.pipe(map((params) => params['params'])),
+        this.route.queryParams,
         this.searchQuery$,
     ]).pipe(
         takeUntilDestroyed(),
@@ -39,6 +39,8 @@ export class BaseService {
             const page = params.page;
             const limit = params.limit;
             const perPage = params.perPage;
+            const sortBy = params.sortBy;
+            const sortOrder = params.sortOrder;
             const search = searchQuery;
             return {
                 ...(page && !search && { page: page }),
@@ -47,6 +49,8 @@ export class BaseService {
                     ? { perPage: this.perPage }
                     : { perPage: perPage }),
                 ...(search && { name: search }),
+                ...(sortBy && !search && { sortBy: sortBy }),
+                ...(sortOrder && !search && { sortOrder: sortOrder }),
             };
         })
     );
@@ -54,6 +58,11 @@ export class BaseService {
 
     constructor(resource: string) {
         if (!resource) throw new Error('Resource is not provided');
+        this.resource = resource;
+        this.apiUrl = `${baseUrl}${this.resource}`;
+    }
+
+    updateResource(resource: string) {
         this.resource = resource;
         this.apiUrl = `${baseUrl}${this.resource}`;
     }
