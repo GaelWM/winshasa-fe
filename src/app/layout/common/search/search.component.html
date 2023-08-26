@@ -47,7 +47,7 @@
                 >
                     <mat-option
                         class="group relative mb-1 py-0 px-6 text-md rounded-md hover:bg-gray-100 dark:hover:bg-hover"
-                        [routerLink]="result.link"
+                        [routerLink]="[result.link, result.id]"
                         [value]="result.value"
                     >
                         <!-- templates -->
@@ -124,7 +124,7 @@
                 >
                     <mat-option
                         class="group relative mb-1 py-0 px-6 text-md rounded-md hover:bg-gray-100 dark:hover:bg-hover"
-                        [routerLink]="result.link"
+                        [routerLink]="[result.link, result.id]"
                         [value]="result.id"
                     >
                         <!-- Contacts -->
