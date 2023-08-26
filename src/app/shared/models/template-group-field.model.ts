@@ -1,59 +1,67 @@
+import { v4 as uuidv4 } from 'uuid';
 export interface ITemplateGroupField {
-    id: string;
-    group?: { id?: number; name?: string };
-    parentId?: string;
-    templateId?: string;
-    order?: number;
+    id?: string;
     name: string;
-    details?: JsonFormControls;
-    createdAt?: Date;
-    createdBy?: string;
-    updatedAt?: Date;
-    updatedBy?: string;
+    label?: string;
+    value: string | number | Date;
+    placeholder?: string;
+    type: FieldType;
+    options?: string;
+    sliderOptions?: SliderFieldOpts;
+    required: boolean;
+    validators?: FieldValidator;
+    hasValidators?: boolean;
+    hintMessage?: string;
+    labelPosition?: 'before' | 'after';
 }
 
 export class TemplateGroupField implements ITemplateGroupField {
     id: string;
-    group?: { id?: number; name?: string };
-    templateId?: string;
-    parentId: string;
-    order: number;
     name: string;
-    details?: JsonFormControls;
-    createdAt?: Date;
-    createdBy?: string;
-    updatedAt?: Date;
-    updatedBy?: string;
+    label?: string;
+    value: string | number | Date;
+    placeholder?: string;
+    type: FieldType;
+    options?: string;
+    sliderOptions?: SliderFieldOpts;
+    required: boolean;
+    validators?: FieldValidator;
+    hasValidators?: boolean;
+    hintMessage?: string;
+    labelPosition?: 'before' | 'after';
 
     /**
      * Constructor
      */
     constructor(templateGroupField: ITemplateGroupField) {
-        this.id = templateGroupField.id;
-        this.group = templateGroupField.group;
-        this.parentId = templateGroupField.parentId;
-        this.order = templateGroupField.order;
+        this.id = templateGroupField.id ?? uuidv4();
         this.name = templateGroupField.name;
-        this.details = templateGroupField.details;
-        this.createdAt = templateGroupField.createdAt;
-        this.createdBy = templateGroupField.createdBy;
-        this.updatedAt = templateGroupField.updatedAt;
-        this.updatedBy = templateGroupField.updatedBy;
+        this.label = templateGroupField.label;
+        this.value = templateGroupField.value;
+        this.placeholder = templateGroupField.placeholder;
+        this.type = templateGroupField.type;
+        this.options = templateGroupField.options;
+        this.sliderOptions = templateGroupField.sliderOptions;
+        this.required = templateGroupField.required;
+        this.validators = templateGroupField.validators;
+        this.hasValidators = templateGroupField.hasValidators;
+        this.hintMessage = templateGroupField.hintMessage;
+        this.labelPosition = templateGroupField.labelPosition;
     }
 
     toJson(): { [key: string]: any } {
-        return {
-            id: this.id,
-            group: this.group,
-            parentId: this.parentId,
-            order: this.order,
-            name: this.name,
-            details: this.details,
-            created_at: this.createdAt,
-            created_by: this.createdBy,
-            updated_at: this.updatedAt,
-            updated_by: this.updatedBy,
-        };
+        return JSON.parse(JSON.stringify(this));
+    }
+
+    public static isTextField(type: FieldType): boolean {
+        return [
+            FieldType.Text,
+            FieldType.Password,
+            FieldType.Number,
+            FieldType.Search,
+            FieldType.Tel,
+            FieldType.Url,
+        ].includes(type);
     }
 }
 
@@ -70,7 +78,7 @@ export enum FieldType {
     DateTime = 'dateTime',
     Time = 'time',
     Select = 'select',
-    MultiSelect = 'multi-select',
+    MultiSelect = 'multiselect',
     Slider = 'slider',
     Radio = 'radio',
     Checkbox = 'checkbox',
@@ -99,46 +107,6 @@ export const fieldOptions = [
     // { name: 'Multi Auto Complete', value: FieldType.MultiAutoComplete },
 ];
 
-export interface JsonFormValidators {
-    min?: number;
-    max?: number;
-    required?: boolean;
-    requiredTrue?: boolean;
-    email?: boolean;
-    minLength?: boolean;
-    maxLength?: boolean;
-    pattern?: string;
-    nullValidator?: boolean;
-}
-export interface JsonFormControlOptions {
-    min?: string;
-    max?: string;
-    step?: string;
-    icon?: string;
-    disabled?: boolean;
-    showTicks?: boolean;
-    thumbLabel?: boolean;
-    value?: number;
-}
-export interface JsonFormControls {
-    name: string;
-    label?: string;
-    value: string | number | Date;
-    placeholder?: string;
-    type: FieldType;
-    options?: string;
-    sliderOptions?: JsonFormControlOptions;
-    required: boolean;
-    validators?: JsonFormValidators;
-    hasValidators?: boolean;
-    hintMessage?: string;
-    labelPosition?: 'before' | 'after';
-}
-
-export interface JsonFormData {
-    controls: JsonFormControls[];
-}
-
 export type ValidationPattern = { name: string; value: string };
 
 export const REGEX_PATTERNS: ValidationPattern[] = [
@@ -155,3 +123,26 @@ export const REGEX_PATTERNS: ValidationPattern[] = [
         value: '^[A-Z0-9]*',
     },
 ];
+
+export interface FieldValidator {
+    min?: number;
+    max?: number;
+    required?: boolean;
+    requiredTrue?: boolean;
+    email?: boolean;
+    minLength?: boolean;
+    maxLength?: boolean;
+    pattern?: string;
+    nullValidator?: boolean;
+}
+
+export interface SliderFieldOpts {
+    min?: string;
+    max?: string;
+    step?: string;
+    icon?: string;
+    disabled?: boolean;
+    showTicks?: boolean;
+    thumbLabel?: boolean;
+    value?: number;
+}

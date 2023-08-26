@@ -1,0 +1,17 @@
+.panel-container {
+    display: flex;
+    flex-direction: row;
+}
+
+.panel-column {
+    flex: 1;
+}
+
+.panel {
+    margin: 10px;
+    height: max-content;
+}
+
+.grid-auto-height {
+    grid-auto-rows: minmax(min-content, max-content);
+}

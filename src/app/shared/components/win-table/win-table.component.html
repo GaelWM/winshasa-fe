@@ -40,6 +40,8 @@
             <tr
                 *ngFor="let row of data"
                 class="hover:bg-gray-800 text-primary font-bold py-2 px-4 rounded transition duration-300"
+                [ngClass]="{ 'cursor-pointer': allowRowClick }"
+                (click)="allowRowClick && onRowClick(row)"
             >
                 <ng-container *ngFor="let column of columns">
                     <ng-container
@@ -59,7 +61,7 @@
         [style]="column.style ?? ''"
         [class]="column.customClass ?? ''"
         [ngClass]="{ 'cursor-pointer': column.clickEvent }"
-        (click)="onRowClick(row, column)"
+        (click)="allowCellClick && onCellClick(row, column)"
     >
         <ng-container
             *ngIf="column.pipe"

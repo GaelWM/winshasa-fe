@@ -7,6 +7,12 @@ export interface ApiResult<T> {
     links?: ApiResultLink;
     meta?: ApiResultMetaData;
 }
+
+export interface ApiRowResult<T> {
+    data?: T;
+    message?: string;
+    success?: boolean;
+}
 export interface ApiResultLink {
     first?: string;
     last?: string;

@@ -11,19 +11,25 @@ import { ToolbarComponent } from 'app/shared/components/toolbar/toolbar.componen
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { ColumnSetting } from 'app/shared/components/win-table/win-table.model';
-import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
+import {
+    takeUntilDestroyed,
+    toObservable,
+    toSignal,
+} from '@angular/core/rxjs-interop';
 import { TemplatesService } from '../../services/templates.service';
 import { UserService } from 'app/services/user/user.service';
 import { User } from 'app/services/user/user.types';
 import { ActivatedRoute, Router } from '@angular/router';
 import { WinPaginatorComponent } from 'app/shared/components/win-paginator/win-paginator.component';
 import { PageEvent } from '@angular/material/paginator';
-import { ITemplate } from 'app/shared/models';
+import { ApiResult, ITemplate, Template } from 'app/shared/models';
 import { MatDialog } from '@angular/material/dialog';
 import { TemplateFormComponent } from './template-form/template-form.component';
 import { FuseConfirmationService } from '@fuse/services/confirmation';
 import { IsActivePipe } from 'app/shared/pipes/is-active/is-active.pipe';
 import { WinTableComponent } from 'app/shared/components/win-table/win-table.component';
+import { Observable, map, switchMap } from 'rxjs';
+import { toWritableSignal } from 'app/shared/utils/common.util';
 
 @Component({
     selector: 'app-template',
@@ -51,8 +57,21 @@ export class TemplatesComponent {
 
     @ViewChild('actionsTpl', { static: true }) actionsTpl!: TemplateRef<any>;
 
+    private templates$: Observable<ApiResult<Template[]>> = toObservable(
+        this._templatesService.queries
+    ).pipe(
+        switchMap((params) => this._templatesService.all<Template[]>(params)),
+        map((result: ApiResult<Template[]>) => {
+            if (result.data) {
+                this._templatesService.templates.set(result);
+            }
+            return result;
+        }),
+        takeUntilDestroyed()
+    );
+    templates = toWritableSignal(this.templates$, {} as ApiResult<Template[]>);
+
     columns: ColumnSetting[] = [];
-    templates = this._templatesService.templates;
     user = toSignal(this._userService.user$, { initialValue: {} as User });
 
     constructor() {
@@ -107,6 +126,10 @@ export class TemplatesComponent {
             queryParamsHandling: 'merge',
             relativeTo: this._route,
         });
+    }
+
+    onRowClick(event: Template): void {
+        this._router.navigate(['templates', event.id]);
     }
 
     onAddTemplate(event: Event) {

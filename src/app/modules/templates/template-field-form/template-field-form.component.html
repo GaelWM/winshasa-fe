@@ -1,0 +1,286 @@
+<form
+    *ngIf="fieldForm() as fieldForm"
+    #fieldNgForm="ngForm"
+    (ngSubmit)="onSubmitField(fieldNgForm)"
+    [formGroup]="fieldForm"
+>
+    <div
+        class="flex flex-col flex-auto md:w-160 md:min-w-160 max-h-160 -m-6 h-screen justify-between"
+    >
+        <div
+            class="flex flex-0 items-center justify-between h-16 pr-3 sm:pr-5 pl-6 sm:pl-8 bg-primary text-on-primary"
+        >
+            <div class="text-lg font-medium">
+                Field: {{ fieldForm.value.name }}
+            </div>
+            <button mat-icon-button (click)="onCloseModal($event)">
+                <mat-icon
+                    class="text-current"
+                    [svgIcon]="'heroicons_outline:x-circle'"
+                ></mat-icon>
+            </button>
+        </div>
+
+        <div
+            class="flex flex-col flex-0 items-start w-full p-6 sm:p-8 space-y-1 flex-grow overflow-y-auto h-30"
+        >
+            <input type="hidden" name="id" formControlName="id" />
+            <mat-form-field class="w-full">
+                <mat-label>Name</mat-label>
+                <input
+                    matInput
+                    type="text"
+                    formControlName="name"
+                    name="name"
+                    required
+                />
+                <mat-hint>Please enter the field name</mat-hint>
+            </mat-form-field>
+
+            <ng-container>
+                <mat-form-field class="w-full">
+                    <mat-label>Field type</mat-label>
+                    <mat-select
+                        [placeholder]="'Field type'"
+                        name="type"
+                        formControlName="type"
+                        required
+                    >
+                        <mat-option
+                            *ngFor="let option of fieldOptions"
+                            [value]="option.value"
+                            >{{ option.name }}</mat-option
+                        >
+                    </mat-select>
+                    <mat-hint>Please select the field type</mat-hint>
+                </mat-form-field>
+
+                <mat-form-field class="w-full" *ngIf="showLabelPosition">
+                    <mat-label>Label position</mat-label>
+                    <mat-select
+                        [placeholder]="'Label position'"
+                        name="labelPosition"
+                        formControlName="labelPosition"
+                        required
+                    >
+                        <mat-option value="before">Before</mat-option>
+                        <mat-option value="after">After</mat-option>
+                    </mat-select>
+                    <mat-hint
+                        >Please select checkbox/radio label position</mat-hint
+                    >
+                </mat-form-field>
+
+                <mat-form-field class="w-full" *ngIf="showOptions">
+                    <mat-label>Options</mat-label>
+                    <input
+                        matInput
+                        type="text"
+                        formControlName="options"
+                        name="options"
+                    />
+                    <mat-hint
+                        >Please enter your options with semicolon separated as
+                        (e.g. A;B;C)</mat-hint
+                    >
+                </mat-form-field>
+
+                <div
+                    class="w-full flex flex-col gap-2 mb-4"
+                    formGroupName="sliderOptions"
+                    *ngIf="showSliderOptions"
+                >
+                    <div class="flex gap-2">
+                        <mat-form-field class="w-full">
+                            <mat-label>Min</mat-label>
+                            <input
+                                matInput
+                                type="number"
+                                formControlName="min"
+                                placeholder="min"
+                                aria-placeholder="min"
+                                name="min"
+                            />
+                        </mat-form-field>
+                        <mat-form-field class="w-full">
+                            <mat-label>Max</mat-label>
+                            <input
+                                matInput
+                                type="number"
+                                formControlName="max"
+                                placeholder="max"
+                                aria-placeholder="max"
+                                name="max"
+                            />
+                        </mat-form-field>
+                        <mat-form-field class="w-full">
+                            <mat-label>Step</mat-label>
+                            <input
+                                matInput
+                                type="number"
+                                formControlName="step"
+                                placeholder="step"
+                                aria-placeholder="step"
+                                name="step"
+                            />
+                        </mat-form-field>
+                    </div>
+                    <div class="flex gap-2">
+                        <section class="example-section">
+                            <mat-checkbox
+                                class="mb-2"
+                                [color]="'primary'"
+                                formControlName="showTicks"
+                                >Show ticks</mat-checkbox
+                            >
+                        </section>
+
+                        <section class="example-section">
+                            <mat-checkbox
+                                class="mb-2"
+                                [color]="'primary'"
+                                formControlName="thumbLabel"
+                                >Show thumb label</mat-checkbox
+                            >
+                        </section>
+
+                        <section class="example-section">
+                            <mat-checkbox
+                                class="mb-2"
+                                [color]="'primary'"
+                                formControlName="disabled"
+                                >Disabled</mat-checkbox
+                            >
+                        </section>
+                    </div>
+                </div>
+
+                <mat-checkbox
+                    class="mb-2"
+                    [color]="'primary'"
+                    name="hasValidators"
+                    formControlName="hasValidators"
+                >
+                    Has validation rule(s)
+                </mat-checkbox>
+
+                <div
+                    class="flex flex-col w-full border border-gray-500 p-4 rounded"
+                    *ngIf="fieldForm.value.hasValidators"
+                    formGroupName="validators"
+                >
+                    <div class="flex justify-start items-center gap-4 py-2">
+                        <mat-checkbox
+                            class="mb-2"
+                            [color]="'primary'"
+                            formControlName="required"
+                            name="required"
+                        >
+                            Required
+                        </mat-checkbox>
+                        <mat-checkbox
+                            class="mb-2"
+                            [color]="'primary'"
+                            formControlName="email"
+                            name="email"
+                            *ngIf="isTextField"
+                        >
+                            Email
+                        </mat-checkbox>
+                        <mat-checkbox
+                            class="mb-2"
+                            [color]="'primary'"
+                            formControlName="nullValidator"
+                            name="nullValidator"
+                        >
+                            NullValidator
+                        </mat-checkbox>
+                    </div>
+                    <div
+                        class="flex justify-between items-center gap-3"
+                        *ngIf="showMinMaxValidation"
+                    >
+                        <mat-form-field class="w-full">
+                            <mat-label>Min</mat-label>
+                            <input
+                                matInput
+                                type="number"
+                                formControlName="min"
+                                name="min"
+                            />
+                        </mat-form-field>
+                        <mat-form-field class="w-full">
+                            <mat-label>Max</mat-label>
+                            <input
+                                matInput
+                                type="number"
+                                formControlName="max"
+                                name="max"
+                            />
+                        </mat-form-field>
+                    </div>
+                    <div
+                        class="flex justify-between items-center gap-3"
+                        *ngIf="!showMinMaxValidation"
+                    >
+                        <mat-form-field class="w-full">
+                            <mat-label>Min length</mat-label>
+                            <input
+                                matInput
+                                type="number"
+                                formControlName="minLength"
+                                name="minLength"
+                            />
+                        </mat-form-field>
+
+                        <mat-form-field class="w-full">
+                            <mat-label>Max length</mat-label>
+                            <input
+                                matInput
+                                type="number"
+                                formControlName="maxLength"
+                                name="maxLength"
+                            />
+                        </mat-form-field>
+                    </div>
+                    <div class="flex items-center">
+                        <mat-form-field class="w-full" appearance="fill">
+                            <mat-label>Pattern</mat-label>
+                            <input
+                                type="text"
+                                placeholder="Pick one"
+                                aria-label="Regular Expression"
+                                matInput
+                                formControlName="pattern"
+                                [matAutocomplete]="auto"
+                            />
+                            <mat-autocomplete #auto="matAutocomplete">
+                                <ng-container *ngIf="allPatterns">
+                                    <mat-option
+                                        *ngFor="let option of allPatterns"
+                                        [value]="option.name"
+                                        >{{ option.name }}</mat-option
+                                    >
+                                </ng-container>
+                            </mat-autocomplete>
+                        </mat-form-field>
+                    </div>
+                </div>
+            </ng-container>
+        </div>
+        <div
+            class="flex items-center justify-end border-t px-8 py-5 bg-gray-50 dark:bg-gray-700"
+        >
+            <button mat-button (click)="onCloseModal($event)">Cancel</button>
+            <button
+                type="submit"
+                class="px-6 ml-3"
+                mat-flat-button
+                [color]="'primary'"
+                [disabled]="!fieldForm.valid"
+            >
+                Save
+            </button>
+        </div>
+    </div>
+</form>

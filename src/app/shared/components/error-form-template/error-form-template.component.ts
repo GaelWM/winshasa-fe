@@ -1,8 +1,8 @@
 import { Component, Input } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormGroup } from '@angular/forms';
-import { REGEX_PATTERNS } from 'app/shared/models';
 import { MatFormFieldModule } from '@angular/material/form-field';
+import { REGEX_PATTERNS } from 'app/shared/models/template-group-field.model';
 
 @Component({
     selector: 'app-error-form-template',

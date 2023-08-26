@@ -56,6 +56,8 @@ export class BaseService {
     );
     queries = toSignal(this.queries$, {} as Params);
 
+    params$ = this.route.params;
+
     constructor(resource: string) {
         if (!resource) throw new Error('Resource is not provided');
         this.resource = resource;

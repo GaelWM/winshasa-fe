@@ -18,8 +18,10 @@
             [columns]="columns"
             [data]="templates().data"
             [allowSort]="true"
+            [allowRowClick]="true"
             [serverSideSorting]="true"
             (sort)="onSort($event)"
+            (tableRow)="onRowClick($event)"
         ></win-table>
         <div class="flex justify-center items-center py-2">
             <win-paginator

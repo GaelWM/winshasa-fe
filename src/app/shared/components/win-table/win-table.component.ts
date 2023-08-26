@@ -32,6 +32,8 @@ export class WinTableComponent {
     @Input() caption: string = '';
     @Input() allowSort: boolean = false;
     @Input() serverSideSorting: boolean = false;
+    @Input() allowRowClick: boolean = false;
+    @Input() allowCellClick: boolean = false;
 
     @Input() set columns(value: ColumnSetting[]) {
         const queries = this._route.snapshot.queryParams;
@@ -48,12 +50,19 @@ export class WinTableComponent {
         return this._columns;
     }
 
-    @Output() rowClick: EventEmitter<any> = new EventEmitter<any>();
+    @Output() tableRow: EventEmitter<any> = new EventEmitter<any>();
+    @Output() tableCell: EventEmitter<any> = new EventEmitter<any>();
     @Output() sort: EventEmitter<ColumnSetting> = new EventEmitter<any>();
 
-    onRowClick(row: any, column: ColumnSetting) {
+    onCellClick(row: any, column: ColumnSetting) {
         if (column.clickEvent) {
-            this.rowClick.emit(row);
+            this.tableCell.emit(row[column.key]);
+        }
+    }
+
+    onRowClick(row: any) {
+        if (this.allowRowClick) {
+            this.tableRow.emit(row);
         }
     }
 
