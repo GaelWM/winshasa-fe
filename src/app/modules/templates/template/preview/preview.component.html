@@ -9,10 +9,10 @@
 
     <div class="w-full p-2 sm:p-3 space-y-1 flex-grow overflow-y-auto h-30">
         <form
-            [formGroup]="templateForm"
+            [formGroup]="templateForm()"
             id="ngForm"
-            #generatedSiteForm="ngForm"
-            (ngSubmit)="onSubmitPreview(generatedSiteForm)"
+            #previewForm="ngForm"
+            (ngSubmit)="onSubmitPreview(previewForm)"
         >
             <app-json-form
                 [formClass]="'flex-col'"

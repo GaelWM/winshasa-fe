@@ -11,10 +11,8 @@
         "
     ></ng-container>
     <div
-        [class]="
-            'w-full md:min-w-1/4 md:w-1/4 my-1 form-group ' + formGroupClass
-        "
-        *ngFor="let group of template.groups; let i = index"
+        [class]="'w-full  my-1 form-group ' + formGroupClass"
+        *ngFor="let group of template?.details?.groups; let i = index"
         formGroupName="details"
     >
         <mat-expansion-panel
@@ -37,29 +35,27 @@
                 >
                     <!-- Text fields -->
                     <mat-form-field
-                        *ngIf="isTextField(field.details.type)"
+                        *ngIf="isTextField(field.type)"
                         class="w-full"
                     >
-                        <mat-label *ngIf="field.details.name !== ''">{{
-                            field.details.name
+                        <mat-label *ngIf="field.name !== ''">{{
+                            field.name
                         }}</mat-label>
                         <input
                             matInput
-                            [type]="field.details.type"
-                            [formControlName]="field.details.name"
-                            [placeholder]="
-                                field.details.placeholder ?? field.details.name
-                            "
+                            [type]="field.type"
+                            [formControlName]="field.name"
+                            [placeholder]="field.placeholder ?? field.name"
                         />
-                        <mat-hint *ngIf="field.details?.hintMessage">{{
-                            field.details.hintMessage
+                        <mat-hint *ngIf="field?.hintMessage">{{
+                            field.hintMessage
                         }}</mat-hint>
 
                         <mat-error
                             *ngIf="
                                 form.controls &&
-                                form.controls[field.details.name]?.touched &&
-                                form.controls[field.details.name]?.invalid
+                                form.controls[field.name]?.touched &&
+                                form.controls[field.name]?.invalid
                             "
                             class="flex flex-col gap-2"
                         >
@@ -73,27 +69,25 @@
 
                     <!-- Textarea -->
                     <mat-form-field
-                        *ngIf="field.details.type === 'textarea'"
+                        *ngIf="field.type === 'textarea'"
                         class="w-full"
                     >
-                        <mat-label *ngIf="field.details.name !== ''">{{
-                            field.details.name
+                        <mat-label *ngIf="field.name !== ''">{{
+                            field.name
                         }}</mat-label>
                         <textarea
                             matInput
-                            [formControlName]="field.details.name"
-                            [placeholder]="
-                                field.details.placeholder ?? field.details.name
-                            "
+                            [formControlName]="field.name"
+                            [placeholder]="field.placeholder ?? field.name"
                         ></textarea>
-                        <mat-hint *ngIf="field.details?.hintMessage">{{
-                            field.details.hintMessage
+                        <mat-hint *ngIf="field?.hintMessage">{{
+                            field.hintMessage
                         }}</mat-hint>
                         <mat-error
                             *ngIf="
                                 form.controls &&
-                                form.controls[field.details.name]?.touched &&
-                                form.controls[field.details.name]?.invalid
+                                form.controls[field.name]?.touched &&
+                                form.controls[field.name]?.invalid
                             "
                             class="flex flex-col gap-2"
                         >
@@ -108,20 +102,20 @@
                     <!-- Checkbox -->
                     <mat-checkbox
                         class="pb-4"
-                        *ngIf="field.details.type === 'checkbox'"
-                        [formControlName]="field.details.name"
-                        [labelPosition]="field.details.labelPosition"
+                        *ngIf="field.type === 'checkbox'"
+                        [formControlName]="field.name"
+                        [labelPosition]="field.labelPosition"
                         [color]="'primary'"
                     >
-                        {{ field.details.name }}
-                        <mat-hint *ngIf="field.details?.hintMessage">{{
-                            field.details.hintMessage
+                        {{ field.name }}
+                        <mat-hint *ngIf="field?.hintMessage">{{
+                            field.hintMessage
                         }}</mat-hint>
                         <mat-error
                             *ngIf="
                                 form.controls &&
-                                form.controls[field.details.name]?.touched &&
-                                form.controls[field.details.name]?.invalid
+                                form.controls[field.name]?.touched &&
+                                form.controls[field.name]?.invalid
                             "
                             class="flex flex-col gap-2"
                         >
@@ -135,28 +129,22 @@
 
                     <!-- Radio -->
                     <div
-                        *ngIf="field.details.type === 'radio'"
+                        *ngIf="field.type === 'radio'"
                         class="flex flex-col gap-1 w-full pb-4"
                     >
-                        <label class="font-bold">{{
-                            field.details.name
-                        }}</label>
+                        <label class="font-bold">{{ field.name }}</label>
                         <mat-radio-group
-                            [formControlName]="field.details.name"
+                            [formControlName]="field.name"
                             class="flex gap-2"
                         >
-                            <ng-container *ngIf="field.details.options">
+                            <ng-container *ngIf="field.options">
                                 <mat-radio-button
                                     *ngFor="
-                                        let option of field.details.options.split(
-                                            ';'
-                                        )
+                                        let option of field.options.split(';')
                                     "
                                     [value]="option"
                                     [color]="'primary'"
-                                    [labelPosition]="
-                                        field.details.labelPosition
-                                    "
+                                    [labelPosition]="field.labelPosition"
                                 >
                                     {{ option | uppercase }}
                                 </mat-radio-button>
@@ -165,8 +153,8 @@
                         <mat-error
                             *ngIf="
                                 form.controls &&
-                                form.controls[field.details.name]?.touched &&
-                                form.controls[field.details.name]?.invalid
+                                form.controls[field.name]?.touched &&
+                                form.controls[field.name]?.invalid
                             "
                             class="flex flex-col gap-2"
                         >
@@ -180,39 +168,35 @@
 
                     <!-- Select -->
                     <mat-form-field
-                        *ngIf="field.details.type === 'select'"
+                        *ngIf="field.type === 'select'"
                         class="w-full"
                     >
-                        <mat-label *ngIf="field.details.name !== ''">{{
-                            field.details.name
+                        <mat-label *ngIf="field.name !== ''">{{
+                            field.name
                         }}</mat-label>
                         <mat-select
-                            [placeholder]="
-                                field.details.placeholder ?? field.details.name
-                            "
-                            [formControlName]="field.details.name"
+                            [placeholder]="field.placeholder ?? field.name"
+                            [formControlName]="field.name"
                         >
                             <mat-option>Select</mat-option>
-                            <ng-container *ngIf="field.details.options">
+                            <ng-container *ngIf="field.options">
                                 <mat-option
                                     *ngFor="
-                                        let option of field.details.options.split(
-                                            ';'
-                                        )
+                                        let option of field.options.split(';')
                                     "
                                     [value]="option"
                                     >{{ option }}</mat-option
                                 >
                             </ng-container>
                         </mat-select>
-                        <mat-hint *ngIf="field.details?.hintMessage">{{
-                            field.details.hintMessage
+                        <mat-hint *ngIf="field?.hintMessage">{{
+                            field.hintMessage
                         }}</mat-hint>
                         <mat-error
                             *ngIf="
                                 form.controls &&
-                                form.controls[field.details.name]?.touched &&
-                                form.controls[field.details.name]?.invalid
+                                form.controls[field.name]?.touched &&
+                                form.controls[field.name]?.invalid
                             "
                             class="flex flex-col gap-2"
                         >
@@ -226,40 +210,36 @@
 
                     <!-- Multi Select -->
                     <mat-form-field
-                        *ngIf="field.details.type === 'multi-select'"
+                        *ngIf="field.type === 'multi-select'"
                         class="w-full"
                     >
-                        <mat-label *ngIf="field.details.name !== ''">{{
-                            field.details.name
+                        <mat-label *ngIf="field.name !== ''">{{
+                            field.name
                         }}</mat-label>
                         <mat-select
-                            [placeholder]="
-                                field.details.placeholder ?? field.details.name
-                            "
-                            [formControlName]="field.details.name"
+                            [placeholder]="field.placeholder ?? field.name"
+                            [formControlName]="field.name"
                             multiple
                         >
                             <mat-option [value]="">Select</mat-option>
-                            <ng-container *ngIf="field.details.options">
+                            <ng-container *ngIf="field.options">
                                 <mat-option
                                     *ngFor="
-                                        let option of field.details.options.split(
-                                            ';'
-                                        )
+                                        let option of field.options.split(';')
                                     "
                                     [value]="option"
                                     >{{ option }}</mat-option
                                 >
                             </ng-container>
                         </mat-select>
-                        <mat-hint *ngIf="field.details?.hintMessage">{{
-                            field.details.hintMessage
+                        <mat-hint *ngIf="field?.hintMessage">{{
+                            field.hintMessage
                         }}</mat-hint>
                         <mat-error
                             *ngIf="
                                 form.controls &&
-                                form.controls[field.details.name]?.touched &&
-                                form.controls[field.details.name]?.invalid
+                                form.controls[field.name]?.touched &&
+                                form.controls[field.name]?.invalid
                             "
                             class="flex flex-col gap-2"
                         >
@@ -273,19 +253,19 @@
 
                     <!-- Date -->
                     <mat-form-field
-                        *ngIf="field.details.type === 'date'"
+                        *ngIf="field.type === 'date'"
                         class="w-full"
                     >
-                        <mat-label *ngIf="field.details.name !== ''">{{
-                            field.details.name
+                        <mat-label *ngIf="field.name !== ''">{{
+                            field.name
                         }}</mat-label>
                         <input
                             matInput
                             [matDatepicker]="picker"
-                            [formControlName]="field.details.name"
+                            [formControlName]="field.name"
                         />
-                        <mat-hint *ngIf="field.details?.hintMessage">{{
-                            field.details.hintMessage ?? "MM/DD/YYYY"
+                        <mat-hint *ngIf="field?.hintMessage">{{
+                            field.hintMessage ?? "MM/DD/YYYY"
                         }}</mat-hint>
                         <mat-datepicker-toggle
                             matSuffix
@@ -295,8 +275,8 @@
                         <mat-error
                             *ngIf="
                                 form.controls &&
-                                form.controls[field.details.name]?.touched &&
-                                form.controls[field.details.name]?.invalid
+                                form.controls[field.name]?.touched &&
+                                form.controls[field.name]?.invalid
                             "
                             class="flex flex-col gap-2"
                         >
@@ -310,15 +290,15 @@
 
                     <!-- Date Range -->
                     <mat-form-field
-                        *ngIf="field.details.type === 'date-range'"
+                        *ngIf="field.type === 'date-range'"
                         class="w-full"
                     >
-                        <mat-label *ngIf="field.details.name !== ''">{{
-                            field.details.name
+                        <mat-label *ngIf="field.name !== ''">{{
+                            field.name
                         }}</mat-label>
                         <mat-date-range-input
                             [rangePicker]="picker"
-                            [formGroupName]="field.details.name"
+                            [formGroupName]="field.name"
                         >
                             <input
                                 matStartDate
@@ -331,9 +311,8 @@
                                 placeholder="End date"
                             />
                         </mat-date-range-input>
-                        <mat-hint *ngIf="field.details?.hintMessage">{{
-                            field.details.hintMessage ??
-                                "MM/DD/YYYY - MM/DD/YYYY"
+                        <mat-hint *ngIf="field?.hintMessage">{{
+                            field.hintMessage ?? "MM/DD/YYYY - MM/DD/YYYY"
                         }}</mat-hint>
                         <mat-datepicker-toggle
                             matSuffix
@@ -343,8 +322,8 @@
                         <mat-error
                             *ngIf="
                                 form.controls &&
-                                form.controls[field.details.name]?.touched &&
-                                form.controls[field.details.name]?.invalid
+                                form.controls[field.name]?.touched &&
+                                form.controls[field.name]?.invalid
                             "
                             class="flex flex-col gap-2"
                         >
@@ -358,27 +337,25 @@
 
                     <!-- Time -->
                     <mat-form-field
-                        *ngIf="field.details.type === 'time'"
+                        *ngIf="field.type === 'time'"
                         class="w-full"
                     >
-                        <mat-label *ngIf="field.details.name !== ''">{{
-                            field.details.name
+                        <mat-label *ngIf="field.name !== ''">{{
+                            field.name
                         }}</mat-label>
                         <input
                             matTimepicker
-                            [formControlName]="field.details.name"
-                            [placeholder]="
-                                field.details.placeholder ?? field.details.name
-                            "
+                            [formControlName]="field.name"
+                            [placeholder]="field.placeholder ?? field.name"
                         />
-                        <mat-hint *ngIf="field.details?.hintMessage">{{
-                            field.details.hintMessage ?? "HH:mm:ss"
+                        <mat-hint *ngIf="field?.hintMessage">{{
+                            field.hintMessage ?? "HH:mm:ss"
                         }}</mat-hint>
                         <mat-error
                             *ngIf="
                                 form.controls &&
-                                form.controls[field.details.name]?.touched &&
-                                form.controls[field.details.name]?.invalid
+                                form.controls[field.name]?.touched &&
+                                form.controls[field.name]?.invalid
                             "
                             class="flex flex-col gap-2"
                         >
@@ -392,33 +369,31 @@
 
                     <!-- Slider -->
                     <div
-                        *ngIf="field.details.type === 'slider'"
+                        *ngIf="field.type === 'slider'"
                         class="flex flex-col gap-1 w-full pb-4"
                     >
-                        <label *ngIf="field.details.name !== ''">{{
-                            field.details.name
+                        <label *ngIf="field.name !== ''">{{
+                            field.name
                         }}</label>
                         <mat-slider
                             [min]="
-                                field.details &&
-                                field.details.sliderOptions &&
-                                field.details.sliderOptions.min
+                                field &&
+                                field.sliderOptions &&
+                                field.sliderOptions.min
                             "
                             [max]="
-                                field.details &&
-                                field.details.sliderOptions &&
-                                field.details.sliderOptions.max
+                                field &&
+                                field.sliderOptions &&
+                                field.sliderOptions.max
                             "
                             [step]="
-                                field.details &&
-                                field.details.sliderOptions &&
-                                field.details.sliderOptions.step
+                                field &&
+                                field.sliderOptions &&
+                                field.sliderOptions.step
                             "
-                            [showTickMarks]="
-                                field.details.sliderOptions.showTicks
-                            "
-                            [discrete]="field.details.sliderOptions.thumbLabel"
-                            [disabled]="field.details.sliderOptions.disabled"
+                            [showTickMarks]="field.sliderOptions.showTicks"
+                            [discrete]="field.sliderOptions.thumbLabel"
+                            [disabled]="field.sliderOptions.disabled"
                             [color]="'primary'"
                             [displayWith]="formatSliderLabel"
                             [value]="slider.value"
@@ -426,18 +401,18 @@
                             <input
                                 #slider
                                 matSliderThumb
-                                [formControlName]="field.details.name"
+                                [formControlName]="field.name"
                             />
                         </mat-slider>
 
-                        <mat-hint *ngIf="field.details?.hintMessage">{{
-                            field.details.hintMessage
+                        <mat-hint *ngIf="field?.hintMessage">{{
+                            field.hintMessage
                         }}</mat-hint>
                         <mat-error
                             *ngIf="
                                 form.controls &&
-                                form.controls[field.details.name]?.touched &&
-                                form.controls[field.details.name]?.invalid
+                                form.controls[field.name]?.touched &&
+                                form.controls[field.name]?.invalid
                             "
                             class="flex flex-col gap-2"
                         >
@@ -453,35 +428,29 @@
                     <mat-form-field
                         class="w-full"
                         appearance="fill"
-                        *ngIf="field.details.type === 'autocomplete'"
+                        *ngIf="field.type === 'autocomplete'"
                     >
-                        <mat-label *ngIf="field.details.name !== ''">{{
-                            field.details.name
+                        <mat-label *ngIf="field.name !== ''">{{
+                            field.name
                         }}</mat-label>
                         <input
                             type="text"
                             aria-label="
-                                {{
-                                field.details.placeholder ?? field.details.name
-                            }}
+                                {{ field.placeholder ?? field.name }}
                             "
                             matInput
-                            [placeholder]="
-                                field.details.placeholder ?? field.details.name
-                            "
-                            [formControlName]="field.details.name"
+                            [placeholder]="field.placeholder ?? field.name"
+                            [formControlName]="field.name"
                             [matAutocomplete]="auto"
                         />
                         <mat-autocomplete
                             autoActiveFirstOption
                             #auto="matAutocomplete"
                         >
-                            <ng-container *ngIf="field.details.options">
+                            <ng-container *ngIf="field.options">
                                 <mat-option
                                     *ngFor="
-                                        let option of field.details.options.split(
-                                            ';'
-                                        )
+                                        let option of field.options.split(';')
                                     "
                                     [value]="option"
                                     >{{ option }}</mat-option
@@ -490,8 +459,8 @@
                         </mat-autocomplete>
                         <mat-error
                             *ngIf="
-                                form.controls[field.details.name]?.touched &&
-                                form.controls[field.details.name]?.invalid
+                                form.controls[field.name]?.touched &&
+                                form.controls[field.name]?.invalid
                             "
                             class="flex flex-col gap-2"
                         >
@@ -507,20 +476,18 @@
                     <mat-form-field
                         class="w-full"
                         appearance="fill"
-                        *ngIf="field.details.type === 'multi-autocomplete'"
+                        *ngIf="field.type === 'multi-autocomplete'"
                     >
-                        <mat-label *ngIf="field.details.name !== ''">{{
-                            field.details.name
+                        <mat-label *ngIf="field.name !== ''">{{
+                            field.name
                         }}</mat-label>
                         <mat-chip-list
                             #chipList
-                            aria-label="{{
-                                field.details.placeholder ?? field.details.name
-                            }}"
+                            aria-label="{{ field.placeholder ?? field.name }}"
                         >
                             <!-- <mat-chip
                                 *ngFor="
-                                    let option of field.details.options.split(
+                                    let option of field.options.split(
                                         ';'
                                     )
                                 "
@@ -533,11 +500,10 @@
                             </mat-chip> -->
                             <input
                                 placeholder="{{
-                                    field.details.placeholder ??
-                                        field.details.name
+                                    field.placeholder ?? field.name
                                 }}"
                                 #fruitInput
-                                [formControlName]="field.details.name"
+                                [formControlName]="field.name"
                                 [matAutocomplete]="auto"
                                 [matChipInputFor]="chipList"
                                 [matChipInputSeparatorKeyCodes]="
@@ -550,12 +516,10 @@
                             #auto="matAutocomplete"
                             (optionSelected)="selected($event)"
                         >
-                            <ng-container *ngIf="field.details.options">
+                            <ng-container *ngIf="field.options">
                                 <mat-option
                                     *ngFor="
-                                        let option of field.details.options.split(
-                                            ';'
-                                        )
+                                        let option of field.options.split(';')
                                     "
                                     [value]="option"
                                     >{{ option }}</mat-option
@@ -565,8 +529,8 @@
                         <mat-error
                             *ngIf="
                                 form.controls &&
-                                form.controls[field.details.name]?.touched &&
-                                form.controls[field.details.name]?.invalid
+                                form.controls[field.name]?.touched &&
+                                form.controls[field.name]?.invalid
                             "
                             class="flex flex-col gap-2"
                         >
@@ -587,76 +551,74 @@
     {{ field | json }}
     <span
         *ngIf="
-            form.controls[field.details.name] &&
-            form.controls[field.details.name].errors &&
-            form.controls[field.details.name].errors.required
+            form.controls[field.name] &&
+            form.controls[field.name].errors &&
+            form.controls[field.name].errors.required
         "
-        >{{ field.details.name }} is mandatory</span
+        >{{ field.name }} is mandatory</span
     >
     <span
         *ngIf="
-            form.controls[field.details.name] &&
-            form.controls[field.details.name].errors &&
-            form.controls[field.details.name].errors.min
+            form.controls[field.name] &&
+            form.controls[field.name].errors &&
+            form.controls[field.name].errors.min
         "
-        >{{ field.details.name }} minimum value is
-        {{ form.controls[field.details.name].errors.min.min }}</span
+        >{{ field.name }} minimum value is
+        {{ form.controls[field.name].errors.min.min }}</span
     >
     <span
         *ngIf="
-            form.controls[field.details.name] &&
-            form.controls[field.details.name].errors &&
-            form.controls[field.details.name].errors.max
+            form.controls[field.name] &&
+            form.controls[field.name].errors &&
+            form.controls[field.name].errors.max
         "
-        >{{ field.details.name }} maximum value is
-        {{ form.controls[field.details.name].errors.max.max }}</span
+        >{{ field.name }} maximum value is
+        {{ form.controls[field.name].errors.max.max }}</span
     >
     <span
         *ngIf="
-            form.controls[field.details.name] &&
-            form.controls[field.details.name].errors &&
-            form.controls[field.details.name].errors.minlength
+            form.controls[field.name] &&
+            form.controls[field.name].errors &&
+            form.controls[field.name].errors.minlength
         "
-        >{{ field.details.name }} minimum length value is
-        {{ form.controls[field.details.name].errors.minlength.requiredLength }}
+        >{{ field.name }} minimum length value is
+        {{ form.controls[field.name].errors.minlength.requiredLength }}
     </span>
     <span
         *ngIf="
-            form.controls[field.details.name] &&
-            form.controls[field.details.name].errors &&
-            form.controls[field.details.name].errors.maxlength
+            form.controls[field.name] &&
+            form.controls[field.name].errors &&
+            form.controls[field.name].errors.maxlength
         "
-        >{{ field.details.name }} maximum length value is
-        {{
-            form.controls[field.details.name].errors.maxlength.requiredLength
-        }}</span
+        >{{ field.name }} maximum length value is
+        {{ form.controls[field.name].errors.maxlength.requiredLength }}</span
     >
     <span
         *ngIf="
-            form.controls[field.details.name] &&
-            form.controls[field.details.name].errors &&
-            form.controls[field.details.name].errors.pattern
+            form.controls[field.name] &&
+            form.controls[field.name].errors &&
+            form.controls[field.name].errors.pattern
         "
-        >{{ field.details.name }} is invalid, please follow this rule "{{
+        >{{ field.name }} is invalid, please follow this rule "{{
             this.getPatternName(
-                form.controls[field.details.name].errors.pattern.requiredPattern
+                form.controls[field.name].errors.pattern.requiredPattern
             )
         }}"</span
     >
     <span
         *ngIf="
-            form.controls[field.details.name] &&
-            form.controls[field.details.name].errors &&
-            form.controls[field.details.name].errors.nullValidator
+            form.controls[field.name] &&
+            form.controls[field.name].errors &&
+            form.controls[field.name].errors.nullValidator
         "
-        >{{ field.details.name }} cannot be null</span
+        >{{ field.name }} cannot be null</span
     >
     <span
         *ngIf="
-            form.controls[field.details.name] &&
-            form.controls[field.details.name].errors &&
-            form.controls[field.details.name].errors.email
+            form.controls[field.name] &&
+            form.controls[field.name].errors &&
+            form.controls[field.name].errors.email
         "
-        >{{ field.details.name }} is incorrect (example@test.com)</span
+        >{{ field.name }} is incorrect (example@test.com)</span
     >
 </ng-template>

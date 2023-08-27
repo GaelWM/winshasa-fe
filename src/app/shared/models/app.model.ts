@@ -54,7 +54,6 @@ export interface ApiResultMeta {
 export interface ConnectionObject {
     id: number;
     name: string;
-    slug: string;
 }
 
 export interface FormError {

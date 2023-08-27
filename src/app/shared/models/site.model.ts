@@ -1,30 +1,44 @@
-/* eslint-disable @typescript-eslint/naming-convention */
-import { Type } from './type.model';
-import { Category } from './category.model';
-import { Status } from './status.model';
-import { Template } from './template.model';
 import { DocModel } from './file-manager.model';
+import { v4 as uuidv4 } from 'uuid';
 
-export class Site {
-    id: number;
-    slug: string;
+export interface ISite {
+    id?: string;
     name: string;
-    type: Type;
-    status: Status;
-    category?: Category;
+    type: string;
+    status: string;
     latitude?: number;
     longitude?: number;
-    template_id: number;
-    status_id: number;
-    type_id: number;
-    category_id: number;
-    template: Template;
+    templateId: string;
+    isActive: boolean;
     details?: {
-        name: string;
-        type: string;
+        description: string;
         category: string;
+        documentation?: DocModel;
+        leases?: [];
     };
-    documentation?: DocModel;
+    createdAt?: Date;
+    createdBy?: string;
+    updatedAt?: Date;
+    updatedBy?: string;
+    deletedAt?: Date;
+    deletedBy?: string;
+}
+export class Site {
+    id: string;
+    name: string;
+    type: string;
+    status: string;
+    latitude?: number;
+    longitude?: number;
+    position?: { lat: number; lng: number };
+    templateId: string;
+    isActive: boolean;
+    details?: {
+        description: string;
+        category: string;
+        documentation?: DocModel;
+        leases?: [];
+    };
     createdAt?: Date;
     createdBy?: string;
     updatedAt?: Date;
@@ -32,28 +46,27 @@ export class Site {
     deletedAt?: Date;
     deletedBy?: string;
 
-    constructor(model: any) {
-        this.id = model.id;
-        this.slug = model.slug;
+    constructor(model: ISite) {
+        this.id = model.id ?? uuidv4();
         this.name = model.name;
         this.type = model.type;
-        this.category = model.category;
         this.status = model.status;
         this.latitude = model.latitude;
         this.longitude = model.longitude;
+        this.templateId = model.templateId;
+        this.position =
+            model.latitude && model.longitude
+                ? { lat: model.latitude, lng: model.longitude }
+                : null;
+        this.isActive = model.isActive ?? true;
         this.details = model.details;
-        this.template = model.template;
-        this.template_id = model.template_id;
-        this.status_id = model.status_id;
-        this.type_id = model.type_id;
-        this.category_id = model.category_id;
-        this.createdAt = model.created_at;
-        this.createdBy = model.created_by;
-        this.updatedAt = model.updated_at;
-        this.updatedBy = model.updated_by;
-        this.deletedAt = model.deleted_at;
-        this.deletedBy = model.deleted_by;
+        this.createdAt = model.createdAt;
+        this.createdBy = model.createdBy;
+        this.updatedAt = model.updatedAt;
+        this.updatedBy = model.updatedBy;
+        this.deletedAt = model.deletedAt;
+        this.deletedBy = model.deletedBy;
     }
 }
 
-export const SITE_MODEL_TYPE = 'App\\Models\\Site';
+export const SITE_MODEL_TYPE = 'Site';

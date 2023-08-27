@@ -98,6 +98,10 @@ export const appRoutes: Route[] = [
                 loadChildren: () =>
                     import('app/modules/templates/templates.routes'),
             },
+            {
+                path: 'sites',
+                loadChildren: () => import('app/modules/sites/sites.routes'),
+            },
         ],
     },
 ];

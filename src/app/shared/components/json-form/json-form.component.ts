@@ -31,6 +31,7 @@ import { MatInputModule } from '@angular/material/input';
 import { MatRadioModule } from '@angular/material/radio';
 import { MatSelectModule } from '@angular/material/select';
 import { MatSliderModule } from '@angular/material/slider';
+import { MatTimepickerModule } from 'mat-timepicker';
 import { Template } from 'app/shared/models';
 import {
     ValidationPattern,
@@ -66,6 +67,7 @@ export interface JsonFormData {
         MatFormFieldModule,
         ReactiveFormsModule,
         MatSliderModule,
+        MatTimepickerModule,
     ],
     standalone: true,
 })
@@ -90,18 +92,20 @@ export class JsonFormComponent implements OnInit, OnChanges {
 
     ngOnChanges(changes: SimpleChanges): void {
         if (changes.template.firstChange) {
-            const controls = this.template.details?.groups?.map(
-                (group) => group.fields
-            );
+            if (this.template != null) {
+                const controls = this.template?.details?.groups?.map(
+                    (group) => group.fields
+                );
 
-            const merged = controls.flat(1);
-            merged.map((control) => {
-                control.value = this.values?.details?.[control.name]
-                    ? this.values.details[control.name]
-                    : null;
-                return control;
-            });
-            this.createForm(merged);
+                const merged = controls.flat(1);
+                merged.map((control) => {
+                    control.value = this.values?.details?.[control.name]
+                        ? this.values.details[control.name]
+                        : null;
+                    return control;
+                });
+                this.createForm(merged);
+            }
         }
     }
 
@@ -198,5 +202,9 @@ export class JsonFormComponent implements OnInit, OnChanges {
             return Math.round(value / 1000) + 'k';
         }
         return `${value}`;
+    }
+
+    isTextField(type: FieldType): boolean {
+        return TemplateGroupField.isTextField(type);
     }
 }
