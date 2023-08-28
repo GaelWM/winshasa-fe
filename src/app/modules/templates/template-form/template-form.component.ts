@@ -30,7 +30,6 @@ import { FormError, Template } from 'app/shared/models';
 @Component({
     selector: 'app-template-form',
     templateUrl: './template-form.component.html',
-    styleUrls: ['./template-form.component.scss'],
     standalone: true,
     imports: [
         CommonModule,
@@ -100,7 +99,12 @@ export class TemplateFormComponent {
                     this.dialogRef.close();
                 },
                 error: (err) => {
-                    this.errors.set(err?.error?.errors);
+                    if (err?.error) {
+                        this.errors.set([{ message: err?.error?.message }]);
+                    }
+                    if (err?.error?.errors) {
+                        this.errors.set(err?.error?.errors);
+                    }
                 },
             });
     }
@@ -114,7 +118,12 @@ export class TemplateFormComponent {
                     this.dialogRef.close();
                 },
                 error: (err) => {
-                    this.errors.set(err?.error?.errors);
+                    if (err?.error) {
+                        this.errors.set([{ message: err?.error?.message }]);
+                    }
+                    if (err?.error?.errors) {
+                        this.errors.set(err?.error?.errors);
+                    }
                 },
             });
     }

@@ -37,6 +37,7 @@
     <div class="inline-flex items-center gap-1">
         <button
             mat-icon-button
+            matTooltip="Edit template"
             color="primary"
             aria-label="Edit template"
             (click)="onEditTemplate($event, row)"
@@ -45,6 +46,7 @@
         </button>
         <button
             mat-icon-button
+            matTooltip="Delete template"
             color="warn"
             aria-label="Delete template"
             (click)="onDeleteTemplate($event, row)"

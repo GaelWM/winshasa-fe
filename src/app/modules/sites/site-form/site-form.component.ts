@@ -120,15 +120,46 @@ export class SiteFormComponent {
     });
 
     onSubmitNewSite(siteForm: NgForm): void {
-        const site = new Site(siteForm.value);
-        this._siteService.storeSite(site).subscribe({
+        this.submitted = true;
+        if (this.data.action === 'edit' && this.data.site.id) {
+            this.editSite(siteForm);
+        } else {
+            this.addSite(siteForm);
+        }
+    }
+
+    private addSite(siteForm: NgForm): void {
+        this._siteService.storeSite(siteForm.value).subscribe({
             next: () => {
                 this.dialogRef.close();
             },
             error: (err) => {
-                this.errors.set(err?.error?.errors);
+                if (err?.error) {
+                    this.errors.set([{ message: err?.error?.message }]);
+                }
+                if (err?.error?.errors) {
+                    this.errors.set(err?.error?.errors);
+                }
             },
         });
+    }
+
+    private editSite(siteForm: NgForm): void {
+        this._siteService
+            .updateSite(this.data.site.id, siteForm.value)
+            .subscribe({
+                next: () => {
+                    this.dialogRef.close();
+                },
+                error: (err) => {
+                    if (err?.error) {
+                        this.errors.set([{ message: err?.error?.message }]);
+                    }
+                    if (err?.error?.errors) {
+                        this.errors.set(err?.error?.errors);
+                    }
+                },
+            });
     }
 
     onCloseModal(event: Event): void {

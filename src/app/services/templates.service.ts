@@ -22,7 +22,13 @@ export class TemplatesService extends BaseService {
     );
 
     storeTemplate(payload: Template): Observable<ApiResult<Template>> {
-        return this.post<Template>(payload).pipe(
+        return this.post<Template>({
+            ...payload,
+            details: {
+                ...payload.details,
+                groups: [],
+            },
+        }).pipe(
             tap((result) => {
                 this.templates.mutate((templates: ApiResult<Template[]>) => {
                     templates.data = [

@@ -30,6 +30,7 @@ import { IsActivePipe } from 'app/shared/pipes/is-active/is-active.pipe';
 import { WinTableComponent } from 'app/shared/components/win-table/win-table.component';
 import { Observable, map, switchMap } from 'rxjs';
 import { toWritableSignal } from 'app/shared/utils/common.util';
+import { MatTooltipModule } from '@angular/material/tooltip';
 
 @Component({
     selector: 'app-site',
@@ -42,6 +43,7 @@ import { toWritableSignal } from 'app/shared/utils/common.util';
         WinTableComponent,
         WinPaginatorComponent,
         IsActivePipe,
+        MatTooltipModule,
     ],
     templateUrl: './sites.component.html',
 })
