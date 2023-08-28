@@ -4,9 +4,6 @@ import { AuthGuard } from 'app/core/auth/guards/auth.guard';
 import { NoAuthGuard } from 'app/core/auth/guards/noAuth.guard';
 import { LayoutComponent } from 'app/layout/layout.component';
 
-// @formatter:off
-/* eslint-disable max-len */
-/* eslint-disable @typescript-eslint/explicit-function-return-type */
 export const appRoutes: Route[] = [
     { path: '', pathMatch: 'full', redirectTo: 'home' },
     { path: 'signed-in-redirect', pathMatch: 'full', redirectTo: 'home' },
@@ -64,6 +61,38 @@ export const appRoutes: Route[] = [
                 path: 'sign-out',
                 loadChildren: () =>
                     import('app/modules/auth/sign-out/sign-out.routes'),
+            },
+        ],
+    },
+
+    // Error routes
+    {
+        path: '',
+        component: LayoutComponent,
+        data: {
+            layout: 'empty',
+        },
+        children: [
+            {
+                path: 'forbidden',
+                loadComponent: () =>
+                    import(
+                        'app/modules/errors/error-403/error-403.component'
+                    ).then((m) => m.Error403Component),
+            },
+            {
+                path: 'not-found',
+                loadComponent: () =>
+                    import(
+                        'app/modules/errors/error-404/error-404.component'
+                    ).then((m) => m.Error404Component),
+            },
+            {
+                path: 'error',
+                loadComponent: () =>
+                    import(
+                        'app/modules/errors/error-500/error-500.component'
+                    ).then((m) => m.Error500Component),
             },
         ],
     },
