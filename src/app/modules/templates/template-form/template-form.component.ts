@@ -71,6 +71,16 @@ export class TemplateFormComponent {
             isActive: [template?.isActive ?? true],
             details: this._formBuilder.group({
                 description: [template?.details?.description ?? ''],
+                settings: this._formBuilder.group({
+                    expandAllGroups: [
+                        template?.details?.settings?.expandAllGroups ?? false,
+                    ],
+                    numberOfGrids: [
+                        template?.details?.settings?.numberOfGrids ?? 1,
+                    ],
+                    gridType: [template?.details?.settings?.gridType ?? ''],
+                    gridFlow: [template?.details?.settings?.gridFlow ?? ''],
+                }),
             }),
         });
     });

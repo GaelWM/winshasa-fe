@@ -34,56 +34,61 @@
                 <span fuseAlertTitle>Error</span>
                 <span *ngFor="let error of errors()"> {{ error.message }}</span>
             </fuse-alert>
-            <mat-form-field [ngClass]="formFieldHelpers" class="w-full">
-                <mat-label>Template Name</mat-label>
-                <input
-                    name="name"
-                    formControlName="name"
-                    matInput
-                    required
-                    [placeholder]="'Template name'"
-                />
-                <mat-hint>Please type in the template name</mat-hint>
-                <mat-error
-                    *ngIf="
-                        templateForm.controls?.name?.touched &&
-                        templateForm.controls?.name?.invalid
-                    "
-                >
-                    <app-error-form-template
-                        [form]="templateForm"
-                        field="name"
-                        name="Template name"
-                    ></app-error-form-template>
-                </mat-error>
-            </mat-form-field>
-
-            <mat-form-field class="w-full">
-                <mat-label>Entity type</mat-label>
-                <mat-select
-                    [placeholder]="'Entity type'"
-                    name="type"
-                    formControlName="type"
-                    required
-                >
-                    <mat-option [value]="'Form'">Form</mat-option>
-                    <mat-option [value]="'Site'">Site</mat-option>
-                    <mat-option [value]="'Product'">Product</mat-option>
-                </mat-select>
-                <mat-hint>Please select the entity type</mat-hint>
-                <mat-error
-                    *ngIf="
-                        templateForm.controls?.type?.touched &&
-                        templateForm.controls?.type?.invalid
-                    "
-                >
-                    <app-error-form-template
-                        [form]="templateForm"
-                        field="type"
-                        name="Template type"
-                    ></app-error-form-template>
-                </mat-error>
-            </mat-form-field>
+            <div class="w-full flex justify-start gap-3">
+                <div class="w-2/3">
+                    <mat-form-field [ngClass]="formFieldHelpers" class="w-full">
+                        <mat-label>Template Name</mat-label>
+                        <input
+                            name="name"
+                            formControlName="name"
+                            matInput
+                            required
+                            [placeholder]="'Template name'"
+                        />
+                        <mat-hint>Please type in the template name</mat-hint>
+                        <mat-error
+                            *ngIf="
+                                templateForm.controls?.name?.touched &&
+                                templateForm.controls?.name?.invalid
+                            "
+                        >
+                            <app-error-form-template
+                                [form]="templateForm"
+                                field="name"
+                                name="Template name"
+                            ></app-error-form-template>
+                        </mat-error>
+                    </mat-form-field>
+                </div>
+                <div class="w-1/3">
+                    <mat-form-field class="w-full">
+                        <mat-label>Entity type</mat-label>
+                        <mat-select
+                            [placeholder]="'Entity type'"
+                            name="type"
+                            formControlName="type"
+                            required
+                        >
+                            <mat-option [value]="'Form'">Form</mat-option>
+                            <mat-option [value]="'Site'">Site</mat-option>
+                            <mat-option [value]="'Product'">Product</mat-option>
+                        </mat-select>
+                        <mat-hint>Please select the entity type</mat-hint>
+                        <mat-error
+                            *ngIf="
+                                templateForm.controls?.type?.touched &&
+                                templateForm.controls?.type?.invalid
+                            "
+                        >
+                            <app-error-form-template
+                                [form]="templateForm"
+                                field="type"
+                                name="Template type"
+                            ></app-error-form-template>
+                        </mat-error>
+                    </mat-form-field>
+                </div>
+            </div>
             <ng-container formGroupName="details">
                 <mat-form-field class="w-full">
                     <mat-label>Description</mat-label>
@@ -97,6 +102,65 @@
                     </textarea>
                     <mat-hint>Please enter the template description</mat-hint>
                 </mat-form-field>
+                <ng-container formGroupName="settings">
+                    <div class="flex flex-row gap-2">
+                        <mat-form-field class="w-full">
+                            <mat-label>Grid type</mat-label>
+                            <mat-select
+                                [placeholder]="'Grid type'"
+                                name="gridType"
+                                formControlName="gridType"
+                            >
+                                <mat-option [value]="'rows'">Row</mat-option>
+                                <mat-option [value]="'cols'">Column</mat-option>
+                            </mat-select>
+                        </mat-form-field>
+                        <mat-form-field
+                            class="w-full"
+                            *ngIf="
+                                templateForm?.value?.details?.settings
+                                    ?.gridType !== ''
+                            "
+                        >
+                            <mat-label
+                                >No. of
+                                {{
+                                    templateForm?.value?.details?.settings
+                                        ?.gridType
+                                }}</mat-label
+                            >
+                            <input
+                                name="numberOfGrids"
+                                formControlName="numberOfGrids"
+                                matInput
+                                [placeholder]="
+                                    'Number of ' +
+                                    templateForm?.value?.details?.settings
+                                        ?.gridType
+                                "
+                            />
+                        </mat-form-field>
+                        <mat-form-field class="w-full">
+                            <mat-label>Grid Flow</mat-label>
+                            <mat-select
+                                [placeholder]="'Grid Flow'"
+                                name="gridFlow"
+                                formControlName="gridFlow"
+                            >
+                                <mat-option [value]="'row'">Row</mat-option>
+                                <mat-option [value]="'col'">Column</mat-option>
+                            </mat-select>
+                        </mat-form-field>
+                    </div>
+                    <mat-checkbox
+                        class="w-full justify-center"
+                        [color]="'primary'"
+                        name="expandAllGroups"
+                        formControlName="expandAllGroups"
+                    >
+                        Expand All groups
+                    </mat-checkbox>
+                </ng-container>
             </ng-container>
         </div>
         <div

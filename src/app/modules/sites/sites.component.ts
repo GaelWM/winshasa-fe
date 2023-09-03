@@ -140,7 +140,7 @@ export class SitesComponent {
     }
 
     onRowClick(event: Site): void {
-        this._router.navigate(['sites', event.id]);
+        this._router.navigate(['sites', event.id, 'general-details']);
     }
 
     onAddSite(event: Event) {

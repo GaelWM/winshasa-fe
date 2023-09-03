@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/naming-convention */
 export type WithWildcards<T> = T & { [key: string]: unknown };
 export interface ApiResult<T> {
     data?: T[] | T;

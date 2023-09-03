@@ -16,7 +16,7 @@
         formGroupName="details"
     >
         <mat-expansion-panel
-            [expanded]="template.details?.expandAllGroups ?? i === 0"
+            [expanded]="template.details?.settings?.expandAllGroups ?? i === 0"
             class="mr-2 h-max"
         >
             <mat-expansion-panel-header class="dark:bg-gray-700">
@@ -36,6 +36,40 @@
                     <!-- Text fields -->
                     <mat-form-field
                         *ngIf="isTextField(field.type)"
+                        class="w-full"
+                    >
+                        <mat-label *ngIf="field.name !== ''">{{
+                            field.name
+                        }}</mat-label>
+                        <input
+                            matInput
+                            [type]="field.type"
+                            [formControlName]="field.name"
+                            [placeholder]="field.placeholder ?? field.name"
+                        />
+                        <mat-hint *ngIf="field?.hintMessage">{{
+                            field.hintMessage
+                        }}</mat-hint>
+
+                        <mat-error
+                            *ngIf="
+                                form.controls &&
+                                form.controls[field.name]?.touched &&
+                                form.controls[field.name]?.invalid
+                            "
+                            class="flex flex-col gap-2"
+                        >
+                            <ng-container
+                                [ngTemplateOutlet]="errorTemplate"
+                                [ngTemplateOutletContext]="{ field: field }"
+                            >
+                            </ng-container>
+                        </mat-error>
+                    </mat-form-field>
+
+                    <!-- Number -->
+                    <mat-form-field
+                        *ngIf="field.type === 'number'"
                         class="w-full"
                     >
                         <mat-label *ngIf="field.name !== ''">{{

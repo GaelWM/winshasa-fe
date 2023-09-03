@@ -1,7 +1,7 @@
 import { Injectable, WritableSignal, signal } from '@angular/core';
 import { BaseService } from 'app/services/base.service';
 import { ApiResult, Site } from 'app/shared/models';
-import { Observable, tap } from 'rxjs';
+import { BehaviorSubject, Observable, tap } from 'rxjs';
 
 @Injectable({
     providedIn: 'root',
@@ -10,12 +10,22 @@ export class SitesService extends BaseService {
     constructor() {
         super('sites');
     }
+    public _submitted: BehaviorSubject<boolean> = new BehaviorSubject(false);
+    public onSubmitSiteForm$: Observable<any> = this._submitted.asObservable();
 
     sites: WritableSignal<ApiResult<Site[]>> = signal({} as ApiResult<Site[]>);
 
     selectedSite: WritableSignal<ApiResult<Site>> = signal(
         {} as ApiResult<Site>
     );
+
+    onSiteFormSubmit(): Observable<boolean> {
+        return this.onSubmitSiteForm$;
+    }
+
+    submitSiteForm(): void {
+        this._submitted.next(true);
+    }
 
     storeSite(payload: Site): Observable<ApiResult<Site>> {
         return this.post<Site>(payload).pipe(
@@ -35,12 +45,7 @@ export class SitesService extends BaseService {
     updateSite(id: string, payload: Site): Observable<ApiResult<Site>> {
         return this.patch<Site>(id, payload).pipe(
             tap((result) => {
-                this.sites.mutate((sites: ApiResult<Site[]>) => {
-                    sites.data = (sites.data as Site[]).map((t: Site) =>
-                        t.id === (result.data as Site)?.id ? result.data : t
-                    ) as Site[];
-                    return sites;
-                });
+                this.selectedSite.set(result);
             })
         );
     }

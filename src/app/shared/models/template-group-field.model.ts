@@ -57,11 +57,13 @@ export class TemplateGroupField implements ITemplateGroupField {
         return [
             FieldType.Text,
             FieldType.Password,
-            FieldType.Number,
             FieldType.Search,
             FieldType.Tel,
             FieldType.Url,
         ].includes(type);
+    }
+    public static isNumber(type: FieldType): boolean {
+        return [FieldType.Number].includes(type);
     }
 }
 

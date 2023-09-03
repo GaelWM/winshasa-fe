@@ -1,18 +1,30 @@
 <div
-    class="flex-auto pt-6 sm:px-4 sm:pb-4 overflow-auto"
+    class="flex-auto pt-4 sm:px-4 sm:pb-4 overflow-y-auto"
     cdkScrollable
-    *ngIf="siteForm() as siteForm"
+    *ngIf="template()?.data as template"
 >
-    <form
-        [formGroup]="siteForm"
-        id="ngForm"
-        #generatedSiteForm="ngForm"
-        (ngSubmit)="onSaveSite(generatedSiteForm)"
-        *ngIf="template()?.data as template"
+    <fuse-alert
+        [type]="'error'"
+        *ngIf="errors().length > 0"
+        class="w-full pb-2"
     >
-        <app-json-form [template]="template" [form]="siteForm" [values]="site">
+        <span fuseAlertTitle>Error</span>
+        <span *ngFor="let error of errors()"> {{ error.message }}</span>
+    </fuse-alert>
+    <form
+        *ngIf="siteForm() as siteForm"
+        id="ngForm"
+        #siteNgForm="ngForm"
+        (ngSubmit)="onSaveSite(siteNgForm)"
+        [formGroup]="siteForm"
+    >
+        <app-json-form
+            [template]="template"
+            [form]="siteForm"
+            [values]="site()?.data"
+        >
             <ng-template jsonFormFirstCol>
-                <div class="w-full md:min-w-1/4 md:w-1/4 my-1">
+                <div class="w-full my-1">
                     <mat-expansion-panel [expanded]="true" class="mr-2 h-max">
                         <mat-expansion-panel-header class="dark:bg-gray-700">
                             <mat-panel-title>
@@ -21,6 +33,11 @@
                         </mat-expansion-panel-header>
 
                         <div class="flex flex-col gap-1 md:gap-2 mt-2">
+                            <input
+                                type="hidden"
+                                name="templateId"
+                                formControlName="templateId"
+                            />
                             <mat-form-field class="w-full">
                                 <mat-label>Site Name</mat-label>
                                 <input
@@ -51,14 +68,16 @@
                                 <mat-label>Site status</mat-label>
                                 <mat-select
                                     placeholder="Site status"
-                                    formControlName="status_id"
-                                    name="status_id"
+                                    formControlName="status"
+                                    name="status"
                                 >
                                     <mat-option>Select</mat-option>
-                                    <ng-container *ngIf="statusOptions">
+                                    <ng-container *ngIf="statusOptions()">
                                         <mat-option
-                                            *ngFor="let option of statusOptions"
-                                            [value]="option.id"
+                                            *ngFor="
+                                                let option of statusOptions()
+                                            "
+                                            [value]="option.name"
                                             >{{ option.name }}</mat-option
                                         >
                                     </ng-container>
@@ -66,19 +85,18 @@
                                 <mat-error
                                     *ngIf="
                                         siteForm.controls &&
-                                        siteForm.controls['status_id']
-                                            ?.touched &&
-                                        siteForm.controls['status_id']?.invalid
+                                        siteForm.controls['status']?.touched &&
+                                        siteForm.controls['status']?.invalid
                                     "
                                     class="flex flex-col gap-2"
                                 >
                                     <span
                                         *ngIf="
-                                            siteForm.controls['status_id'] &&
-                                            siteForm.controls['status_id']
+                                            siteForm.controls['status'] &&
+                                            siteForm.controls['status']
                                                 .errors &&
-                                            siteForm.controls['status_id']
-                                                .errors.required
+                                            siteForm.controls['status'].errors
+                                                .required
                                         "
                                         >Site status is mandatory</span
                                     >
@@ -88,14 +106,14 @@
                                 <mat-label>Site Type</mat-label>
                                 <mat-select
                                     placeholder="Site status"
-                                    name="type_id"
-                                    formControlName="type_id"
+                                    name="type"
+                                    formControlName="type"
                                 >
                                     <mat-option>Select</mat-option>
-                                    <ng-container *ngIf="typeOptions">
+                                    <ng-container *ngIf="typeOptions()">
                                         <mat-option
-                                            *ngFor="let option of typeOptions"
-                                            [value]="option.id"
+                                            *ngFor="let option of typeOptions()"
+                                            [value]="option.name"
                                             >{{ option.name }}</mat-option
                                         >
                                     </ng-container>
@@ -103,41 +121,21 @@
                                 <mat-error
                                     *ngIf="
                                         siteForm.controls &&
-                                        siteForm.controls['type_id']?.touched &&
-                                        siteForm.controls['type_id']?.invalid
+                                        siteForm.controls['type']?.touched &&
+                                        siteForm.controls['type']?.invalid
                                     "
                                     class="flex flex-col gap-2"
                                 >
                                     <span
                                         *ngIf="
-                                            siteForm.controls['type_id'] &&
-                                            siteForm.controls['type_id']
-                                                .errors &&
-                                            siteForm.controls['type_id'].errors
+                                            siteForm.controls['type'] &&
+                                            siteForm.controls['type'].errors &&
+                                            siteForm.controls['type'].errors
                                                 .required
                                         "
                                         >Site type is mandatory</span
                                     >
                                 </mat-error>
-                            </mat-form-field>
-                            <mat-form-field class="w-full">
-                                <mat-label>Site Category</mat-label>
-                                <mat-select
-                                    placeholder="Site status"
-                                    name="category_id"
-                                    formControlName="category_id"
-                                >
-                                    <mat-option>Select</mat-option>
-                                    <ng-container *ngIf="categoryOptions">
-                                        <mat-option
-                                            *ngFor="
-                                                let option of categoryOptions
-                                            "
-                                            [value]="option.id"
-                                            >{{ option.name }}</mat-option
-                                        >
-                                    </ng-container>
-                                </mat-select>
                             </mat-form-field>
                             <mat-form-field class="w-full">
                                 <mat-label>Latitude</mat-label>

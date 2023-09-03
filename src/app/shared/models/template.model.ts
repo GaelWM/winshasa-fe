@@ -51,11 +51,11 @@ export class Template implements ITemplate {
 export type TemplateDetails = {
     groups?: TemplateGroup[];
     description?: string;
-    expandAllGroups?: boolean;
-    uiClassesOverride?: string;
-    uiSettings?: {
+    settings?: {
+        expandAllGroups?: boolean;
         gridType?: 'rows' | 'cols';
         gridFlow?: 'row' | 'col';
-        noGridType?: number;
+        numberOfGrids?: number;
+        uiClassesOverride?: string;
     };
 };

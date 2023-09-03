@@ -4,7 +4,9 @@ import {
     computed,
     DestroyRef,
     inject,
+    signal,
     ViewChild,
+    WritableSignal,
 } from '@angular/core';
 import {
     takeUntilDestroyed,
@@ -23,12 +25,21 @@ import { MatExpansionModule } from '@angular/material/expansion';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
+import { MatSelectModule } from '@angular/material/select';
+import { FuseAlertComponent } from '@fuse/components/alert';
 import { MetadataService } from 'app/services/metadata.service';
 import { SitesService } from 'app/services/sites.service';
 import { TemplatesService } from 'app/services/templates.service';
+import { JsonFormFirstColDirective } from 'app/shared/components/json-form/json-form-first-item.directive';
 import { JsonFormComponent } from 'app/shared/components/json-form/json-form.component';
-import { ApiResult, Metadata, Site, Template } from 'app/shared/models';
-import { Observable, switchMap, catchError, of } from 'rxjs';
+import {
+    ApiResult,
+    FormError,
+    Metadata,
+    Site,
+    Template,
+} from 'app/shared/models';
+import { Observable, switchMap, catchError, of, filter, tap } from 'rxjs';
 
 @Component({
     selector: 'app-general-details',
@@ -43,6 +54,9 @@ import { Observable, switchMap, catchError, of } from 'rxjs';
         MatInputModule,
         JsonFormComponent,
         MatExpansionModule,
+        JsonFormFirstColDirective,
+        MatSelectModule,
+        FuseAlertComponent,
     ],
     standalone: true,
 })
@@ -53,7 +67,9 @@ export class GeneralDetailsComponent {
     private _metadataService = inject(MetadataService);
     private destroyRef = inject(DestroyRef);
 
-    @ViewChild('generatedSiteForm') _form: NgForm;
+    @ViewChild('siteNgForm') _form: NgForm;
+
+    errors: WritableSignal<FormError[]> = signal([]);
 
     site = this._siteService.selectedSite;
     siteForm = computed(() => {
@@ -61,7 +77,7 @@ export class GeneralDetailsComponent {
         return this.fb.group({
             id: [site?.id],
             name: [site?.name, Validators.required],
-            template_id: [site?.templateId],
+            templateId: [site?.templateId],
             status: [site?.status, Validators.required],
             type: [site?.type, Validators.required],
             latitude: [site?.latitude],
@@ -117,20 +133,34 @@ export class GeneralDetailsComponent {
     });
 
     constructor() {
-        // this.siteForm()
-        //     .statusChanges.pipe(takeUntilDestroyed(this.destroyRef))
-        //     .subscribe();
-        // this._siteService.onSubmitForm().pipe(filter((submit) => submit)),
-        //     takeUntilDestroyed(this.destroyRef).subscribe(() => {
-        //         this._form.ngSubmit.emit();
-        //     });
+        this._siteService
+            .onSiteFormSubmit()
+            .pipe(
+                filter((submit) => submit),
+                takeUntilDestroyed(this.destroyRef)
+            )
+            .subscribe(() => {
+                this._form && this._form.ngSubmit.emit();
+            });
     }
 
     onSaveSite(siteForm: NgForm): void {
-        const site = new Site(siteForm.form.value);
+        const site = siteForm.form.value;
         this._siteService
             .updateSite(site.id, site)
             .pipe(takeUntilDestroyed(this.destroyRef))
-            .subscribe();
+            .subscribe({
+                error: (err) => {
+                    console.log('err: ', err.response);
+
+                    this.errors.set([err]);
+                    if (err?.error) {
+                        this.errors.set([{ message: err?.error?.message }]);
+                    }
+                    if (err?.error?.errors) {
+                        this.errors.set(err?.error?.errors);
+                    }
+                },
+            });
     }
 }

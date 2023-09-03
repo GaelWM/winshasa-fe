@@ -4,9 +4,8 @@ import {
     EventEmitter,
     Input,
     OnChanges,
-    OnInit,
     Output,
-    SimpleChanges,
+    inject,
 } from '@angular/core';
 import {
     FormBuilder,
@@ -71,7 +70,9 @@ export interface JsonFormData {
     ],
     standalone: true,
 })
-export class JsonFormComponent implements OnInit, OnChanges {
+export class JsonFormComponent implements OnChanges {
+    private fb = inject(FormBuilder);
+
     @ContentChild(JsonFormFirstColDirective)
     firstCol!: JsonFormFirstColDirective;
     @Input() template: Template;
@@ -86,26 +87,20 @@ export class JsonFormComponent implements OnInit, OnChanges {
 
     allPatterns: ValidationPattern[] = REGEX_PATTERNS;
 
-    constructor(private fb: FormBuilder) {}
+    ngOnChanges(): void {
+        if (this.template != null) {
+            const controls = this.template?.details?.groups?.map(
+                (group) => group.fields
+            );
 
-    ngOnInit(): void {}
-
-    ngOnChanges(changes: SimpleChanges): void {
-        if (changes.template.firstChange) {
-            if (this.template != null) {
-                const controls = this.template?.details?.groups?.map(
-                    (group) => group.fields
-                );
-
-                const merged = controls.flat(1);
-                merged.map((control) => {
-                    control.value = this.values?.details?.[control.name]
-                        ? this.values.details[control.name]
-                        : null;
-                    return control;
-                });
-                this.createForm(merged);
-            }
+            const merged = controls.flat(1);
+            merged.map((control) => {
+                control.value = this.values?.details?.[control.name]
+                    ? this.values.details[control.name]
+                    : null;
+                return control;
+            });
+            this.createForm(merged);
         }
     }
 

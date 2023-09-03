@@ -53,7 +53,7 @@
             <button
                 mat-stroked-button
                 type="submit"
-                [color]="'primary'"
+                [color]="'secondary'"
                 form="ngForm"
                 (click)="onSave($event)"
             >
@@ -76,22 +76,19 @@
             <a
                 mat-tab-link
                 routerLink="general-details"
-                routerLinkActive="!border-b-2 !border-b-primary-500"
-                [routerLinkActiveOptions]="{ exact: true }"
+                routerLinkActive="mat-tab-label-active"
                 >General Details
             </a>
             <a
                 mat-tab-link
                 routerLink="map-view"
-                routerLinkActive="!border-b-2 !border-b-primary-500"
-                [routerLinkActiveOptions]="{ exact: true }"
+                routerLinkActive="mat-tab-label-active"
                 >Map View</a
             >
             <a
                 mat-tab-link
                 routerLink="documentation"
-                routerLinkActive="!border-b-2 !border-b-primary-500"
-                [routerLinkActiveOptions]="{ exact: true }"
+                routerLinkActive="mat-tab-label-active"
                 >Documentation</a
             >
         </nav>
