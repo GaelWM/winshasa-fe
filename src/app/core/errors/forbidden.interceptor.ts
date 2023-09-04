@@ -24,7 +24,7 @@ export function ForbiddenInterceptor(
             if (error.status === 500) {
                 router.navigate(['/error']);
             }
-            return throwError(() => new Error(error.message));
+            return throwError(() => error);
         })
     );
 }
