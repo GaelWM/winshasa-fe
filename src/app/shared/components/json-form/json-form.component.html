@@ -582,7 +582,6 @@
 </div>
 
 <ng-template #errorTemplate let-field="field">
-    {{ field | json }}
     <span
         *ngIf="
             form.controls[field.name] &&

@@ -39,6 +39,8 @@ import {
 } from 'app/shared/models/template-group-field.model';
 
 import { TemplateGroupField } from 'app/shared/models/template-group-field.model';
+import { TextFieldComponent } from './controls/text-field/text-field.component';
+import { NumberFieldComponent } from './controls/number-field/number-field.component';
 
 export interface JsonFormData {
     controls: TemplateGroupField[];
@@ -67,6 +69,9 @@ export interface JsonFormData {
         ReactiveFormsModule,
         MatSliderModule,
         MatTimepickerModule,
+
+        TextFieldComponent,
+        NumberFieldComponent,
     ],
     standalone: true,
 })
