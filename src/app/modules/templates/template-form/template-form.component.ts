@@ -81,6 +81,11 @@ export class TemplateFormComponent {
                     gridType: [template?.details?.settings?.gridType ?? ''],
                     gridFlow: [template?.details?.settings?.gridFlow ?? ''],
                 }),
+                groups:
+                    template?.details?.groups !== null &&
+                    template?.details?.groups !== undefined
+                        ? template?.details?.groups
+                        : this._formBuilder.array([]),
             }),
         });
     });

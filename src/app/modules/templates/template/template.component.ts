@@ -40,6 +40,7 @@ import { Observable, tap, switchMap, catchError, of, filter, map } from 'rxjs';
 import { MatMenuModule } from '@angular/material/menu';
 import { TemplateFieldFormComponent } from '../template-field-form/template-field-form.component';
 import { MatButtonModule } from '@angular/material/button';
+import { MatTooltipModule } from '@angular/material/tooltip';
 
 @Component({
     selector: 'app-template',
@@ -59,6 +60,7 @@ import { MatButtonModule } from '@angular/material/button';
         MatMenuModule,
         TemplateFieldFormComponent,
         MatButtonModule,
+        MatTooltipModule,
     ],
     standalone: true,
 })
