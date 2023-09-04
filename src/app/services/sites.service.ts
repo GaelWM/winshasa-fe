@@ -23,8 +23,8 @@ export class SitesService extends BaseService {
         return this.onSubmitSiteForm$;
     }
 
-    submitSiteForm(): void {
-        this._submitted.next(true);
+    submitSiteForm(flag: boolean): void {
+        this._submitted.next(flag);
     }
 
     storeSite(payload: Site): Observable<ApiResult<Site>> {

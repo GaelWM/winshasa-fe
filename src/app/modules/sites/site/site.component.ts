@@ -66,6 +66,6 @@ export class SiteComponent {
 
     onSave(event: Event): void {
         event.preventDefault();
-        this._siteService.submitSiteForm();
+        this._siteService.submitSiteForm(true);
     }
 }

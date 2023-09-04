@@ -1,12 +1,12 @@
 <div
-    class="flex-auto pt-4 sm:px-4 sm:pb-4 overflow-y-auto"
+    class="h-full flex-auto pt-4 sm:px-4 sm:pb-4 overflow-hidden"
     cdkScrollable
     *ngIf="template()?.data as template"
 >
     <fuse-alert
         [type]="'error'"
         *ngIf="errors().length > 0"
-        class="w-full pb-2"
+        class="w-full pb-2 overflow-hidden"
     >
         <span fuseAlertTitle>Error</span>
         <span *ngFor="let error of errors()"> {{ error.message }}</span>
@@ -17,6 +17,7 @@
         #siteNgForm="ngForm"
         (ngSubmit)="onSaveSite(siteNgForm)"
         [formGroup]="siteForm"
+        class="flex-1 overflow-y-auto"
     >
         <app-json-form
             [template]="template"

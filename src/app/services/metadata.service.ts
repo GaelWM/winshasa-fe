@@ -1,6 +1,7 @@
-import { Injectable, WritableSignal, signal } from '@angular/core';
+import { Injectable, WritableSignal, computed, signal } from '@angular/core';
 import { BaseService } from 'app/services/base.service';
 import { ApiResult, Metadata } from 'app/shared/models';
+import { toWritableSignal } from 'app/shared/utils/common.util';
 import { Observable, tap } from 'rxjs';
 
 @Injectable({
@@ -11,13 +12,42 @@ export class MetadataService extends BaseService {
         super('metadata');
     }
 
-    metadata: WritableSignal<ApiResult<Metadata[]>> = signal(
-        {} as ApiResult<Metadata[]>
-    );
+    metadata$ = this.all<Metadata[]>({ perPage: 100 });
+    metadata = toWritableSignal(this.metadata$, {} as ApiResult<Metadata[]>);
 
     selectedMetadata: WritableSignal<ApiResult<Metadata>> = signal(
         {} as ApiResult<Metadata>
     );
+
+    typeOptions = computed(() => {
+        const metadata = this.metadata()?.data as Metadata[];
+        return metadata
+            ?.filter((t) => t.type === 'type' && t.entity === 'Site')
+            .map((t) => ({
+                id: t.id,
+                name: t.value,
+            }));
+    });
+
+    statusOptions = computed(() => {
+        const metadata = this.metadata()?.data as Metadata[];
+        return metadata
+            ?.filter((t) => t.type === 'status' && t.entity === 'Site')
+            .map((t) => ({
+                id: t.id,
+                name: t.value,
+            }));
+    });
+
+    categoryOptions = computed(() => {
+        const metadata = this.metadata()?.data as Metadata[];
+        return metadata
+            ?.filter((t) => t.type === 'status' && t.entity === 'Site')
+            .map((t) => ({
+                id: t.id,
+                name: t.value,
+            }));
+    });
 
     storeMetadata(payload: Metadata): Observable<ApiResult<Metadata>> {
         return this.post<Metadata>(payload).pipe(

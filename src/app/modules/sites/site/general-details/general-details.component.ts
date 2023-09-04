@@ -32,14 +32,8 @@ import { SitesService } from 'app/services/sites.service';
 import { TemplatesService } from 'app/services/templates.service';
 import { JsonFormFirstColDirective } from 'app/shared/components/json-form/json-form-first-item.directive';
 import { JsonFormComponent } from 'app/shared/components/json-form/json-form.component';
-import {
-    ApiResult,
-    FormError,
-    Metadata,
-    Site,
-    Template,
-} from 'app/shared/models';
-import { Observable, switchMap, catchError, of, filter, tap } from 'rxjs';
+import { ApiResult, FormError, Site, Template } from 'app/shared/models';
+import { Observable, switchMap, catchError, of, filter } from 'rxjs';
 
 @Component({
     selector: 'app-general-details',
@@ -99,38 +93,9 @@ export class GeneralDetailsComponent {
         initialValue: {} as ApiResult<Template>,
     });
 
-    metadata$ = this._metadataService.all<Metadata[]>({ perPage: 100 });
-    metadata = toSignal(this.metadata$);
-
-    typeOptions = computed(() => {
-        const metadata = this.metadata()?.data as Metadata[];
-        return metadata
-            ?.filter((t) => t.type === 'type' && t.entity === 'Site')
-            .map((t) => ({
-                id: t.id,
-                name: t.value,
-            }));
-    });
-
-    statusOptions = computed(() => {
-        const metadata = this.metadata()?.data as Metadata[];
-        return metadata
-            ?.filter((t) => t.type === 'status' && t.entity === 'Site')
-            .map((t) => ({
-                id: t.id,
-                name: t.value,
-            }));
-    });
-
-    categoryOptions = computed(() => {
-        const metadata = this.metadata()?.data as Metadata[];
-        return metadata
-            ?.filter((t) => t.type === 'status' && t.entity === 'Site')
-            .map((t) => ({
-                id: t.id,
-                name: t.value,
-            }));
-    });
+    typeOptions = this._metadataService.typeOptions;
+    statusOptions = this._metadataService.statusOptions;
+    categoryOptions = this._metadataService.categoryOptions;
 
     constructor() {
         this._siteService
@@ -140,6 +105,7 @@ export class GeneralDetailsComponent {
                 takeUntilDestroyed(this.destroyRef)
             )
             .subscribe(() => {
+                this.errors.set([]);
                 this._form && this._form.ngSubmit.emit();
             });
     }
@@ -151,15 +117,15 @@ export class GeneralDetailsComponent {
             .pipe(takeUntilDestroyed(this.destroyRef))
             .subscribe({
                 error: (err) => {
-                    console.log('err: ', err.response);
-
-                    this.errors.set([err]);
                     if (err?.error) {
                         this.errors.set([{ message: err?.error?.message }]);
                     }
                     if (err?.error?.errors) {
                         this.errors.set(err?.error?.errors);
                     }
+                },
+                complete: () => {
+                    this._siteService.submitSiteForm(false);
                 },
             });
     }
