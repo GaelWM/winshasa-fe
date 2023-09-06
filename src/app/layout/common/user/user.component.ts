@@ -15,10 +15,10 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatIconModule } from '@angular/material/icon';
 import { MatMenuModule } from '@angular/material/menu';
-import { Router } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
 import { AuthService } from 'app/services/auth.service';
-import { UserService } from 'app/services/user/user.service';
-import { User } from 'app/services/user/user.types';
+import { UserService } from 'app/services/user.service';
+import { User, UserStatus } from 'app/shared/models';
 
 @Component({
     selector: 'user',
@@ -34,6 +34,7 @@ import { User } from 'app/services/user/user.types';
         MatIconModule,
         NgClass,
         MatDividerModule,
+        RouterModule,
     ],
 })
 export class UserComponent implements OnInit {
@@ -45,6 +46,7 @@ export class UserComponent implements OnInit {
 
     user: User;
     destroyRef = inject(DestroyRef);
+    userStatus = UserStatus;
 
     private _changeDetectorRef = inject(ChangeDetectorRef);
     private _router = inject(Router);
@@ -72,7 +74,7 @@ export class UserComponent implements OnInit {
      *
      * @param status
      */
-    updateUserStatus(status: string): void {
+    updateUserStatus(status: UserStatus): void {
         if (!this.user) {
             return;
         }

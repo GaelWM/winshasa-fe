@@ -3,7 +3,8 @@
     <input
         matInput
         [type]="field.type"
-        [formControlName]="field.name"
+        [name]="field.name"
+        [formControl]="form.controls?.details?.controls?.[field.name]"
         [placeholder]="field.placeholder ?? field.name"
     />
     <mat-hint *ngIf="field?.hintMessage">{{ field.hintMessage }}</mat-hint>

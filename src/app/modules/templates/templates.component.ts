@@ -17,12 +17,11 @@ import {
     toSignal,
 } from '@angular/core/rxjs-interop';
 import { TemplatesService } from '../../services/templates.service';
-import { UserService } from 'app/services/user/user.service';
-import { User } from 'app/services/user/user.types';
+import { UserService } from 'app/services/user.service';
 import { ActivatedRoute, Router } from '@angular/router';
 import { WinPaginatorComponent } from 'app/shared/components/win-paginator/win-paginator.component';
 import { PageEvent } from '@angular/material/paginator';
-import { ApiResult, ITemplate, Template } from 'app/shared/models';
+import { ApiResult, ITemplate, Template, User } from 'app/shared/models';
 import { MatDialog } from '@angular/material/dialog';
 import { TemplateFormComponent } from './template-form/template-form.component';
 import { FuseConfirmationService } from '@fuse/services/confirmation';

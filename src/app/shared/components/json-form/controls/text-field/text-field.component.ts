@@ -7,7 +7,12 @@ import {
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { ErrorFormTemplateComponent } from 'app/shared/components/error-form-template/error-form-template.component';
-import { FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
+import {
+    FormControl,
+    FormGroup,
+    FormsModule,
+    ReactiveFormsModule,
+} from '@angular/forms';
 
 @Component({
     selector: 'app-text-field',
@@ -23,6 +28,7 @@ import { FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
     templateUrl: './text-field.component.html',
 })
 export class TextFieldComponent {
+    @Input({ required: true }) formControl: FormControl;
     @Input({ required: true }) field: TemplateGroupField;
     @Input({ required: true }) form: FormGroup<any> = {} as FormGroup<any>;
     isTextField(type: FieldType): boolean {
