@@ -9,6 +9,13 @@ export const defaultNavigation: FuseNavigationItem[] = [
         link: '/sites',
     },
     {
+        id: 'products',
+        title: 'Products',
+        type: 'basic',
+        icon: 'heroicons_outline:lifebuoy',
+        link: '/products',
+    },
+    {
         id: 'templates',
         title: 'Templates',
         type: 'basic',
@@ -23,6 +30,13 @@ export const compactNavigation: FuseNavigationItem[] = [
         type: 'basic',
         icon: 'heroicons_outline:globe-europe-africa',
         link: '/sites',
+    },
+    {
+        id: 'products',
+        title: 'Products',
+        type: 'basic',
+        icon: 'heroicons_outline:lifebuoy',
+        link: '/products',
     },
     {
         id: 'templates',
@@ -41,6 +55,13 @@ export const futuristicNavigation: FuseNavigationItem[] = [
         link: '/sites',
     },
     {
+        id: 'products',
+        title: 'Products',
+        type: 'basic',
+        icon: 'heroicons_outline:lifebuoy',
+        link: '/products',
+    },
+    {
         id: 'templates',
         title: 'Templates',
         type: 'basic',
@@ -55,6 +76,13 @@ export const horizontalNavigation: FuseNavigationItem[] = [
         type: 'basic',
         icon: 'heroicons_outline:globe-europe-africa',
         link: '/sites',
+    },
+    {
+        id: 'products',
+        title: 'Products',
+        type: 'basic',
+        icon: 'heroicons_outline:lifebuoy',
+        link: '/products',
     },
     {
         id: 'templates',

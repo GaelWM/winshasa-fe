@@ -132,6 +132,11 @@ export const appRoutes: Route[] = [
                 loadChildren: () => import('app/modules/sites/sites.routes'),
             },
             {
+                path: 'products',
+                loadChildren: () =>
+                    import('app/modules/products/products.routes'),
+            },
+            {
                 path: 'profile',
                 loadComponent: () =>
                     import('app/modules/profile/profile.component').then(

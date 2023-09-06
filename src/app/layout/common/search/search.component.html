@@ -59,6 +59,15 @@
                                 "
                             ></ng-container>
                         </ng-container>
+                        <!-- Products -->
+                        <ng-container *ngIf="resultSet.id === 'products'">
+                            <ng-container
+                                *ngTemplateOutlet="
+                                    siteResult;
+                                    context: { $implicit: result }
+                                "
+                            ></ng-container>
+                        </ng-container>
                         <!-- templates -->
                         <ng-container *ngIf="resultSet.id === 'templates'">
                             <ng-container
@@ -145,6 +154,15 @@
                                 "
                             ></ng-container>
                         </ng-container>
+                        <!-- Products -->
+                        <ng-container *ngIf="resultSet.id === 'products'">
+                            <ng-container
+                                *ngTemplateOutlet="
+                                    siteResult;
+                                    context: { $implicit: result }
+                                "
+                            ></ng-container>
+                        </ng-container>
                         <!-- Templates -->
                         <ng-container *ngIf="resultSet.id === 'templates'">
                             <ng-container
@@ -216,6 +234,23 @@
             <mat-icon
                 class="m-0 icon-size-5 text-primary dark:text-primary-400"
                 [svgIcon]="'heroicons_outline:globe-europe-africa'"
+            ></mat-icon>
+        </div>
+        <div class="ml-3 truncate">
+            <span>{{ result.name }} ==> {{ result.type }}</span>
+        </div>
+    </div>
+</ng-template>
+
+<!-- Product result template -->
+<ng-template #siteResult let-result>
+    <div class="flex items-center">
+        <div
+            class="flex shrink-0 items-center justify-center w-8 h-8 rounded-full overflow-hidden bg-primary-100 dark:bg-primary-800"
+        >
+            <mat-icon
+                class="m-0 icon-size-5 text-primary dark:text-primary-400"
+                [svgIcon]="'heroicons_outline:lifebuoy'"
             ></mat-icon>
         </div>
         <div class="ml-3 truncate">

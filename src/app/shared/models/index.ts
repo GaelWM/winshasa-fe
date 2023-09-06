@@ -1,3 +1,4 @@
+export * from './product.model';
 export * from './template.model';
 export * from './template-group.model';
 export * from './metadata.model';
