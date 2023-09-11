@@ -16,6 +16,13 @@ export const defaultNavigation: FuseNavigationItem[] = [
         link: '/products',
     },
     {
+        id: 'leases',
+        title: 'Leases',
+        type: 'basic',
+        icon: 'heroicons_outline:document-text',
+        link: '/lease-agreements',
+    },
+    {
         id: 'templates',
         title: 'Templates',
         type: 'basic',
@@ -37,6 +44,13 @@ export const compactNavigation: FuseNavigationItem[] = [
         type: 'basic',
         icon: 'heroicons_outline:lifebuoy',
         link: '/products',
+    },
+    {
+        id: 'leases',
+        title: 'Leases',
+        type: 'basic',
+        icon: 'heroicons_outline:document-text',
+        link: '/lease-agreements',
     },
     {
         id: 'templates',
@@ -62,6 +76,13 @@ export const futuristicNavigation: FuseNavigationItem[] = [
         link: '/products',
     },
     {
+        id: 'leases',
+        title: 'Leases',
+        type: 'basic',
+        icon: 'heroicons_outline:document-text',
+        link: '/lease-agreements',
+    },
+    {
         id: 'templates',
         title: 'Templates',
         type: 'basic',
@@ -83,6 +104,13 @@ export const horizontalNavigation: FuseNavigationItem[] = [
         type: 'basic',
         icon: 'heroicons_outline:lifebuoy',
         link: '/products',
+    },
+    {
+        id: 'leases',
+        title: 'Leases',
+        type: 'basic',
+        icon: 'heroicons_outline:document-text',
+        link: '/lease-agreements',
     },
     {
         id: 'templates',

@@ -137,6 +137,13 @@ export const appRoutes: Route[] = [
                     import('app/modules/products/products.routes'),
             },
             {
+                path: 'lease-agreements',
+                loadChildren: () =>
+                    import(
+                        'app/modules/lease-agreements/lease-agreements.routes'
+                    ),
+            },
+            {
                 path: 'profile',
                 loadComponent: () =>
                     import('app/modules/profile/profile.component').then(

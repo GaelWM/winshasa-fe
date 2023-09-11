@@ -1,0 +1,57 @@
+<div class="w-full flex flex-col">
+    <div class="w-full">
+        <app-toolbar [title]="'LeaseAgreements'">
+            <div>
+                <button
+                    mat-button
+                    color="primary"
+                    aria-label="Add lease agreement"
+                    (click)="onAddLeaseAgreement($event)"
+                >
+                    <mat-icon>add</mat-icon> Add a leaseAgreement
+                </button>
+            </div>
+        </app-toolbar>
+    </div>
+    <div class="w-full p-3">
+        <win-table
+            [columns]="columns"
+            [data]="leaseAgreements().data"
+            [allowSort]="true"
+            [allowRowClick]="true"
+            [serverSideSorting]="true"
+            (sort)="onSort($event)"
+            (tableRow)="onRowClick($event)"
+        ></win-table>
+        <div class="flex justify-center items-center py-2">
+            <win-paginator
+                [meta]="leaseAgreements().meta"
+                (pageChange)="onPageChange($event)"
+            >
+            </win-paginator>
+        </div>
+    </div>
+</div>
+
+<ng-template #actionsTpl let-row="row">
+    <div class="inline-flex items-center gap-1">
+        <button
+            mat-icon-button
+            matTooltip="Quick edit lease agreement"
+            color="primary"
+            aria-label="Edit lease agreement"
+            (click)="onEditLeaseAgreement($event, row)"
+        >
+            <mat-icon class="text-blue-500">edit</mat-icon>
+        </button>
+        <button
+            mat-icon-button
+            matTooltip="Delete lease agreement"
+            color="warn"
+            aria-label="Delete lease agreement"
+            (click)="onDeleteLeaseAgreement($event, row)"
+        >
+            <mat-icon class="text-red-500">delete</mat-icon>
+        </button>
+    </div>
+</ng-template>

@@ -1,0 +1,57 @@
+<form [formGroup]="folderForm" (ngSubmit)="onSubmitFolder(folderForm.value)">
+    <div
+        class="flex flex-col flex-auto md:w-160 md:min-w-160 max-h-160 -m-6 overflow-y-auto"
+    >
+        <div
+            class="flex flex-0 items-center justify-between h-16 pr-3 sm:pr-5 pl-6 sm:pl-8 bg-primary text-on-primary"
+        >
+            <div class="text-lg font-medium">{{ data.title }}</div>
+            <button
+                mat-icon-button
+                (click)="onCloseModal($event)"
+                [tabIndex]="-1"
+            >
+                <mat-icon
+                    class="text-current"
+                    [svgIcon]="'heroicons_outline:x'"
+                ></mat-icon>
+            </button>
+        </div>
+
+        <div
+            class="flex flex-col flex-0 items-start w-full p-6 sm:p-8 space-y-3 overflow-y-auto"
+        >
+            <input
+                type="hidden"
+                name="path"
+                value="sites/"
+                formControlName="path"
+            />
+            <mat-form-field class="w-full">
+                <mat-label>Folder Name</mat-label>
+                <input
+                    name="name"
+                    matInput
+                    required
+                    formControlName="name"
+                    [placeholder]="'Folder name'"
+                />
+                <mat-hint>Please type in the folder name</mat-hint>
+            </mat-form-field>
+        </div>
+        <div
+            class="flex items-center justify-end border-t px-8 py-5 bg-gray-50 dark:bg-gray-700"
+        >
+            <button mat-button (click)="onCloseModal($event)">Close</button>
+            <button
+                type="submit"
+                class="px-6 ml-3"
+                mat-flat-button
+                [color]="'primary'"
+                [disabled]="!folderForm.valid"
+            >
+                Save
+            </button>
+        </div>
+    </div>
+</form>
