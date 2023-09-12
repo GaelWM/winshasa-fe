@@ -68,6 +68,17 @@
                                 "
                             ></ng-container>
                         </ng-container>
+                        <!-- Leases -->
+                        <ng-container
+                            *ngIf="resultSet.id === 'lease_agreements'"
+                        >
+                            <ng-container
+                                *ngTemplateOutlet="
+                                    leaseResult;
+                                    context: { $implicit: result }
+                                "
+                            ></ng-container>
+                        </ng-container>
                         <!-- templates -->
                         <ng-container *ngIf="resultSet.id === 'templates'">
                             <ng-container
@@ -159,6 +170,17 @@
                             <ng-container
                                 *ngTemplateOutlet="
                                     siteResult;
+                                    context: { $implicit: result }
+                                "
+                            ></ng-container>
+                        </ng-container>
+                        <!-- Leases -->
+                        <ng-container
+                            *ngIf="resultSet.id === 'lease_agreements'"
+                        >
+                            <ng-container
+                                *ngTemplateOutlet="
+                                    leaseResult;
                                     context: { $implicit: result }
                                 "
                             ></ng-container>
@@ -255,6 +277,26 @@
         </div>
         <div class="ml-3 truncate">
             <span>{{ result.name }} ==> {{ result.type }}</span>
+        </div>
+    </div>
+</ng-template>
+
+<!-- Lease result template -->
+<ng-template #leaseResult let-result>
+    <div class="flex items-center">
+        <div
+            class="flex shrink-0 items-center justify-center w-8 h-8 rounded-full overflow-hidden bg-primary-100 dark:bg-primary-800"
+        >
+            <mat-icon
+                class="m-0 icon-size-5 text-primary dark:text-primary-400"
+                [svgIcon]="'heroicons_outline:document-text'"
+            ></mat-icon>
+        </div>
+        <div class="ml-3 truncate">
+            <span
+                >{{ result.type }} ==> {{ result.property_type }} ==>
+                {{ result.status }}</span
+            >
         </div>
     </div>
 </ng-template>
