@@ -1,0 +1,51 @@
+<div class="w-full flex flex-col gap-1">
+    <div class="flex justify-end">
+        <button
+            mat-button
+            color="primary"
+            aria-label="Add user"
+            (click)="onAddUser($event)"
+        >
+            <mat-icon>add</mat-icon> Add a user
+        </button>
+    </div>
+    <win-table
+        [columns]="columns"
+        [data]="users().data"
+        [allowSort]="true"
+        [allowRowClick]="true"
+        [serverSideSorting]="true"
+        (sort)="onSort($event)"
+        (tableRow)="onRowClick($event)"
+    ></win-table>
+    <div class="flex justify-center items-center py-2">
+        <win-paginator
+            [meta]="users().meta"
+            (pageChange)="onPageChange($event)"
+        >
+        </win-paginator>
+    </div>
+</div>
+
+<ng-template #actionsTpl let-row="row">
+    <div class="inline-flex items-center gap-1">
+        <button
+            mat-icon-button
+            matTooltip="Quick edit user"
+            color="primary"
+            aria-label="Edit user"
+            (click)="onEditUser($event, row)"
+        >
+            <mat-icon class="text-blue-500">edit</mat-icon>
+        </button>
+        <button
+            mat-icon-button
+            matTooltip="Delete user"
+            color="warn"
+            aria-label="Delete user"
+            (click)="onDeleteUser($event, row)"
+        >
+            <mat-icon class="text-red-500">delete</mat-icon>
+        </button>
+    </div>
+</ng-template>

@@ -7,49 +7,42 @@ import {
     inject,
 } from '@angular/core';
 import { CommonModule, DatePipe } from '@angular/common';
-import { ToolbarComponent } from 'app/shared/components/toolbar/toolbar.component';
-import { MatButtonModule } from '@angular/material/button';
-import { MatIconModule } from '@angular/material/icon';
-import { ColumnSetting } from 'app/shared/components/win-table/win-table.model';
+import { UserService } from 'app/services/user.service';
 import {
-    takeUntilDestroyed,
     toObservable,
+    takeUntilDestroyed,
     toSignal,
 } from '@angular/core/rxjs-interop';
-import { TemplatesService } from '../../services/templates.service';
-import { UserService } from 'app/services/user.service';
-import { ActivatedRoute, Router } from '@angular/router';
-import { WinPaginatorComponent } from 'app/shared/components/win-paginator/win-paginator.component';
-import { PageEvent } from '@angular/material/paginator';
-import { ApiResult, ITemplate, Template, User } from 'app/shared/models';
 import { MatDialog } from '@angular/material/dialog';
-import { TemplateFormComponent } from './template-form/template-form.component';
+import { PageEvent } from '@angular/material/paginator';
+import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { FuseConfirmationService } from '@fuse/services/confirmation';
+import { ColumnSetting } from 'app/shared/components/win-table/win-table.model';
+import { ApiResult, User, IUser } from 'app/shared/models';
 import { IsActivePipe } from 'app/shared/pipes/is-active/is-active.pipe';
-import { WinTableComponent } from 'app/shared/components/win-table/win-table.component';
-import { Observable, map, switchMap } from 'rxjs';
 import { toWritableSignal } from 'app/shared/utils/common.util';
-import { MatTooltipModule } from '@angular/material/tooltip';
+import { Observable, switchMap, map } from 'rxjs';
+import { UserFormComponent } from './user-form/user-form.component';
+import { WinTableComponent } from 'app/shared/components/win-table/win-table.component';
+import { WinPaginatorComponent } from 'app/shared/components/win-paginator/win-paginator.component';
+import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
 
 @Component({
-    selector: 'app-template',
+    selector: 'app-users',
     standalone: true,
     imports: [
         CommonModule,
-        ToolbarComponent,
-        MatButtonModule,
-        MatIconModule,
         WinTableComponent,
         WinPaginatorComponent,
-        IsActivePipe,
-        MatTooltipModule,
+        MatButtonModule,
+        MatIconModule,
+        RouterModule,
     ],
-    templateUrl: './templates.component.html',
-    styleUrls: ['./templates.component.scss'],
+    templateUrl: './users.component.html',
 })
-export class TemplatesComponent {
-    private _userService = inject(UserService);
-    private _templatesService = inject(TemplatesService);
+export class UsersComponent {
+    private _usersService = inject(UserService);
     private _router = inject(Router);
     private _route = inject(ActivatedRoute);
     private _dialog = inject(MatDialog);
@@ -58,56 +51,75 @@ export class TemplatesComponent {
 
     @ViewChild('actionsTpl', { static: true }) actionsTpl!: TemplateRef<any>;
 
-    private templates$: Observable<ApiResult<Template[]>> = toObservable(
-        this._templatesService.queries
+    private users$: Observable<ApiResult<User[]>> = toObservable(
+        this._usersService.queries
     ).pipe(
-        switchMap((params) => this._templatesService.all<Template[]>(params)),
-        map((result: ApiResult<Template[]>) => {
+        switchMap((params) => this._usersService.all<User[]>(params)),
+        map((result: ApiResult<User[]>) => {
             if (result.data) {
-                this._templatesService.templates.set(result);
+                this._usersService.users.set(result);
             }
             return result;
         }),
         takeUntilDestroyed()
     );
-    templates = toWritableSignal(this.templates$, {} as ApiResult<Template[]>);
+    users = toWritableSignal(this.users$, {} as ApiResult<User[]>);
 
     columns: ColumnSetting[] = [];
-    user = toSignal(this._userService.user$, { initialValue: {} as User });
+    user = toSignal(this._usersService.user$, { initialValue: {} as User });
 
     constructor() {
         effect(() => {
             this.columns = [
                 {
-                    title: 'Name',
-                    key: 'name',
-                    customClass: 'w-2/12',
+                    title: 'First name',
+                    key: 'firstName',
                     clickEvent: true,
-                    sortKey: 'name',
+                    sortKey: 'firstName',
                 },
                 {
-                    title: 'Type',
-                    key: 'type',
-                    customClass: 'w-2/12',
+                    title: 'Last name',
+                    key: 'lastName',
                     clickEvent: true,
-                    sortKey: 'type',
+                    sortKey: 'lastName',
+                },
+                {
+                    title: 'Email',
+                    key: 'email',
+                    clickEvent: true,
+                    sortKey: 'email',
+                },
+                {
+                    title: 'Phone',
+                    key: 'phone',
+                    clickEvent: true,
+                    sortKey: 'phone',
+                },
+                {
+                    title: 'Address',
+                    key: 'address',
+                    clickEvent: true,
+                    sortKey: 'address',
                 },
                 {
                     title: 'Active',
                     key: 'isActive',
-                    customClass: 'w-2/12',
                     pipe: { class: { obj: IsActivePipe } },
                 },
                 {
-                    title: 'Description',
-                    key: 'details.description',
-                    customClass: 'w-2/12',
+                    title: 'Last Connected',
+                    key: 'lastConnected',
+                    clickEvent: true,
+                    sortKey: 'lastConnected',
+                    pipe: {
+                        class: { obj: DatePipe, constructor: 'en-US' },
+                        args: 'MMM d, y, hh:mm:ss',
+                    },
                 },
                 {
                     title: 'Created At',
                     key: 'createdAt',
                     clickEvent: true,
-                    customClass: 'w-2/12',
                     sortKey: 'address',
                     pipe: {
                         class: { obj: DatePipe, constructor: 'en-US' },
@@ -117,7 +129,6 @@ export class TemplatesComponent {
                 {
                     title: 'Updated At',
                     key: 'updatedAt',
-                    customClass: 'w-2/12',
                     clickEvent: true,
                     sortKey: 'updatedAt',
                     pipe: {
@@ -151,41 +162,41 @@ export class TemplatesComponent {
         });
     }
 
-    onRowClick(event: Template): void {
-        this._router.navigate(['templates', event.id]);
+    onRowClick(user: User): void {
+        this.onEditUser(undefined, user);
     }
 
-    onAddTemplate(event: Event) {
+    onAddUser(event: Event) {
         event.preventDefault();
         event.stopPropagation();
-        this._dialog.open(TemplateFormComponent, {
+        this._dialog.open(UserFormComponent, {
             data: {
-                title: 'Add new template',
+                title: 'Add new user',
                 action: 'add',
             },
         });
     }
 
-    onEditTemplate(event: Event, template: ITemplate) {
-        event.preventDefault();
-        event.stopPropagation();
-        this._dialog.open(TemplateFormComponent, {
+    onEditUser(event: Event, user: User) {
+        event?.preventDefault();
+        event?.stopPropagation();
+        this._dialog.open(UserFormComponent, {
             data: {
-                title: 'Edit  template',
-                template: template,
+                title: 'Edit  user',
+                user: user,
                 action: 'edit',
             },
         });
     }
 
-    onDeleteTemplate(event: Event, template: ITemplate) {
+    onDeleteUser(event: Event, user: IUser) {
         event.preventDefault();
         event.stopPropagation();
 
         const confirmation = this._fuseConfirmationService.open({
-            title: 'Delete template',
+            title: 'Delete user',
             message:
-                'Are you sure you want to delete this template and its groups and fields? This action cannot be undone!',
+                'Are you sure you want to delete this user and its groups and fields? This action cannot be undone!',
             actions: {
                 confirm: {
                     label: 'Delete',
@@ -195,8 +206,8 @@ export class TemplatesComponent {
 
         confirmation.afterClosed().subscribe((result) => {
             if (result === 'confirmed') {
-                this._templatesService
-                    .deleteTemplate(template.id)
+                this._usersService
+                    .deleteUser(user.id)
                     .pipe(takeUntilDestroyed(this.destroyRef))
                     .subscribe();
             }

@@ -29,6 +29,13 @@ export const defaultNavigation: FuseNavigationItem[] = [
         icon: 'heroicons_outline:square-2*2',
         link: '/templates',
     },
+    {
+        id: 'iam',
+        title: 'Iam',
+        type: 'basic',
+        icon: 'heroicons_outline:finger-print',
+        link: '/iam',
+    },
 ];
 export const compactNavigation: FuseNavigationItem[] = [
     {
@@ -58,6 +65,13 @@ export const compactNavigation: FuseNavigationItem[] = [
         type: 'basic',
         icon: 'heroicons_outline:squares-2x2',
         link: '/templates',
+    },
+    {
+        id: 'iam',
+        title: 'Iam',
+        type: 'basic',
+        icon: 'heroicons_outline:finger-print',
+        link: '/iam',
     },
 ];
 export const futuristicNavigation: FuseNavigationItem[] = [
@@ -89,6 +103,13 @@ export const futuristicNavigation: FuseNavigationItem[] = [
         icon: 'heroicons_outline:squares-2x2',
         link: '/templates',
     },
+    {
+        id: 'iam',
+        title: 'Iam',
+        type: 'basic',
+        icon: 'heroicons_outline:finger-print',
+        link: '/iam',
+    },
 ];
 export const horizontalNavigation: FuseNavigationItem[] = [
     {
@@ -118,5 +139,12 @@ export const horizontalNavigation: FuseNavigationItem[] = [
         type: 'basic',
         icon: 'heroicons_outline:squares-2x2',
         link: '/templates',
+    },
+    {
+        id: 'iam',
+        title: 'Iam',
+        type: 'basic',
+        icon: 'heroicons_outline:finger-print',
+        link: '/iam',
     },
 ];

@@ -144,6 +144,10 @@ export const appRoutes: Route[] = [
                     ),
             },
             {
+                path: 'iam',
+                loadChildren: () => import('app/modules/iam/iam.routes'),
+            },
+            {
                 path: 'profile',
                 loadComponent: () =>
                     import('app/modules/profile/profile.component').then(

@@ -1,0 +1,167 @@
+<form
+    *ngIf="userForm() as userForm"
+    #userNgForm="ngForm"
+    (ngSubmit)="onSubmitNewUser(userNgForm)"
+    [formGroup]="userForm"
+>
+    <div
+        class="flex flex-col flex-auto md:w-160 md:min-w-160 max-h-160 -m-6 overflow-y-auto"
+    >
+        <div
+            class="flex flex-0 items-center justify-between h-16 pr-3 sm:pr-5 pl-6 sm:pl-8 bg-primary text-on-primary"
+        >
+            <div class="text-lg font-medium">{{ data.title }}</div>
+            <button
+                mat-icon-button
+                (click)="onCloseModal($event)"
+                [tabIndex]="-1"
+            >
+                <mat-icon
+                    class="text-current"
+                    [svgIcon]="'heroicons_outline:x-circle'"
+                ></mat-icon>
+            </button>
+        </div>
+
+        <div
+            class="flex flex-col flex-1 items-start w-full p-6 sm:p-8 space-y-3 overflow-y-auto"
+        >
+            <fuse-alert
+                [type]="'error'"
+                *ngIf="errors().length > 0"
+                class="w-full"
+            >
+                <span fuseAlertTitle>Error</span>
+                <span *ngFor="let error of errors()"> {{ error.message }}</span>
+            </fuse-alert>
+            <mat-form-field [ngClass]="formFieldHelpers" class="w-full">
+                <mat-label>First Name</mat-label>
+                <input
+                    type="text"
+                    formControlName="firstName"
+                    matInput
+                    required
+                    [placeholder]="'First name'"
+                />
+                <mat-hint>Please type in the user first name</mat-hint>
+                <mat-error
+                    *ngIf="
+                        userForm.controls?.name?.touched &&
+                        userForm.controls?.name?.invalid
+                    "
+                >
+                    <app-error-form-template
+                        [form]="userForm"
+                        field="firstName"
+                        name="User first name"
+                    ></app-error-form-template>
+                </mat-error>
+            </mat-form-field>
+            <mat-form-field [ngClass]="formFieldHelpers" class="w-full">
+                <mat-label>Last Name</mat-label>
+                <input
+                    type="text"
+                    formControlName="lastName"
+                    matInput
+                    [placeholder]="'Last name'"
+                />
+                <mat-hint>Please type in the user last name</mat-hint>
+                <mat-error
+                    *ngIf="
+                        userForm.controls?.name?.touched &&
+                        userForm.controls?.name?.invalid
+                    "
+                >
+                    <app-error-form-template
+                        [form]="userForm"
+                        field="lastName"
+                        name="User last name"
+                    ></app-error-form-template>
+                </mat-error>
+            </mat-form-field>
+            <mat-form-field [ngClass]="formFieldHelpers" class="w-full">
+                <mat-label>Email</mat-label>
+                <input
+                    type="email"
+                    formControlName="email"
+                    matInput
+                    required
+                    [placeholder]="'Email'"
+                />
+                <mat-hint>Please type in the user email</mat-hint>
+                <mat-error
+                    *ngIf="
+                        userForm.controls?.name?.touched &&
+                        userForm.controls?.name?.invalid
+                    "
+                >
+                    <app-error-form-template
+                        [form]="userForm"
+                        field="email"
+                        name="User email"
+                    ></app-error-form-template>
+                </mat-error>
+            </mat-form-field>
+
+            <mat-form-field [ngClass]="formFieldHelpers" class="w-full">
+                <mat-label>Phone</mat-label>
+                <input
+                    type="text"
+                    formControlName="phone"
+                    matInput
+                    [placeholder]="'Phone'"
+                />
+                <mat-hint>Please type in the user phone</mat-hint>
+                <mat-error
+                    *ngIf="
+                        userForm.controls?.name?.touched &&
+                        userForm.controls?.name?.invalid
+                    "
+                >
+                    <app-error-form-template
+                        [form]="userForm"
+                        field="phone"
+                        name="User phone"
+                    ></app-error-form-template>
+                </mat-error>
+            </mat-form-field>
+
+            <mat-form-field [ngClass]="formFieldHelpers" class="w-full">
+                <mat-label>Address</mat-label>
+                <textarea
+                    rows="3"
+                    formControlName="address"
+                    matInput
+                    [placeholder]="'address'"
+                ></textarea>
+                <mat-hint>Please type in the user address</mat-hint>
+                <mat-error
+                    *ngIf="
+                        userForm.controls?.name?.touched &&
+                        userForm.controls?.name?.invalid
+                    "
+                >
+                    <app-error-form-template
+                        [form]="userForm"
+                        field="address"
+                        name="User address"
+                    ></app-error-form-template>
+                </mat-error>
+            </mat-form-field>
+        </div>
+        <div
+            class="flex items-center justify-end border-t px-8 py-5 bg-gray-50 dark:bg-gray-700"
+        >
+            <button mat-button (click)="onCloseModal($event)">Close</button>
+            <button
+                type="submit"
+                class="px-6 ml-3"
+                mat-flat-button
+                [color]="'primary'"
+                [disabled]="!userForm.valid"
+            >
+                Save
+            </button>
+        </div>
+    </div>
+</form>

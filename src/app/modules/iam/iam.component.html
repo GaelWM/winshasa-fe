@@ -1,0 +1,38 @@
+<div class="w-full flex flex-col">
+    <div class="w-full">
+        <app-toolbar [title]="'Identity Access Management'">
+            <div class="flex justify-start items-center gap-1">
+                <a
+                    mat-fab
+                    extended
+                    routerLink="/iam/dashboard"
+                    routerLinkActive="bg-primary"
+                >
+                    <mat-icon>dashboard</mat-icon>
+                    Dashboard
+                </a>
+                <a
+                    mat-fab
+                    extended
+                    routerLink="/iam/users"
+                    routerLinkActive="bg-primary"
+                >
+                    <mat-icon>group</mat-icon>
+                    Users
+                </a>
+                <a
+                    mat-fab
+                    extended
+                    routerLink="/iam/roles"
+                    routerLinkActive="bg-primary"
+                >
+                    <mat-icon>lock</mat-icon>
+                    Roles
+                </a>
+            </div>
+        </app-toolbar>
+    </div>
+    <div class="w-full p-3">
+        <router-outlet></router-outlet>
+    </div>
+</div>
