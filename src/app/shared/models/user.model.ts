@@ -8,6 +8,7 @@ export interface IUser {
     avatar?: string;
     image?: string;
     isActive: boolean;
+    roles?: string[];
     permissions?: Record<string, unknown>;
     details?: {
         settings?: {
@@ -40,6 +41,7 @@ export class User {
     phone: string;
     avatar: string;
     isActive: boolean;
+    roles?: string[];
     permissions?: Record<string, unknown>;
     details?: {
         settings?: {
@@ -64,6 +66,7 @@ export class User {
         this.address = model.address;
         this.phone = model.phone;
         this.avatar = model.image;
+        this.roles = model.roles;
         this.permissions = model.permissions;
         this.details = model.details;
         this.emailVerifiedAt = model.emailVerifiedAt;

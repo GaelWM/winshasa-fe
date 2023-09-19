@@ -1,4 +1,5 @@
 export * from './product.model';
+export * from './role.model';
 export * from './lease-agreement.model';
 export * from './template.model';
 export * from './template-group.model';

@@ -113,7 +113,7 @@ export class UsersComponent {
                     sortKey: 'lastConnected',
                     pipe: {
                         class: { obj: DatePipe, constructor: 'en-US' },
-                        args: 'MMM d, y, hh:mm:ss',
+                        args: 'y-MM-dd, hh:mm:ss',
                     },
                 },
                 {
@@ -123,7 +123,7 @@ export class UsersComponent {
                     sortKey: 'address',
                     pipe: {
                         class: { obj: DatePipe, constructor: 'en-US' },
-                        args: 'MMM d, y, hh:mm:ss',
+                        args: 'y-MM-dd, hh:mm:ss',
                     },
                 },
                 {
@@ -133,7 +133,7 @@ export class UsersComponent {
                     sortKey: 'updatedAt',
                     pipe: {
                         class: { obj: DatePipe, constructor: 'en-US' },
-                        args: 'MMM d, y, hh:mm:ss',
+                        args: 'y-MM-dd, hh:mm:ss',
                     },
                 },
                 { title: 'Actions', key: 'action', template: this.actionsTpl },
