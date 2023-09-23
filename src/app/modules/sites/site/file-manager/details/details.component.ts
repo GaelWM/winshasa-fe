@@ -1,3 +1,4 @@
+import { NgIf } from '@angular/common';
 import {
     ChangeDetectionStrategy,
     ChangeDetectorRef,
@@ -6,16 +7,22 @@ import {
     OnInit,
     ViewEncapsulation,
 } from '@angular/core';
+import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
 import { MatDrawerToggleResult } from '@angular/material/sidenav';
+import { RouterLink } from '@angular/router';
 import { Subject, takeUntil } from 'rxjs';
-import { FileManagerService } from '../../../../../services/file-manager.service';
-import { Item } from '../../../../../shared/models/file-manager.model';
 import { FileManagerListComponent } from '../list/list.component';
+import { FileManagerService } from '../file-manager.service';
+import { Item } from '../file-manager.types';
+
 @Component({
     selector: 'file-manager-details',
     templateUrl: './details.component.html',
     encapsulation: ViewEncapsulation.None,
     changeDetection: ChangeDetectionStrategy.OnPush,
+    standalone: true,
+    imports: [MatButtonModule, RouterLink, MatIconModule, NgIf],
 })
 export class FileManagerDetailsComponent implements OnInit, OnDestroy {
     item: Item;

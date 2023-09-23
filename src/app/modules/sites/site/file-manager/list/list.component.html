@@ -1,9 +1,8 @@
-<div class="absolute inset-0 flex flex-col min-w-0 overflow-hidden">
+<div class="w-full flex flex-col overflow-hidden">
     <mat-drawer-container
         class="flex-auto h-full bg-card dark:bg-transparent"
         (backdropClick)="onBackdropClicked()"
     >
-        <!-- Drawer -->
         <mat-drawer
             class="w-full sm:w-100 dark:bg-gray-900"
             [mode]="drawerMode"
@@ -18,33 +17,34 @@
         <mat-drawer-content
             class="flex flex-col bg-gray-100 dark:bg-transparent"
         >
-            <!-- Main -->
-            <div class="flex flex-col flex-auto" *ngIf="items">
-                <!-- Header -->
+            <div class="flex flex-col flex-auto">
                 <div
-                    class="flex flex-col sm:flex-row items-start sm:items-center sm:justify-between p-3 md:px-8 border-b bg-card dark:bg-transparent"
+                    class="flex flex-col sm:flex-row items-start sm:items-center sm:justify-between p-2 sm:py-4 md:px-4 border-b bg-card dark:bg-transparent"
                 >
                     <div>
                         <div
                             class="flex items-center mt-0.5 font-medium text-secondary"
                         >
-                            <ng-container *ngIf="!items.folders.length">
+                            <ng-container *ngIf="!items.path.length">
                                 {{ items.folders.length }} folders,
                                 {{ items.files.length }} files
                             </ng-container>
-                            <!-- Breadcrumbs -->
-                            <ng-container *ngIf="items.folders.length">
+
+                            <ng-container *ngIf="items.path.length">
                                 <div class="flex items-center space-x-2">
                                     <a
                                         class="text-primary cursor-pointer"
-                                        [routerLink]="['/apps/file-manager']"
+                                        [routerLink]="[
+                                            '/sites',
+                                            site()?.data?.id,
+                                            'documentation'
+                                        ]"
                                         >Home
                                     </a>
                                     <div class="">/</div>
-
                                     <ng-container
                                         *ngFor="
-                                            let folder of items.folders;
+                                            let path of items.path;
                                             let last = last;
                                             trackBy: trackByFn
                                         "
@@ -53,16 +53,17 @@
                                             <a
                                                 class="text-primary cursor-pointer"
                                                 [routerLink]="[
-                                                    'sites/' +
-                                                        selectedSite.slug +
-                                                        '/folders/',
-                                                    folder.id
+                                                    '/sites',
+                                                    site()?.data?.id,
+                                                    'documentation',
+                                                    'folders',
+                                                    path.id
                                                 ]"
-                                                >{{ folder.name }}</a
+                                                >{{ path.name }}</a
                                             >
                                         </ng-container>
                                         <ng-container *ngIf="last">
-                                            <div>{{ folder.name }}</div>
+                                            <div>{{ path.name }}</div>
                                         </ng-container>
                                         <ng-container *ngIf="!last">
                                             <div class="">/</div>
@@ -74,28 +75,15 @@
                     </div>
 
                     <div class="mt-4 sm:mt-0">
-                        <div class="flex gap-3">
-                            <button
-                                mat-flat-button
-                                [color]="'primary'"
-                                (click)="onCreateNewFolder($event)"
-                            >
-                                <mat-icon
-                                    [svgIcon]="'heroicons_outline:plus'"
-                                ></mat-icon>
-                                <span class="ml-2 mr-1">Create a folder</span>
-                            </button>
-                            <button mat-flat-button [color]="'primary'">
-                                <mat-icon
-                                    [svgIcon]="'heroicons_outline:plus'"
-                                ></mat-icon>
-                                <span class="ml-2 mr-1">Upload file</span>
-                            </button>
-                        </div>
+                        <button mat-flat-button [color]="'primary'">
+                            <mat-icon
+                                [svgIcon]="'heroicons_outline:plus'"
+                            ></mat-icon>
+                            <span class="ml-2 mr-1">Upload file</span>
+                        </button>
                     </div>
                 </div>
 
-                <!-- Items list -->
                 <ng-container
                     *ngIf="
                         items &&
@@ -104,8 +92,7 @@
                         else noItems
                     "
                 >
-                    <div class="p-6 md:p-8 space-y-8">
-                        <!-- Folders -->
+                    <div class="p-4 md:p-6 space-y-6">
                         <ng-container *ngIf="items.folders.length > 0">
                             <div>
                                 <div class="font-medium">Folders</div>
@@ -117,7 +104,7 @@
                                         "
                                     >
                                         <div
-                                            class="relative w-40 h-40 m-2 p-4 shadow rounded-2xl bg-card"
+                                            class="relative w-32 h-32 m-2 p-4 shadow rounded-2xl bg-card"
                                         >
                                             <a
                                                 class="absolute z-20 top-1.5 right-1.5 w-8 h-8 min-h-8"
@@ -138,16 +125,21 @@
                                                 ></mat-icon>
                                             </a>
                                             <a
-                                                class="z-10 absolute inset-0 flex flex-col p-4 cursor-pointer"
+                                                class="z-10 flex flex-col p-4 cursor-pointer"
+                                                [queryParamsHandling]="'merge'"
+                                                [replaceUrl]="true"
                                                 [routerLink]="[
-                                                    './folders/' + folder.id
+                                                    '/sites',
+                                                    site()?.data?.id,
+                                                    'documentation',
+                                                    'folders',
+                                                    folder.id
                                                 ]"
                                             >
                                                 <div class="aspect-[9/6]">
                                                     <div
                                                         class="flex items-center justify-center h-full"
                                                     >
-                                                        <!-- Icon -->
                                                         <mat-icon
                                                             class="icon-size-14 text-hint opacity-50"
                                                             [svgIcon]="
@@ -168,13 +160,17 @@
                                                         {{ folder.name }}
                                                     </div>
                                                     <ng-container
-                                                        *ngIf="folder.contents"
+                                                        *ngIf="
+                                                            folder?.details
+                                                                ?.contents
+                                                        "
                                                     >
                                                         <div
                                                             class="text-secondary truncate"
                                                         >
                                                             {{
-                                                                folder.contents
+                                                                folder?.details
+                                                                    ?.contents
                                                             }}
                                                         </div>
                                                     </ng-container>
@@ -186,7 +182,6 @@
                             </div>
                         </ng-container>
 
-                        <!-- Files -->
                         <ng-container *ngIf="items.files.length > 0">
                             <div>
                                 <div class="font-medium">Files</div>
@@ -198,7 +193,7 @@
                                         "
                                     >
                                         <a
-                                            class="flex flex-col w-40 h-40 m-2 p-4 shadow rounded-2xl cursor-pointer bg-card"
+                                            class="flex flex-col w-32 h-32 m-2 p-4 shadow rounded-2xl cursor-pointer bg-card"
                                             [routerLink]="[
                                                 './details/',
                                                 file.id
@@ -208,7 +203,6 @@
                                                 <div
                                                     class="flex items-center justify-center h-full"
                                                 >
-                                                    <!-- Icons -->
                                                     <div class="relative">
                                                         <mat-icon
                                                             class="icon-size-14 text-hint opacity-50"
@@ -220,27 +214,66 @@
                                                             class="absolute left-0 bottom-0 px-1.5 rounded text-sm font-semibold leading-5 text-white"
                                                             [class.bg-red-600]="
                                                                 file.type ===
-                                                                'PDF'
+                                                                docType.PDF
                                                             "
                                                             [class.bg-blue-600]="
-                                                                file.type ===
-                                                                'DOC'
+                                                                [
+                                                                    docType.DOC,
+                                                                    docType.DOCX
+                                                                ].includes(
+                                                                    file.type
+                                                                )
+                                                            "
+                                                            [class.bg-yellow-600]="
+                                                                [
+                                                                    docType.PPT,
+                                                                    docType.PPTX
+                                                                ].includes(
+                                                                    file.type
+                                                                )
                                                             "
                                                             [class.bg-green-600]="
-                                                                file.type ===
-                                                                'XLS'
+                                                                [
+                                                                    docType.XLS,
+                                                                    docType.XLSX,
+                                                                    docType.CSV
+                                                                ].includes(
+                                                                    file.type
+                                                                )
                                                             "
                                                             [class.bg-gray-600]="
                                                                 file.type ===
-                                                                'TXT'
+                                                                docType.TXT
                                                             "
                                                             [class.bg-amber-600]="
-                                                                file.type ===
-                                                                'JPG'
+                                                                [
+                                                                    docType.JPG,
+                                                                    docType.PNG,
+                                                                    docType.JPEG
+                                                                ].includes(
+                                                                    file.type
+                                                                )
+                                                            "
+                                                            [class.bg-black]="
+                                                                [
+                                                                    docType.RAR,
+                                                                    docType.ZIP
+                                                                ].includes(
+                                                                    file.type
+                                                                )
+                                                            "
+                                                            [class.bg-accent-500]="
+                                                                [
+                                                                    docType.OTHER
+                                                                ].includes(
+                                                                    file.type
+                                                                )
                                                             "
                                                         >
                                                             {{
-                                                                file.type.toUpperCase()
+                                                                docTypeMap.get(
+                                                                    file?.type
+                                                                )
                                                             }}
                                                         </div>
                                                     </div>
@@ -273,7 +306,6 @@
                     </div>
                 </ng-container>
 
-                <!-- No items template -->
                 <ng-template #noItems>
                     <div
                         class="flex flex-auto flex-col items-center justify-center bg-gray-100 dark:bg-transparent"

@@ -21,7 +21,7 @@ const baseUrl = environment.apiBaseUrl;
 })
 export class BaseService {
     apiUrl: string;
-    resource: string = '';
+    protected resource: string = '';
     perPage = 10;
     private route = inject(ActivatedRoute);
     private http = inject(HttpClient);

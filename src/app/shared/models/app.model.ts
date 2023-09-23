@@ -7,6 +7,8 @@ export interface ApiResult<T> {
     meta?: ApiResultMetaData;
 }
 
+export type ApiResultArray<T> = T[];
+
 export interface ApiRowResult<T> {
     data?: T;
     message?: string;

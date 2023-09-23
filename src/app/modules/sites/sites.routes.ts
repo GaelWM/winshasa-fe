@@ -25,13 +25,12 @@ export default [
                         (m) => m.MapViewComponent
                     ),
             },
-            // {
-            //     path: 'documentation',
-            //     loadChildren: () =>
-            //         import(
-            //             'app/modules/sites/site/file-manager/file-manager.module'
-            //         ).then((m) => m.FileManagerModule),
-            // },
+            {
+                path: 'documentation',
+
+                loadChildren: () =>
+                    import('./site/file-manager/file-manager.routes'),
+            },
         ],
     },
 ] as Routes;

@@ -1,3 +1,4 @@
+import { NgFor, NgIf } from '@angular/common';
 import {
     ChangeDetectionStrategy,
     ChangeDetectorRef,
@@ -6,32 +7,57 @@ import {
     OnInit,
     ViewChild,
     ViewEncapsulation,
+    inject,
 } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
-import { MatDrawer } from '@angular/material/sidenav';
-import { Subject, takeUntil } from 'rxjs';
+import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
+import { MatDrawer, MatSidenavModule } from '@angular/material/sidenav';
+import { MatTooltipModule } from '@angular/material/tooltip';
+import {
+    ActivatedRoute,
+    Router,
+    RouterLink,
+    RouterOutlet,
+} from '@angular/router';
 import { FuseMediaWatcherService } from '@fuse/services/media-watcher';
-import { FileManagerService } from '@services/file-manager.service';
-import { Item, Items } from '@shared/models/file-manager.model';
-import { MatDialog } from '@angular/material/dialog';
-import { FolderFormComponent } from './folder-form/folder-form.component';
-import { Site } from '@app/shared/models/site.model';
-import { SiteService } from '@app/services/site.service';
+import { Subject, takeUntil } from 'rxjs';
+import { FileManagerService } from '../file-manager.service';
+import {
+    Item,
+    Items,
+    DocumentType,
+    DocumentTypeMap,
+} from '../file-manager.types';
+import { SitesService } from 'app/services/sites.service';
 
 @Component({
     selector: 'file-manager-list',
     templateUrl: './list.component.html',
     encapsulation: ViewEncapsulation.None,
     changeDetection: ChangeDetectionStrategy.OnPush,
+    standalone: true,
+    imports: [
+        MatSidenavModule,
+        RouterOutlet,
+        NgIf,
+        RouterLink,
+        NgFor,
+        MatButtonModule,
+        MatIconModule,
+        MatTooltipModule,
+    ],
 })
 export class FileManagerListComponent implements OnInit, OnDestroy {
     @ViewChild('matDrawer', { static: true }) matDrawer: MatDrawer;
     drawerMode: 'side' | 'over';
     selectedItem: Item;
-    selectedSite: Site;
     items: Items;
     private _unsubscribeAll: Subject<any> = new Subject<any>();
+    #sitesService = inject(SitesService);
 
+    docType = DocumentType;
+    docTypeMap = DocumentTypeMap;
+    site = this.#sitesService.selectedSite;
     /**
      * Constructor
      */
@@ -39,10 +65,9 @@ export class FileManagerListComponent implements OnInit, OnDestroy {
         private _activatedRoute: ActivatedRoute,
         private _changeDetectorRef: ChangeDetectorRef,
         private _router: Router,
+        public _route: ActivatedRoute,
         private _fileManagerService: FileManagerService,
-        private _fuseMediaWatcherService: FuseMediaWatcherService,
-        private _dialog: MatDialog,
-        private _siteService: SiteService
+        private _fuseMediaWatcherService: FuseMediaWatcherService
     ) {}
 
     // -----------------------------------------------------------------------------------------------------
@@ -73,16 +98,6 @@ export class FileManagerListComponent implements OnInit, OnDestroy {
                 this._changeDetectorRef.markForCheck();
             });
 
-        // Get the selected site
-        this._siteService.site$
-            .pipe(takeUntil(this._unsubscribeAll))
-            .subscribe((site: Site) => {
-                this.selectedSite = site;
-
-                // Mark for check
-                this._changeDetectorRef.markForCheck();
-            });
-
         // Subscribe to media query change
         this._fuseMediaWatcherService
             .onMediaQueryChange$('(min-width: 1440px)')
@@ -108,17 +123,6 @@ export class FileManagerListComponent implements OnInit, OnDestroy {
     // -----------------------------------------------------------------------------------------------------
     // @ Public methods
     // -----------------------------------------------------------------------------------------------------
-
-    onCreateNewFolder(event: Event): void {
-        event.preventDefault();
-        this._dialog.open(FolderFormComponent, {
-            data: {
-                title: 'Create new folder',
-                action: 'create',
-                folder: { path: 'sites/' + this.selectedSite.slug },
-            },
-        });
-    }
 
     /**
      * On backdrop clicked
