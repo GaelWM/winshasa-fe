@@ -60,10 +60,15 @@ export class UserService extends BaseService {
     updateProfilePic(formData: any): Observable<any> {
         return this.user$.pipe(
             switchMap((user) =>
-                this._httpClient.post<any>(
-                    `${this.apiUrl}/${user.id}/update-profile`,
-                    formData,
-                    { reportProgress: true, observe: 'events' }
+                this.post<User>(
+                    {
+                        ...user,
+                        ...formData,
+                    },
+                    {
+                        reportProgress: true,
+                        observe: 'events',
+                    }
                 )
             )
         );

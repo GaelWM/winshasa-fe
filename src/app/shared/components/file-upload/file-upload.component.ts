@@ -1,12 +1,21 @@
 import { CommonModule } from '@angular/common';
-import { HttpEventType } from '@angular/common/http';
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { HttpClient, HttpEventType } from '@angular/common/http';
+import {
+    Component,
+    DestroyRef,
+    EventEmitter,
+    Input,
+    Output,
+    inject,
+} from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
-import { UploadService } from 'app/services/upload.service';
-import { finalize, Subscription, tap, catchError } from 'rxjs';
+import { environment } from 'environments/environment';
+import { finalize, tap, catchError } from 'rxjs';
 
+const baseUrl = environment.apiBaseUrl;
 @Component({
     selector: 'app-file-upload',
     templateUrl: './file-upload.component.html',
@@ -18,64 +27,72 @@ import { finalize, Subscription, tap, catchError } from 'rxjs';
     ],
     standalone: true,
 })
-export class FileUploadComponent implements OnInit {
+export class FileUploadComponent {
     @Input() url: string;
     @Input() fileAttribute: string;
     @Input() requiredFileTypes: string[];
     @Input() multiple: boolean = false;
+    @Input() additionalFormData: Record<string, string> = {};
 
     @Output() uploaded: EventEmitter<{ res: any; error: any | boolean }> =
         new EventEmitter<{ res: any; error: any | boolean }>();
 
     fileName: string = '';
     uploadProgress: number;
-    subscription: Subscription = new Subscription();
 
-    constructor(private uploadService: UploadService) {}
-
-    ngOnInit(): void {}
+    #destroyRef = inject(DestroyRef);
+    #http = inject(HttpClient);
 
     onFileSelected(event: any): void {
         event.preventDefault();
         event.stopPropagation();
         const file: File = event.target.files[0];
 
-        if (!this.requiredFileTypes.includes(file.type)) {
-        }
         if (file && this.requiredFileTypes.includes(file.type)) {
             this.fileName = file.name;
             const formData = new FormData();
             formData.append(this.fileAttribute, file);
-
-            const upload$ = this.uploadService.upload(formData).pipe(
-                tap((res: any) =>
-                    this.uploaded.emit({ res: res.body, error: false })
-                ),
-                finalize(() => this.reset()),
-                catchError(async (error) =>
-                    this.uploaded.emit({ res: false, error: error })
-                )
-            );
-
-            const uploadSub = upload$.subscribe((_event: any) => {
-                if (_event && _event.type === HttpEventType.UploadProgress) {
-                    this.uploadProgress = Math.round(
-                        100 * (_event.loaded / _event.total)
-                    );
-                }
+            Object.keys(this.additionalFormData).forEach((key) => {
+                formData.append(key, this.additionalFormData[key]);
             });
+            const upload$ = this.#http
+                .put(`${baseUrl}${this.url}`, formData)
+                .pipe(
+                    tap((res: any) =>
+                        this.uploaded.emit({ res: res.data, error: false })
+                    ),
+                    finalize(() => this.reset()),
+                    catchError(async (error) =>
+                        this.uploaded.emit({ res: false, error: error })
+                    ),
+                    takeUntilDestroyed(this.#destroyRef)
+                );
 
-            this.subscription.add(uploadSub);
+            upload$
+                .pipe(takeUntilDestroyed(this.#destroyRef))
+                .subscribe((_event: any) => {
+                    if (
+                        _event &&
+                        _event.type === HttpEventType.UploadProgress
+                    ) {
+                        this.uploadProgress = Math.round(
+                            100 * (_event.loaded / _event.total)
+                        );
+                    }
+                });
+        } else {
+            this.uploaded.emit({
+                res: false,
+                error: 'File type not supported',
+            });
         }
     }
 
     cancelUpload(): void {
-        this.subscription.unsubscribe();
         this.reset();
     }
 
     reset(): void {
         this.uploadProgress = null;
-        this.subscription = null;
     }
 }

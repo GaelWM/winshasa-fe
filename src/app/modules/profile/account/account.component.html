@@ -1,18 +1,13 @@
 <div class="w-full max-w-3xl" *ngIf="user() as user">
-    <form
-        *ngIf="accountForm() as accountForm"
-        #accountNgForm="ngForm"
-        (ngSubmit)="onSubmitForm(accountNgForm)"
-        [formGroup]="accountForm"
-    >
+    <div>
         <div class="w-full">
             <div class="text-secondary">
                 Following information is publicly displayed within the system
             </div>
         </div>
-        <fuse-alert [type]="alert.type" *ngIf="showAlert" class="w-full">
-            <span fuseAlertTitle>{{ alert.title }}</span>
-            {{ alert.message }}
+        <fuse-alert [type]="'error'" *ngIf="errors().length > 0" class="w-full">
+            <span fuseAlertTitle>Error</span>
+            <span *ngFor="let error of errors()"> {{ error.message }}</span>
         </fuse-alert>
         <div class="grid sm:grid-cols-4 gap-6 w-full mt-8">
             <div
@@ -32,8 +27,9 @@
                     ></mat-icon>
                 </div>
                 <app-file-upload
-                    [url]="'user/' + user.id + '/update-profile'"
-                    [fileAttribute]="'profile_pic'"
+                    [url]="'users/' + user.id"
+                    [fileAttribute]="'image'"
+                    [additionalFormData]="{ firstName: user.firstName }"
                     [requiredFileTypes]="[
                         'image/png',
                         'image/jpg',
@@ -42,7 +38,7 @@
                     (uploaded)="onImageUploaded($event)"
                 ></app-file-upload>
             </div>
-            <!-- Name -->
+
             <div class="sm:col-span-2">
                 <mat-form-field
                     class="fuse-mat-no-subscript fuse-mat-emphasized-affix w-full"
@@ -53,18 +49,9 @@
                         [svgIcon]="'heroicons_solid:user'"
                         matPrefix
                     ></mat-icon>
-                    <input [formControlName]="'firstName'" matInput />
+                    <input [value]="user.firstName" matInput disabled />
                 </mat-form-field>
-                <mat-error
-                    *ngIf="
-                        accountForm.controls.firstName.touched &&
-                        accountForm.controls.firstName.invalid
-                    "
-                >
-                    <span *ngIf="accountForm.controls.firstName.errors.required"
-                        >First name is required</span
-                    >
-                </mat-error>
+
                 <mat-form-field
                     class="fuse-mat-no-subscript fuse-mat-emphasized-affix w-full"
                 >
@@ -74,18 +61,9 @@
                         [svgIcon]="'heroicons_solid:user'"
                         matPrefix
                     ></mat-icon>
-                    <input [formControlName]="'lastName'" matInput />
+                    <input [value]="user.lastName" matInput disabled />
                 </mat-form-field>
-                <mat-error
-                    *ngIf="
-                        accountForm.controls.lastName.touched &&
-                        accountForm.controls.lastName.invalid
-                    "
-                >
-                    <span *ngIf="accountForm.controls.lastName.errors.required"
-                        >Last name is required</span
-                    >
-                </mat-error>
+
                 <mat-form-field
                     class="fuse-mat-no-subscript fuse-mat-emphasized-affix w-full mt-2"
                 >
@@ -95,21 +73,8 @@
                         [svgIcon]="'heroicons_solid:envelope'"
                         matPrefix
                     ></mat-icon>
-                    <input [formControlName]="'email'" matInput />
+                    <input [value]="user.email" matInput disabled />
                 </mat-form-field>
-                <mat-error
-                    *ngIf="
-                        accountForm.controls.email.touched &&
-                        accountForm.controls.email.invalid
-                    "
-                >
-                    <span *ngIf="accountForm.controls.email.errors.required"
-                        >Email is required</span
-                    >
-                    <span *ngIf="accountForm.controls.email.errors.email"
-                        >Email is incorrect</span
-                    >
-                </mat-error>
             </div>
         </div>
 
@@ -126,5 +91,5 @@
         <div class="grid sm:grid-cols-4 gap-6 w-full mt-8">
             <settings></settings>
         </div>
-    </form>
+    </div>
 </div>

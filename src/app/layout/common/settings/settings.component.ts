@@ -1,5 +1,13 @@
 import { NgClass, NgFor } from '@angular/common';
-import { Component, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
+import {
+    Component,
+    EventEmitter,
+    OnDestroy,
+    OnInit,
+    Output,
+    ViewChild,
+    ViewEncapsulation,
+} from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatTooltipModule } from '@angular/material/tooltip';
@@ -52,6 +60,10 @@ export class SettingsComponent implements OnInit, OnDestroy {
     theme: string;
     themes: Themes;
     private _unsubscribeAll: Subject<any> = new Subject<any>();
+    @Output() toggleDrawer: EventEmitter<any> = new EventEmitter<any>();
+
+    @ViewChild('settingsDrawer', { static: true })
+    settingsDrawer: FuseDrawerComponent;
 
     /**
      * Constructor
