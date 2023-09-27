@@ -1,4 +1,4 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParamsOptions } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
 import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { ActivatedRoute, Params } from '@angular/router';
@@ -82,12 +82,11 @@ export class BaseService {
         });
     }
 
-    post<T>(body: any, params?: any): Observable<ApiResult<T>> {
-        return this.http.post<ApiResult<T>>(
-            `${this.apiUrl}`,
-            { ...body },
-            { ...(params && { params }) }
-        );
+    post<T>(body: any, params?: any, headers?: any): Observable<ApiResult<T>> {
+        return this.http.post<ApiResult<T>>(`${this.apiUrl}`, body, {
+            ...(params && { params: params }),
+            ...(headers && { headers: headers }),
+        });
     }
 
     put<T>(id: string, body: any, params?: any): Observable<ApiResult<T>> {

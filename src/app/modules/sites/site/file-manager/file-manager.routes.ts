@@ -26,15 +26,11 @@ const folderResolver = (
 ) => {
     const fileManagerService = inject(FileManagerService);
     const router = inject(Router);
-    const sitesService = inject(SitesService);
-    const site = sitesService.selectedSite();
+    const siteId = route.params.id;
+    const folderId = route.params.folderId;
 
     return fileManagerService
-        .getItems(
-            route.paramMap.get('folderId'),
-            (site?.data as Site)?.id,
-            DocumentOwnerType.SITE
-        )
+        .getItems(folderId, siteId, DocumentOwnerType.SITE)
         .pipe(
             // Error here means the requested folder is not available
             catchError((error) => {
@@ -148,12 +144,13 @@ export default [
                 path: '',
                 component: FileManagerListComponent,
                 resolve: {
-                    items: () => {
+                    items: (route: ActivatedRouteSnapshot) => {
+                        const siteId = route.params.id;
                         const sitesService = inject(SitesService);
                         const site = sitesService.selectedSite();
                         return inject(FileManagerService).getItems(
                             undefined,
-                            (site?.data as Site)?.id,
+                            (site?.data as Site)?.id ?? siteId,
                             DocumentOwnerType.SITE
                         );
                     },

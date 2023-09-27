@@ -55,6 +55,7 @@ export class FileManagerService extends BaseService {
         ownerId?: string,
         ownerType?: DocumentOwnerType
     ): Observable<Item[]> {
+        this.updateResource('document-items');
         return this.all<Items>({
             ...(folderId && { folderId }),
             ...(ownerId && { ownerId }),
@@ -70,6 +71,7 @@ export class FileManagerService extends BaseService {
      * Get item by id
      */
     getItemById(id: string): Observable<Item> {
+        this.updateResource('document-items');
         return this._items.pipe(
             take(1),
             map((items) => {
@@ -95,5 +97,33 @@ export class FileManagerService extends BaseService {
                 return of(item);
             })
         );
+    }
+
+    setItems(items: Items): void {
+        this._items.next(items);
+    }
+
+    getRawItems(): Items {
+        return this._items.getValue();
+    }
+
+    uploadDocument(
+        type: 'FILE' | 'FOLDER' = 'FILE',
+        file: any,
+        name?: string,
+        folderId?: string,
+        ownerId?: string,
+        ownerType?: string
+    ): Observable<any> {
+        this.updateResource('documents');
+        const formData = new FormData();
+        formData.append('type', type);
+        formData.append('name', name ?? file.name);
+        formData.append('file', file);
+        formData.append('ownerId', ownerId);
+        formData.append('ownerType', ownerType);
+        formData.append('folderId', folderId);
+
+        return this.post<any>(formData);
     }
 }

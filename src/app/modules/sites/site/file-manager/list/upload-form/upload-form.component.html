@@ -1,0 +1,66 @@
+<form
+    *ngIf="documentForm() as documentForm"
+    #documentNgForm="ngForm"
+    (ngSubmit)="onSubmitDocument(documentNgForm)"
+    [formGroup]="documentForm"
+>
+    <div
+        class="flex flex-col flex-auto md:w-160 md:min-w-160 max-h-160 -m-6 overflow-y-auto"
+    >
+        <div
+            class="flex flex-0 items-center justify-between h-16 pr-3 sm:pr-5 pl-6 sm:pl-8 bg-primary text-on-primary"
+        >
+            <div class="text-lg font-medium">{{ data.title }}</div>
+            <button
+                mat-icon-button
+                (click)="onCloseModal($event)"
+                [tabIndex]="-1"
+            >
+                <mat-icon
+                    class="text-current"
+                    [svgIcon]="'heroicons_outline:x-circle'"
+                ></mat-icon>
+            </button>
+        </div>
+
+        <div
+            class="flex flex-col flex-1 items-start w-full p-6 sm:p-8 space-y-3 overflow-y-auto"
+        >
+            <fuse-alert
+                [type]="'error'"
+                *ngIf="errors().length > 0"
+                class="w-full"
+            >
+                <span fuseAlertTitle>Error</span>
+                <span *ngFor="let error of errors()"> {{ error.message }}</span>
+            </fuse-alert>
+            <div
+                [ngClass]="formFieldHelpers"
+                class="w-full flex flex-col gap-2"
+            >
+                <label>Choose a file to upload</label>
+                <input
+                    type="file"
+                    formControlName="file"
+                    required
+                    [placeholder]="'File'"
+                    (change)="onSelectedFile($event)"
+                />
+            </div>
+        </div>
+        <div
+            class="flex items-center justify-end border-t px-8 py-5 bg-gray-50 dark:bg-gray-700"
+        >
+            <button mat-button (click)="onCloseModal($event)">Close</button>
+            <button
+                type="submit"
+                class="px-6 ml-3"
+                mat-flat-button
+                [color]="'primary'"
+                [disabled]="!documentForm.valid"
+            >
+                Save
+            </button>
+        </div>
+    </div>
+</form>

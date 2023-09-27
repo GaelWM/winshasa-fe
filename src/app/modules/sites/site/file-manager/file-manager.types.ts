@@ -8,6 +8,7 @@ export interface Item {
     id?: string;
     folderId?: string;
     name?: string;
+    url?: string;
     createdBy?: string;
     createdAt?: string;
     updatedAt?: string;
@@ -66,4 +67,16 @@ export enum DocumentOwnerType {
     PAYMENT = 'payments',
     INVOICE = 'invoices',
     DOCUMENT = 'documents',
+}
+
+export enum DocumentStatus {
+    FOLDER_CREATED = 'FOLDER_CREATED',
+    ACTIVE = 'ACTIVE',
+    INACTIVE = 'INACTIVE',
+    DELETED = 'DELETED',
+    ARCHIVED = 'ARCHIVED',
+    REJECTED = 'REJECTED',
+    APPROVED = 'APPROVED',
+    DRAFT = 'DRAFT',
+    LOCKED = 'LOCKED',
 }

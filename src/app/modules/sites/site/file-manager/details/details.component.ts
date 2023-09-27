@@ -14,7 +14,7 @@ import { RouterLink } from '@angular/router';
 import { Subject, takeUntil } from 'rxjs';
 import { FileManagerListComponent } from '../list/list.component';
 import { FileManagerService } from '../file-manager.service';
-import { Item } from '../file-manager.types';
+import { DocumentTypeMap, DocumentType, Item } from '../file-manager.types';
 
 @Component({
     selector: 'file-manager-details',
@@ -26,6 +26,8 @@ import { Item } from '../file-manager.types';
 })
 export class FileManagerDetailsComponent implements OnInit, OnDestroy {
     item: Item;
+    docType = DocumentType;
+    docTypeMap = DocumentTypeMap;
     private _unsubscribeAll: Subject<any> = new Subject<any>();
 
     /**

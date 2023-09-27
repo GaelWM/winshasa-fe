@@ -27,8 +27,12 @@ import {
     Items,
     DocumentType,
     DocumentTypeMap,
+    DocumentOwnerType,
 } from '../file-manager.types';
 import { SitesService } from 'app/services/sites.service';
+import { UploadFormComponent } from './upload-form/upload-form.component';
+import { MatDialog } from '@angular/material/dialog';
+import { Site } from 'app/shared/models';
 
 @Component({
     selector: 'file-manager-list',
@@ -49,11 +53,13 @@ import { SitesService } from 'app/services/sites.service';
 })
 export class FileManagerListComponent implements OnInit, OnDestroy {
     @ViewChild('matDrawer', { static: true }) matDrawer: MatDrawer;
-    drawerMode: 'side' | 'over';
+    drawerMode: 'side' | 'over' = 'side';
     selectedItem: Item;
     items: Items;
     private _unsubscribeAll: Subject<any> = new Subject<any>();
     #sitesService = inject(SitesService);
+    #dialog = inject(MatDialog);
+    #route = inject(ActivatedRoute);
 
     docType = DocumentType;
     docTypeMap = DocumentTypeMap;
@@ -118,6 +124,21 @@ export class FileManagerListComponent implements OnInit, OnDestroy {
         // Unsubscribe from all subscriptions
         this._unsubscribeAll.next(null);
         this._unsubscribeAll.complete();
+    }
+
+    onUploadFile(event: Event): void {
+        event.preventDefault();
+        event.stopPropagation();
+        const folderId = this.#route.snapshot.params.folderId;
+        this.#dialog.open(UploadFormComponent, {
+            data: {
+                title: 'Upload new file',
+                ownerId: (this.site()?.data as Site)?.id,
+                ownerType: DocumentOwnerType.SITE,
+                folderId: folderId,
+                action: 'upload',
+            },
+        });
     }
 
     // -----------------------------------------------------------------------------------------------------
