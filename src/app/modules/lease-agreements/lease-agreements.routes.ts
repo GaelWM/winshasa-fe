@@ -20,13 +20,13 @@ export default [
                         './lease-agreement/general-details/general-details.component'
                     ).then((m) => m.GeneralDetailsComponent),
             },
-            // {
-            //     path: 'documentation',
-            //     loadChildren: () =>
-            //         import(
-            //             'app/modules/sites/site/file-manager/file-manager.module'
-            //         ).then((m) => m.FileManagerModule),
-            // },
+            {
+                path: 'documentation',
+                loadChildren: () =>
+                    import(
+                        './lease-agreement/documentation/documentation.routes'
+                    ),
+            },
         ],
     },
 ] as Routes;

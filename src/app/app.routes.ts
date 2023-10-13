@@ -144,6 +144,11 @@ export const appRoutes: Route[] = [
                     ),
             },
             {
+                path: 'documentation',
+                loadChildren: () =>
+                    import('app/modules/documentation/documentation.routes'),
+            },
+            {
                 path: 'iam',
                 loadChildren: () => import('app/modules/iam/iam.routes'),
             },

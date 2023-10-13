@@ -26,8 +26,15 @@ export const defaultNavigation: FuseNavigationItem[] = [
         id: 'templates',
         title: 'Templates',
         type: 'basic',
-        icon: 'heroicons_outline:square-2*2',
+        icon: 'heroicons_outline:squares-2x2',
         link: '/templates',
+    },
+    {
+        id: 'documentation',
+        title: 'File Manager',
+        type: 'basic',
+        icon: 'heroicons_outline:document-magnifying-glass',
+        link: '/documentation',
     },
     {
         id: 'iam',
@@ -67,6 +74,13 @@ export const compactNavigation: FuseNavigationItem[] = [
         link: '/templates',
     },
     {
+        id: 'documentation',
+        title: 'File Manager',
+        type: 'basic',
+        icon: 'heroicons_outline:document-magnifying-glass',
+        link: '/documentation',
+    },
+    {
         id: 'iam',
         title: 'Iam',
         type: 'basic',
@@ -104,6 +118,13 @@ export const futuristicNavigation: FuseNavigationItem[] = [
         link: '/templates',
     },
     {
+        id: 'documentation',
+        title: 'File Manager',
+        type: 'basic',
+        icon: 'heroicons_outline:document-magnifying-glass',
+        link: '/documentation',
+    },
+    {
         id: 'iam',
         title: 'Iam',
         type: 'basic',
@@ -139,6 +160,13 @@ export const horizontalNavigation: FuseNavigationItem[] = [
         type: 'basic',
         icon: 'heroicons_outline:squares-2x2',
         link: '/templates',
+    },
+    {
+        id: 'documentation',
+        title: 'File Manager',
+        type: 'basic',
+        icon: 'heroicons_outline:document-magnifying-glass',
+        link: '/documentation',
     },
     {
         id: 'iam',

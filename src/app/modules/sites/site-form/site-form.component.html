@@ -75,8 +75,8 @@
                 <mat-hint>Please select a template</mat-hint>
                 <mat-error
                     *ngIf="
-                        siteForm.controls?.name?.touched &&
-                        siteForm.controls?.name?.invalid
+                        siteForm.controls?.templateId?.touched &&
+                        siteForm.controls?.templateId?.invalid
                     "
                 >
                     <app-error-form-template
@@ -104,8 +104,8 @@
                 <mat-hint>Please select a type</mat-hint>
                 <mat-error
                     *ngIf="
-                        siteForm.controls?.name?.touched &&
-                        siteForm.controls?.name?.invalid
+                        siteForm.controls?.type?.touched &&
+                        siteForm.controls?.type?.invalid
                     "
                 >
                     <app-error-form-template
@@ -133,8 +133,8 @@
                 <mat-hint>Please select a status</mat-hint>
                 <mat-error
                     *ngIf="
-                        siteForm.controls?.name?.touched &&
-                        siteForm.controls?.name?.invalid
+                        siteForm.controls?.status?.touched &&
+                        siteForm.controls?.status?.invalid
                     "
                 >
                     <app-error-form-template

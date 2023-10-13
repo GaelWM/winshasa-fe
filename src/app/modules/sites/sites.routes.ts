@@ -27,9 +27,8 @@ export default [
             },
             {
                 path: 'documentation',
-
                 loadChildren: () =>
-                    import('./site/file-manager/file-manager.routes'),
+                    import('./site/documentation/documentation.routes'),
             },
         ],
     },

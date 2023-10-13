@@ -20,14 +20,11 @@ export default [
                         './product/general-details/general-details.component'
                     ).then((c) => c.GeneralDetailsComponent),
             },
-
-            // {
-            //     path: 'documentation',
-            //     loadChildren: () =>
-            //         import(
-            //             'app/modules/products/product/file-manager/file-manager.module'
-            //         ).then((m) => m.FileManagerModule),
-            // },
+            {
+                path: 'documentation',
+                loadChildren: () =>
+                    import('./product/documentation/documentation.routes'),
+            },
         ],
     },
 ] as Routes;
