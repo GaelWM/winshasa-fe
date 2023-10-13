@@ -59,7 +59,8 @@ export class FileManagerListComponent implements OnInit, OnDestroy {
 
     docType = DocumentType;
     docTypeMap = DocumentTypeMap;
-    routePrefix = this.#route.snapshot.data['fileManagerSettings'].routePrefix;
+    routePrefix =
+        this.#route.snapshot.data['fileManagerSettings']?.routePrefix ?? '';
 
     private _unsubscribeAll: Subject<any> = new Subject<any>();
 
