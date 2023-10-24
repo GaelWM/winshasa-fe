@@ -35,6 +35,8 @@ import { Observable, map, switchMap } from 'rxjs';
 import { toWritableSignal } from 'app/shared/utils/common.util';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { LeaseAgreementsService } from 'app/services/lease-agreements.service.';
+import { LeaseAgreementComponent } from './lease-agreement/lease-agreement.component';
+import { ModalTemplateComponent } from 'app/shared/components/modal-template/modal-template.component';
 
 @Component({
     selector: 'app-lease-agreement',
@@ -48,40 +50,43 @@ import { LeaseAgreementsService } from 'app/services/lease-agreements.service.';
         WinPaginatorComponent,
         IsActivePipe,
         MatTooltipModule,
+        LeaseAgreementFormComponent,
+        ModalTemplateComponent,
     ],
     templateUrl: './lease-agreements.component.html',
 })
 export class LeaseAgreementsComponent {
-    private _userService = inject(UserService);
-    private _leaseAgreementsService = inject(LeaseAgreementsService);
-    private _router = inject(Router);
-    private _route = inject(ActivatedRoute);
-    private _dialog = inject(MatDialog);
-    private _fuseConfirmationService = inject(FuseConfirmationService);
-    private destroyRef = inject(DestroyRef);
+    #userService = inject(UserService);
+    #leaseService = inject(LeaseAgreementsService);
+    #router = inject(Router);
+    #route = inject(ActivatedRoute);
+    #dialog = inject(MatDialog);
+    #fuseConfirmationService = inject(FuseConfirmationService);
+    #destroyRef = inject(DestroyRef);
+
+    showModal = false;
 
     @ViewChild('actionsTpl', { static: true }) actionsTpl!: TemplateRef<any>;
 
-    private leaseAgreements$: Observable<ApiResult<LeaseAgreement[]>> =
-        toObservable(this._leaseAgreementsService.queries).pipe(
-            switchMap((params) =>
-                this._leaseAgreementsService.all<LeaseAgreement[]>(params)
-            ),
-            map((result: ApiResult<LeaseAgreement[]>) => {
-                if (result.data) {
-                    this._leaseAgreementsService.leaseAgreements.set(result);
-                }
-                return result;
-            }),
-            takeUntilDestroyed()
-        );
+    #leaseAgreements$: Observable<ApiResult<LeaseAgreement[]>> = toObservable(
+        this.#leaseService.queries
+    ).pipe(
+        switchMap((params) => this.#leaseService.all<LeaseAgreement[]>(params)),
+        map((result: ApiResult<LeaseAgreement[]>) => {
+            if (result.data) {
+                this.#leaseService.leaseAgreements.set(result);
+            }
+            return result;
+        }),
+        takeUntilDestroyed()
+    );
     leaseAgreements = toWritableSignal(
-        this.leaseAgreements$,
+        this.#leaseAgreements$,
         {} as ApiResult<LeaseAgreement[]>
     );
 
     columns: ColumnSetting[] = [];
-    user = toSignal(this._userService.user$, { initialValue: {} as User });
+    user = toSignal(this.#userService.user$, { initialValue: {} as User });
 
     constructor() {
         effect(() => {
@@ -135,13 +140,39 @@ export class LeaseAgreementsComponent {
                     key: 'isActive',
                     pipe: { class: { obj: IsActivePipe } },
                 },
+                {
+                    title: 'Created At',
+                    key: 'createdAt',
+                    clickEvent: true,
+                    sortKey: 'createdAt',
+                    pipe: {
+                        class: {
+                            obj: DatePipe,
+                            constructor: 'en-US',
+                        },
+                        args: 'yyyy-MM-dd HH:mm:ss',
+                    },
+                },
+                {
+                    title: 'Updated At',
+                    key: 'updatedAt',
+                    clickEvent: true,
+                    sortKey: 'updatedAt',
+                    pipe: {
+                        class: {
+                            obj: DatePipe,
+                            constructor: 'en-US',
+                        },
+                        args: 'yyyy-MM-dd HH:mm:ss',
+                    },
+                },
                 { title: 'Actions', key: 'action', template: this.actionsTpl },
             ];
         });
     }
 
     onPageChange(event: PageEvent) {
-        this._router.navigate([], {
+        this.#router.navigate([], {
             queryParams: {
                 page: event.pageIndex + 1,
                 perPage: event.pageSize,
@@ -151,44 +182,43 @@ export class LeaseAgreementsComponent {
     }
 
     onSort(event: ColumnSetting): void {
-        this._router.navigate([], {
+        this.#router.navigate([], {
             queryParams: {
                 sortBy: event.sortKey,
                 sortOrder: event.sortOrder,
             },
             queryParamsHandling: 'merge',
-            relativeTo: this._route,
+            relativeTo: this.#route,
         });
     }
 
-    onRowClick(event: LeaseAgreement): void {
-        this._router.navigate([
-            'lease-agreements',
-            event.id,
-            'general-details',
-        ]);
+    onRowClick(leaseAgreement: LeaseAgreement): void {
+        this.#leaseService.selectedLeaseAgreement.set({ data: leaseAgreement });
+        this.#router.navigate([leaseAgreement.id, 'general-details'], {
+            relativeTo: this.#route,
+            state: { leaseAgreement },
+        });
     }
 
     onAddLeaseAgreement(event: Event) {
         event.preventDefault();
         event.stopPropagation();
-        this._dialog.open(LeaseAgreementFormComponent, {
+        this.#leaseService.selectedLeaseAgreement.set({ data: null });
+        this.#dialog.open(ModalTemplateComponent, {
+            width: '1000px',
             data: {
-                title: 'Add new lease agreement',
-                action: 'add',
+                form: LeaseAgreementFormComponent,
+                title: 'Add Lease Agreement',
             },
         });
     }
 
-    onEditLeaseAgreement(event: Event, leaseAgreement: ILeaseAgreement) {
+    onEditLeaseAgreement(event: Event, leaseAgreement: LeaseAgreement) {
         event.preventDefault();
         event.stopPropagation();
-        this._dialog.open(LeaseAgreementFormComponent, {
-            data: {
-                title: 'Edit  lease agreement',
-                leaseAgreement: leaseAgreement,
-                action: 'edit',
-            },
+        this.#router.navigate([leaseAgreement.id, 'general-details'], {
+            relativeTo: this.#route,
+            state: { leaseAgreement },
         });
     }
 
@@ -196,7 +226,7 @@ export class LeaseAgreementsComponent {
         event.preventDefault();
         event.stopPropagation();
 
-        const confirmation = this._fuseConfirmationService.open({
+        const confirmation = this.#fuseConfirmationService.open({
             title: 'Delete lease agreement',
             message:
                 'Are you sure you want to delete this lease agreement and its groups and fields? This action cannot be undone!',
@@ -209,9 +239,9 @@ export class LeaseAgreementsComponent {
 
         confirmation.afterClosed().subscribe((result) => {
             if (result === 'confirmed') {
-                this._leaseAgreementsService
+                this.#leaseService
                     .deleteLeaseAgreement(leaseAgreement.id)
-                    .pipe(takeUntilDestroyed(this.destroyRef))
+                    .pipe(takeUntilDestroyed(this.#destroyRef))
                     .subscribe();
             }
         });

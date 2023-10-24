@@ -20,3 +20,11 @@ export class Metadata {
         this.updatedAt = model.updated_at;
     }
 }
+
+export enum MetadataEntityType {
+    SITE = 'sites',
+    PRODUCT = 'products',
+    LEASE = 'lease_agreements',
+    PAYMENT = 'payments',
+    DOCUMENT = 'documents',
+}

@@ -4,9 +4,9 @@ import { RouterModule } from '@angular/router';
 import { FileManagerComponent } from 'app/shared/components/file-manager/file-manager.component';
 
 @Component({
-    selector: 'app-documentation',
+    selector: 'app-lease-documentation',
     standalone: true,
     imports: [CommonModule, RouterModule, FileManagerComponent],
     templateUrl: './documentation.component.html',
 })
-export class DocumentationComponent {}
+export class LeaseDocumentationComponent {}

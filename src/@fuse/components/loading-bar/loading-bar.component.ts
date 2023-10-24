@@ -1,6 +1,7 @@
 import { coerceBooleanProperty } from '@angular/cdk/coercion';
 import { NgIf } from '@angular/common';
 import {
+    ChangeDetectorRef,
     Component,
     Input,
     OnChanges,
@@ -32,7 +33,10 @@ export class FuseLoadingBarComponent implements OnChanges, OnInit, OnDestroy {
     /**
      * Constructor
      */
-    constructor(private _fuseLoadingService: FuseLoadingService) {}
+    constructor(
+        private _fuseLoadingService: FuseLoadingService,
+        private cd: ChangeDetectorRef
+    ) {}
 
     // -----------------------------------------------------------------------------------------------------
     // @ Lifecycle hooks
@@ -74,6 +78,7 @@ export class FuseLoadingBarComponent implements OnChanges, OnInit, OnDestroy {
             .pipe(takeUntil(this._unsubscribeAll))
             .subscribe((value) => {
                 this.show = value;
+                this.cd.detectChanges();
             });
     }
 

@@ -35,6 +35,10 @@ export class UserService extends BaseService {
         );
     }
 
+    getUsersWithRole(roles: string): Observable<ApiResult<User[]>> {
+        return this.all<User[]>({ roles, perPage: 1000 });
+    }
+
     update(user: User): Observable<any> {
         return this.patch<User>(user.id, user).pipe(
             map((response) => {

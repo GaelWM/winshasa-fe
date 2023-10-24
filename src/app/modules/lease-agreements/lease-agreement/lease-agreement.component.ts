@@ -17,6 +17,7 @@ import { Observable, catchError, of, switchMap, tap } from 'rxjs';
 import { MatTabsModule } from '@angular/material/tabs';
 import { MatButtonModule } from '@angular/material/button';
 import { LeaseAgreementsService } from 'app/services/lease-agreements.service.';
+import { MatDialog } from '@angular/material/dialog';
 
 @Component({
     selector: 'app-lease-agreement',
@@ -36,19 +37,20 @@ import { LeaseAgreementsService } from 'app/services/lease-agreements.service.';
     standalone: true,
 })
 export class LeaseAgreementComponent {
-    private _leaseAgreementService = inject(LeaseAgreementsService);
-    private _route = inject(ActivatedRoute);
+    #leaseService = inject(LeaseAgreementsService);
+    #route = inject(ActivatedRoute);
+    #dialog = inject(MatDialog);
 
     background: ThemePalette = 'accent';
 
     private leaseAgreement$: Observable<ApiResult<LeaseAgreement>> =
-        this._route.params.pipe(
+        this.#route.params.pipe(
             switchMap((params) =>
-                this._leaseAgreementService.get<LeaseAgreement>(params['id'])
+                this.#leaseService.get<LeaseAgreement>(params['id'])
             ),
             tap((leaseAgreement: ApiResult<LeaseAgreement>) => {
                 if (leaseAgreement) {
-                    this._leaseAgreementService.selectedLeaseAgreement.set(
+                    this.#leaseService.selectedLeaseAgreement.set(
                         leaseAgreement
                     );
                 }
@@ -65,13 +67,18 @@ export class LeaseAgreementComponent {
     constructor() {
         effect(() => {
             this.leaseAgreementTemp();
-            this.leaseAgreement =
-                this._leaseAgreementService.selectedLeaseAgreement;
+            this.leaseAgreement = this.#leaseService.selectedLeaseAgreement;
         });
     }
 
     onSave(event: Event): void {
         event.preventDefault();
-        this._leaseAgreementService.submitLeaseAgreementForm(true);
+        this.#leaseService.submitLeaseAgreementForm(true);
+    }
+
+    openDetailDialog(): void {
+        const dialogRef = this.#dialog.open(LeaseAgreementComponent, {
+            width: '400px', // Set the width as per your requirements
+        });
     }
 }

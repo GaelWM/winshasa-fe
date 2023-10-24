@@ -6,21 +6,38 @@ export interface ILeaseAgreement {
     type: string;
     status: string;
     propertyId: string;
+    property?: {
+        id: string;
+        name: string;
+    };
     propertyType: PropertyType;
     tenantId: string;
+    tenant?: {
+        id: string;
+        firstName: string;
+        lastName: string;
+        email: string;
+    };
     landlordId: string;
+    landlord?: {
+        id: string;
+        firstName: string;
+        lastName: string;
+        email: string;
+    };
     startDate: Date;
     endDate: Date;
-    dailyRent?: number;
-    monthlyRent?: number;
-    weeklyRent?: number;
-    annualRent?: number;
-    securityDeposit?: number;
     paymentFrequency?: PaymentFrequency;
+    rent?: number;
+    securityDeposit?: number;
     leaseTerm?: string;
     moveInCondition?: string;
     moveOutCondition?: string;
     templateId?: string;
+    template?: {
+        id: string;
+        name: string;
+    };
     isActive: boolean;
     details?: {
         description: string;
@@ -39,21 +56,38 @@ export class LeaseAgreement {
     type: string;
     status: string;
     propertyId: string;
+    property?: {
+        id: string;
+        name: string;
+    };
     propertyType: PropertyType;
     tenantId: string;
+    tenant?: {
+        id: string;
+        firstName: string;
+        lastName: string;
+        email: string;
+    };
     landlordId: string;
+    landlord?: {
+        id: string;
+        firstName: string;
+        lastName: string;
+        email: string;
+    };
     startDate: Date;
     endDate: Date;
-    dailyRent?: number;
-    monthlyRent?: number;
-    weeklyRent?: number;
-    annualRent?: number;
-    securityDeposit?: number;
     paymentFrequency?: PaymentFrequency;
+    rent?: number;
+    securityDeposit?: number;
     leaseTerm?: string;
     moveInCondition?: string;
     moveOutCondition?: string;
     templateId?: string;
+    template?: {
+        id: string;
+        name: string;
+    };
     isActive: boolean;
     details?: {
         description: string;
@@ -72,21 +106,22 @@ export class LeaseAgreement {
         this.type = model.type;
         this.status = model.status;
         this.propertyId = model.propertyId;
+        this.property = model.property;
         this.propertyType = model.propertyType;
         this.tenantId = model.tenantId;
+        this.tenant = model.tenant;
         this.landlordId = model.landlordId;
+        this.landlord = model.landlord;
         this.startDate = model.startDate;
         this.endDate = model.endDate;
-        this.dailyRent = model.dailyRent;
-        this.monthlyRent = model.monthlyRent;
-        this.weeklyRent = model.weeklyRent;
-        this.annualRent = model.annualRent;
-        this.securityDeposit = model.securityDeposit;
         this.paymentFrequency = model.paymentFrequency;
+        this.rent = model.rent;
+        this.securityDeposit = model.securityDeposit;
         this.leaseTerm = model.leaseTerm;
         this.moveInCondition = model.moveInCondition;
         this.moveOutCondition = model.moveOutCondition;
         this.templateId = model.templateId;
+        this.template = model.template;
         this.isActive = model.isActive ?? true;
         this.details = model.details;
         this.createdAt = model.createdAt;
@@ -131,17 +166,29 @@ export enum LeaseAgreementType {
 }
 
 export enum PropertyType {
-    SITE = 'Site',
+    SITE = 'SITE',
     PRODUCT = 'PRODUCT',
-    FLOOR = 'Floor',
-    ROOM = 'Room',
-    BUILDING = 'Building',
-    OTHER = 'Other',
+    OTHER = 'OTHER',
 }
 
 export enum PaymentFrequency {
-    DAILY = 'daily',
-    WEEKLY = 'weekly',
-    MONTHLY = 'monthly',
-    ANNUALLY = 'annually',
+    DAILY = 'DAILY',
+    WEEKLY = 'WEEKLY',
+    BI_WEEKLY = 'BI-WEEKLY',
+    MONTHLY = 'MONTHLY',
+    QUARTERLY = 'QUARTERLY',
+    ANNUALLY = 'ANNUALLY',
+    BI_ANNUALLY = 'BI-ANNUALLY',
+    OTHER = 'OTHER',
 }
+
+export const PaymentFrequencyMap = new Map([
+    [PaymentFrequency.DAILY, 'Daily'],
+    [PaymentFrequency.WEEKLY, 'Weekly'],
+    [PaymentFrequency['BI-WEEKLY'], 'Bi-Weekly'],
+    [PaymentFrequency.MONTHLY, 'Monthly'],
+    [PaymentFrequency.QUARTERLY, 'Quarterly'],
+    [PaymentFrequency.ANNUALLY, 'Annually'],
+    [PaymentFrequency['BI-ANNUALLY'], 'Bi-Annually'],
+    [PaymentFrequency.OTHER, 'Other'],
+]);

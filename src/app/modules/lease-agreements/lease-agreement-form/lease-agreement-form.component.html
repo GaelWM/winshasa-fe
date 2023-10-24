@@ -1,189 +1,412 @@
 <form
-    *ngIf="leaseAgreementForm() as leaseAgreementForm"
+    *ngIf="$leaseForm() as leaseForm"
     #leaseAgreementNgForm="ngForm"
-    (ngSubmit)="onSubmitNewSite(leaseAgreementNgForm)"
-    [formGroup]="leaseAgreementForm"
+    (ngSubmit)="onSubmitNewLeaseAgreement(leaseAgreementNgForm)"
+    [formGroup]="leaseForm"
+    class="w-full flex flex-col flex-auto md:min-w-160 h-full"
 >
-    <div
-        class="flex flex-col flex-auto md:w-160 md:min-w-160 max-h-160 -m-6 overflow-y-auto"
-    >
-        <div
-            class="flex flex-0 items-center justify-between h-16 pr-3 sm:pr-5 pl-6 sm:pl-8 bg-primary text-on-primary"
-        >
-            <div class="text-lg font-medium">{{ data.title }}</div>
-            <button
-                mat-icon-button
-                (click)="onCloseModal($event)"
-                [tabIndex]="-1"
-            >
-                <mat-icon
-                    class="text-current"
-                    [svgIcon]="'heroicons_outline:x-circle'"
-                ></mat-icon>
-            </button>
-        </div>
+    <div class="flex flex-col h-full space-y-3">
+        <fuse-alert [type]="'error'" *ngIf="errors().length > 0" class="w-full">
+            <span fuseAlertTitle>Error</span>
+            <span *ngFor="let error of errors()"> {{ error.message }}</span>
+        </fuse-alert>
 
-        <div
-            class="flex flex-col flex-1 items-start w-full p-6 sm:p-8 space-y-3 overflow-y-auto"
-        >
-            <fuse-alert
-                [type]="'error'"
-                *ngIf="errors().length > 0"
-                class="w-full"
-            >
-                <span fuseAlertTitle>Error</span>
-                <span *ngFor="let error of errors()"> {{ error.message }}</span>
-            </fuse-alert>
-            <mat-form-field [ngClass]="formFieldHelpers" class="w-full">
-                <mat-label>Site Name</mat-label>
-                <input
-                    type="text"
-                    formControlName="name"
-                    matInput
-                    required
-                    [placeholder]="'Site name'"
-                />
-                <mat-hint>Please type in the leaseAgreement name</mat-hint>
-                <mat-error
-                    *ngIf="
-                        leaseAgreementForm.controls?.name?.touched &&
-                        leaseAgreementForm.controls?.name?.invalid
-                    "
-                >
-                    <app-error-form-template
-                        [form]="leaseAgreementForm"
-                        field="name"
-                        name="Site name"
-                    ></app-error-form-template>
-                </mat-error>
-            </mat-form-field>
+        <div class="flex flex-col items-start gap-5">
+            <div class="flex flex items-start gap-5">
+                <div class="w-1/2 space-y-3">
+                    <div class="flex items-start gap-3">
+                        <mat-form-field class="w-full">
+                            <mat-label>Landlord/Owner</mat-label>
+                            <mat-select
+                                formControlName="landlordId"
+                                placeholder="Landlord/Owner"
+                                required
+                            >
+                                <mat-option>Select</mat-option>
+                                <mat-option
+                                    *ngFor="let option of $landlords()"
+                                    [value]="option.id"
+                                    >{{ option.name }}</mat-option
+                                >
+                            </mat-select>
+                            <mat-hint>Please select a Landlord/Owner</mat-hint>
+                            <mat-error
+                                *ngIf="
+                                    leaseForm.controls?.landlordId?.touched &&
+                                    leaseForm.controls?.landlordId?.invalid
+                                "
+                            >
+                                <app-error-form-template
+                                    [form]="leaseForm"
+                                    field="landlordId"
+                                    name="Landlord/Owner"
+                                ></app-error-form-template>
+                            </mat-error>
+                        </mat-form-field>
 
-            <mat-form-field class="w-full">
-                <mat-label>Template</mat-label>
-                <mat-select
-                    formControlName="templateId"
-                    [placeholder]="'Template'"
-                    required
-                >
-                    <mat-option>Select</mat-option>
-                    <mat-option
-                        *ngFor="let option of templateOptions()"
-                        [value]="option.id"
-                        >{{ option.name }}</mat-option
-                    >
-                </mat-select>
-                <mat-hint>Please select a template</mat-hint>
-                <mat-error
-                    *ngIf="
-                        leaseAgreementForm.controls?.name?.touched &&
-                        leaseAgreementForm.controls?.name?.invalid
-                    "
-                >
-                    <app-error-form-template
-                        [form]="leaseAgreementForm"
-                        field="templateId"
-                        name="Site template"
-                    ></app-error-form-template>
-                </mat-error>
-            </mat-form-field>
+                        <mat-form-field class="w-full">
+                            <mat-label>Tenant</mat-label>
+                            <mat-select
+                                formControlName="tenantId"
+                                placeholder="Tenant"
+                                required
+                            >
+                                <mat-option>Select</mat-option>
+                                <mat-option
+                                    *ngFor="let option of $tenants()"
+                                    [value]="option.id"
+                                    >{{ option.name }}</mat-option
+                                >
+                            </mat-select>
+                            <mat-hint>Please select a Tenant</mat-hint>
+                            <mat-error
+                                *ngIf="
+                                    leaseForm.controls?.tenantId?.touched &&
+                                    leaseForm.controls?.tenantId?.invalid
+                                "
+                            >
+                                <app-error-form-template
+                                    [form]="leaseForm"
+                                    field="tenantId"
+                                    name="Tenant"
+                                ></app-error-form-template>
+                            </mat-error>
+                        </mat-form-field>
+                    </div>
+                    <div class="flex items-start gap-3">
+                        <mat-form-field class="w-full">
+                            <mat-label>Lease Type</mat-label>
+                            <mat-select
+                                formControlName="type"
+                                placeholder="Lease Type"
+                                required
+                            >
+                                <mat-option>Select</mat-option>
+                                <mat-option
+                                    *ngFor="let option of $types()"
+                                    [value]="option.name"
+                                    >{{ option.name }}</mat-option
+                                >
+                            </mat-select>
+                            <mat-hint>Please select a Lease Type</mat-hint>
+                            <mat-error
+                                *ngIf="
+                                    leaseForm.controls?.type?.touched &&
+                                    leaseForm.controls?.type?.invalid
+                                "
+                            >
+                                <app-error-form-template
+                                    [form]="leaseForm"
+                                    field="type"
+                                    name="Lease Type"
+                                ></app-error-form-template>
+                            </mat-error>
+                        </mat-form-field>
+                    </div>
 
-            <mat-form-field class="w-full">
-                <mat-label>Site type</mat-label>
-                <mat-select
-                    formControlName="type"
-                    [placeholder]="'Site type'"
-                    required
-                >
-                    <mat-option>Select</mat-option>
-                    <mat-option
-                        *ngFor="let option of leaseAgreementTypeOptions()"
-                        [value]="option.name"
-                        >{{ option.name }}</mat-option
-                    >
-                </mat-select>
-                <mat-hint>Please select a type</mat-hint>
-                <mat-error
-                    *ngIf="
-                        leaseAgreementForm.controls?.name?.touched &&
-                        leaseAgreementForm.controls?.name?.invalid
-                    "
-                >
-                    <app-error-form-template
-                        [form]="leaseAgreementForm"
-                        field="type"
-                        name="Site type"
-                    ></app-error-form-template>
-                </mat-error>
-            </mat-form-field>
+                    <div class="flex items-start gap-3">
+                        <mat-form-field class="w-full">
+                            <mat-label>Property Type</mat-label>
+                            <mat-select
+                                formControlName="propertyType"
+                                placeholder="Property Type"
+                                required
+                            >
+                                <mat-option>Select</mat-option>
+                                <mat-option
+                                    *ngFor="let option of $propertyTypes()"
+                                    [value]="option.name"
+                                    >{{ option.name }}</mat-option
+                                >
+                            </mat-select>
+                            <mat-hint>Please select a Property Type</mat-hint>
+                            <mat-error
+                                *ngIf="
+                                    leaseForm.controls?.propertyType?.touched &&
+                                    leaseForm.controls?.propertyType?.invalid
+                                "
+                            >
+                                <app-error-form-template
+                                    [form]="leaseForm"
+                                    field="propertyType"
+                                    name="Property Type"
+                                ></app-error-form-template>
+                            </mat-error>
+                        </mat-form-field>
 
-            <mat-form-field class="w-full">
-                <mat-label>Site status</mat-label>
-                <mat-select
-                    formControlName="status"
-                    [placeholder]="'Site status'"
-                    required
-                >
-                    <mat-option>Select</mat-option>
-                    <mat-option
-                        *ngFor="let option of leaseAgreementStatusOptions()"
-                        [value]="option.name"
-                        >{{ option.name }}</mat-option
-                    >
-                </mat-select>
-                <mat-hint>Please select a status</mat-hint>
-                <mat-error
-                    *ngIf="
-                        leaseAgreementForm.controls?.name?.touched &&
-                        leaseAgreementForm.controls?.name?.invalid
-                    "
-                >
-                    <app-error-form-template
-                        [form]="leaseAgreementForm"
-                        field="status"
-                        name="Site status"
-                    ></app-error-form-template>
-                </mat-error>
-            </mat-form-field>
-            <div class="w-full flex justify-between items-center gap-4">
-                <mat-form-field [ngClass]="formFieldHelpers" class="w-full">
-                    <mat-label>Site latitude</mat-label>
-                    <input
-                        type="number"
-                        formControlName="latitude"
-                        matInput
-                        [placeholder]="'Site latitude'"
-                    />
-                    <mat-hint
-                        >Please type in the leaseAgreement latitude
-                    </mat-hint>
-                </mat-form-field>
-                <mat-form-field [ngClass]="formFieldHelpers" class="w-full">
-                    <mat-label>Site Longitude</mat-label>
-                    <input
-                        type="number"
-                        formControlName="longitude"
-                        matInput
-                        [placeholder]="'Site longitude'"
-                    />
-                    <mat-hint
-                        >Please type in the leaseAgreement longitude</mat-hint
-                    >
-                </mat-form-field>
+                        <mat-form-field class="w-full">
+                            <mat-label>Property</mat-label>
+                            <mat-select
+                                formControlName="propertyId"
+                                placeholder="Property"
+                                required
+                            >
+                                <mat-option>Select</mat-option>
+                                <mat-option
+                                    *ngFor="let option of $properties()"
+                                    [value]="option.id"
+                                    >{{ option.name }}</mat-option
+                                >
+                            </mat-select>
+                            <mat-hint>Please select a Property</mat-hint>
+                            <mat-error
+                                *ngIf="
+                                    leaseForm.controls?.propertyId?.touched &&
+                                    leaseForm.controls?.propertyId?.invalid
+                                "
+                            >
+                                <app-error-form-template
+                                    [form]="leaseForm"
+                                    field="propertyId"
+                                    name="Property"
+                                ></app-error-form-template>
+                            </mat-error>
+                        </mat-form-field>
+                    </div>
+
+                    <div class="flex items-start gap-3">
+                        <mat-form-field class="w-full">
+                            <mat-label>Lease Status</mat-label>
+                            <mat-select
+                                formControlName="status"
+                                placeholder="Lease Status"
+                                required
+                            >
+                                <mat-option>Select</mat-option>
+                                <mat-option
+                                    *ngFor="let option of $statuses()"
+                                    [value]="option.name"
+                                    >{{ option.name }}</mat-option
+                                >
+                            </mat-select>
+                            <mat-hint>Please select a Lease Status</mat-hint>
+                            <mat-error
+                                *ngIf="
+                                    leaseForm.controls?.status?.touched &&
+                                    leaseForm.controls?.status?.invalid
+                                "
+                            >
+                                <app-error-form-template
+                                    [form]="leaseForm"
+                                    field="status"
+                                    name="Lease Status"
+                                ></app-error-form-template>
+                            </mat-error>
+                        </mat-form-field>
+
+                        <mat-form-field class="w-full">
+                            <mat-label>Lease Template</mat-label>
+                            <mat-select
+                                formControlName="templateId"
+                                placeholder="Lease Template"
+                            >
+                                <mat-option>Select</mat-option>
+                                <mat-option
+                                    *ngFor="let option of $templateOpts()"
+                                    [value]="option.id"
+                                    >{{ option.name }}</mat-option
+                                >
+                            </mat-select>
+                            <mat-hint>Please select a Lease Template</mat-hint>
+                            <mat-error
+                                *ngIf="
+                                    leaseForm.controls?.templateId?.touched &&
+                                    leaseForm.controls?.templateId?.invalid
+                                "
+                            >
+                                <app-error-form-template
+                                    [form]="leaseForm"
+                                    field="templateId"
+                                    name="Lease Template"
+                                ></app-error-form-template>
+                            </mat-error>
+                        </mat-form-field>
+                    </div>
+
+                    <div class="flex items-start gap-3">
+                        <mat-form-field
+                            [ngClass]="formFieldHelpers"
+                            class="w-full"
+                        >
+                            <mat-label>Rent Amount</mat-label>
+                            <input
+                                type="number"
+                                formControlName="rent"
+                                matInput
+                                placeholder="Rent Amount"
+                            />
+                            <mat-hint>Please type in the Rent Amount </mat-hint>
+                            <mat-error
+                                *ngIf="
+                                    leaseForm.controls?.rent?.touched &&
+                                    leaseForm.controls?.rent?.invalid
+                                "
+                            >
+                                <app-error-form-template
+                                    [form]="leaseForm"
+                                    field="rent"
+                                    name="Rent Amount"
+                                ></app-error-form-template>
+                            </mat-error>
+                        </mat-form-field>
+
+                        <mat-form-field
+                            [ngClass]="formFieldHelpers"
+                            class="w-full"
+                        >
+                            <mat-label>Security Deposit</mat-label>
+                            <input
+                                type="number"
+                                formControlName="securityDeposit"
+                                matInput
+                                placeholder="Security Deposit"
+                            />
+                            <mat-hint
+                                >Please type in the Security Deposit
+                            </mat-hint>
+                            <mat-error
+                                *ngIf="
+                                    leaseForm.controls?.securityDeposit
+                                        ?.touched &&
+                                    leaseForm.controls?.securityDeposit?.invalid
+                                "
+                            >
+                                <app-error-form-template
+                                    [form]="leaseForm"
+                                    field="securityDeposit"
+                                    name="Security Deposit"
+                                ></app-error-form-template>
+                            </mat-error>
+                        </mat-form-field>
+                    </div>
+
+                    <div class="flex flex-col gap-1 w-full">
+                        <label id="paymentFrequency"
+                            >Pick the lease payment frequency</label
+                        >
+                        <mat-radio-group
+                            aria-label="Select an option"
+                            aria-labelledby="paymentFrequency"
+                            formControlName="paymentFrequency"
+                            class="grid grid-cols-4 gap-1 w-full"
+                        >
+                            <mat-radio-button
+                                *ngFor="let option of paymentFrequencyOpts"
+                                [value]="option"
+                                [color]="'primary'"
+                                class="text-xs"
+                                >{{ option }}</mat-radio-button
+                            >
+                        </mat-radio-group>
+                        <mat-error
+                            *ngIf="
+                                leaseForm.controls?.paymentFrequency?.touched &&
+                                leaseForm.controls?.paymentFrequency?.invalid
+                            "
+                        >
+                            <app-error-form-template
+                                [form]="leaseForm"
+                                field="paymentFrequency"
+                                name="Lease Template"
+                            ></app-error-form-template>
+                        </mat-error>
+                    </div>
+                </div>
+                <div class="w-1/2 space-y-3">
+                    <mat-form-field class="w-full">
+                        <mat-label>Lease Date</mat-label>
+                        <mat-date-range-input [rangePicker]="picker">
+                            <input
+                                matStartDate
+                                placeholder="Start date"
+                                formControlName="startDate"
+                            />
+                            <input
+                                matEndDate
+                                placeholder="End date"
+                                formControlName="endDate"
+                            />
+                        </mat-date-range-input>
+                        <mat-hint>MM/DD/YYYY – MM/DD/YYYY</mat-hint>
+                        <mat-datepicker-toggle
+                            matIconSuffix
+                            [for]="picker"
+                        ></mat-datepicker-toggle>
+                        <mat-date-range-picker #picker></mat-date-range-picker>
+                        <mat-error
+                            *ngIf="
+                                leaseForm.controls.startDate.hasError(
+                                    'matStartDateInvalid'
+                                )
+                            "
+                            >Invalid start date</mat-error
+                        >
+                        <mat-error
+                            *ngIf="
+                                leaseForm.controls.endDate.hasError(
+                                    'matEndDateInvalid'
+                                )
+                            "
+                            >Invalid end date</mat-error
+                        >
+                    </mat-form-field>
+
+                    <mat-form-field class="w-full">
+                        <mat-label>Lease Terms</mat-label>
+                        <textarea
+                            matInput
+                            placeholder="Lease Terms"
+                            name="leaseTerm"
+                            formControlName="leaseTerm"
+                            [rows]="2"
+                        >
+                        </textarea>
+                        <mat-hint>Please enter Lease Terms</mat-hint>
+                    </mat-form-field>
+
+                    <mat-form-field class="w-full">
+                        <mat-label>Move In Conditions</mat-label>
+                        <textarea
+                            matInput
+                            placeholder="Move In Conditions"
+                            name="moveInCondition"
+                            formControlName="moveInCondition"
+                            [rows]="2"
+                        >
+                        </textarea>
+                        <mat-hint>Please enter Move In Conditions</mat-hint>
+                    </mat-form-field>
+
+                    <mat-form-field class="w-full">
+                        <mat-label>Move Out Conditions</mat-label>
+                        <textarea
+                            matInput
+                            placeholder="Move Out Conditions"
+                            name="moveOutCondition"
+                            formControlName="moveOutCondition"
+                            [rows]="2"
+                        >
+                        </textarea>
+                        <mat-hint>Please enter Move Out Conditions</mat-hint>
+                    </mat-form-field>
+                </div>
             </div>
         </div>
-        <div
-            class="flex items-center justify-end border-t px-8 py-5 bg-gray-50 dark:bg-gray-700"
+    </div>
+
+    <!-- Footer -->
+    <div
+        *ngIf="showSaveButton"
+        class="w-full flex items-center justify-end border-t p-2 pb-0 border-gray-50 dark:border-gray-700"
+    >
+        <button
+            type="submit"
+            class=""
+            mat-flat-button
+            [color]="'primary'"
+            [disabled]="!leaseForm.valid"
         >
-            <button mat-button (click)="onCloseModal($event)">Close</button>
-            <button
-                type="submit"
-                class="px-6 ml-3"
-                mat-flat-button
-                [color]="'primary'"
-                [disabled]="!leaseAgreementForm.valid"
-            >
-                Save
-            </button>
-        </div>
+            Save
+        </button>
     </div>
 </form>

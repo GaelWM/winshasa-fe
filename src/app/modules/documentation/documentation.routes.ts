@@ -111,6 +111,22 @@ const canDeactivateFileManagerDetails = (
     return component.closeDrawer().then(() => true);
 };
 
+/**
+ * File manager settings resolver
+ *
+ * @param route
+ * @param state
+ */
+const settingsResolver = (
+    route: ActivatedRouteSnapshot,
+    state: RouterStateSnapshot
+) => {
+    return {
+        folderId: route.params.folderId,
+        routePrefix: 'documentation',
+    };
+};
+
 export default [
     {
         path: '',
@@ -124,6 +140,7 @@ export default [
                 },
                 resolve: {
                     item: folderResolver,
+                    fileManagerSettings: settingsResolver,
                 },
                 children: [
                     {
@@ -131,6 +148,7 @@ export default [
                         component: FileManagerDetailsComponent,
                         resolve: {
                             item: itemResolver,
+                            fileManagerSettings: settingsResolver,
                         },
                         canDeactivate: [canDeactivateFileManagerDetails],
                     },
@@ -144,6 +162,7 @@ export default [
                 },
                 resolve: {
                     items: () => inject(FileManagerService).getItems(),
+                    fileManagerSettings: settingsResolver,
                 },
                 children: [
                     {
@@ -151,6 +170,7 @@ export default [
                         component: FileManagerDetailsComponent,
                         resolve: {
                             item: itemResolver,
+                            fileManagerSettings: settingsResolver,
                         },
                         canDeactivate: [canDeactivateFileManagerDetails],
                     },

@@ -1,3 +1,7 @@
 .mat-tab-label-active {
     border-bottom: 3px solid #f59e0b !important;
 }
+
+.mat-mdc-tab-group .mat-mdc-tab-header .mat-mdc-tab-label-container {
+    @apply m-0;
+}

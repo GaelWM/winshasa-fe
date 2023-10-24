@@ -1,0 +1,46 @@
+<div class="w-full">
+    <!-- Header -->
+    <div
+        class="flex flex-0 items-center justify-between h-16 pr-3 sm:pr-5 pl-6 sm:pl-8 bg-primary text-on-primary"
+    >
+        <div class="text-lg font-medium">{{ data.title }}</div>
+        <button mat-icon-button (click)="onCloseModal($event)" [tabIndex]="-1">
+            <mat-icon
+                class="text-current"
+                [svgIcon]="'heroicons_outline:x-circle'"
+            ></mat-icon>
+        </button>
+    </div>
+
+    <!-- Content -->
+    <div
+        class="flex flex-col flex-1 items-start w-full p-6 sm:p-8 space-y-3 overflow-y-auto"
+    >
+        <ng-container #contentContainer></ng-container>
+    </div>
+
+    <!-- Footer -->
+    <div
+        class="w-full flex items-center justify-end border-t p-3 bg-gray-50 dark:bg-gray-700"
+    >
+        <button
+            *ngIf="data?.showCloseButton ?? true"
+            mat-button
+            (click)="onCloseModal($event)"
+        >
+            Close
+        </button>
+        <button
+            type="submit"
+            class="px-6 ml-3"
+            mat-flat-button
+            [color]="'primary'"
+            (click)="onSubmitClick($event)"
+            [disabled]="!formComponent?.instance?.form.form?.valid"
+        >
+            Save
+        </button>
+
+        <!-- <ng-container *ngTemplateOutlet="modalFooter"></ng-container> -->
+    </div>
+</div>

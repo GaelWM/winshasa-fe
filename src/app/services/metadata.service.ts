@@ -1,6 +1,6 @@
 import { Injectable, WritableSignal, computed, signal } from '@angular/core';
 import { BaseService } from 'app/services/base.service';
-import { ApiResult, Metadata } from 'app/shared/models';
+import { ApiResult, Metadata, MetadataEntityType } from 'app/shared/models';
 import { toWritableSignal } from 'app/shared/utils/common.util';
 import { Observable, tap } from 'rxjs';
 
@@ -12,7 +12,7 @@ export class MetadataService extends BaseService {
         super('metadata');
     }
 
-    metadata$ = this.all<Metadata[]>({ perPage: 100 });
+    metadata$ = this.all<Metadata[]>({ perPage: 10000 });
     metadata = toWritableSignal(this.metadata$, {} as ApiResult<Metadata[]>);
 
     selectedMetadata: WritableSignal<ApiResult<Metadata>> = signal(
@@ -48,6 +48,17 @@ export class MetadataService extends BaseService {
                 name: t.value,
             }));
     });
+
+    getComputedOptions = (type: string, entityType: MetadataEntityType) =>
+        computed(() => {
+            const metadata = this.metadata()?.data as Metadata[];
+            return metadata
+                ?.filter((t) => t.type === type && t.entity === entityType)
+                .map((t) => ({
+                    id: t.id,
+                    name: t.value,
+                }));
+        });
 
     storeMetadata(payload: Metadata): Observable<ApiResult<Metadata>> {
         return this.post<Metadata>(payload).pipe(

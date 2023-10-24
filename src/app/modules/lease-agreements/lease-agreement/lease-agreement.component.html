@@ -1,5 +1,5 @@
 <div
-    class="absolute inset-0 flex flex-col min-w-0 overflow-hidden"
+    class="relative w-full flex flex-col min-w-0 overflow-hidden"
     *ngIf="leaseAgreement().data as leaseAgreement"
 >
     <div
@@ -12,7 +12,7 @@
                         <a
                             class="whitespace-nowrap text-primary-500"
                             [routerLink]="'./..'"
-                            >lease agreements</a
+                            >Lease Agreement</a
                         >
                     </div>
 
@@ -22,7 +22,7 @@
                             [svgIcon]="'heroicons_solid:chevron-right'"
                         ></mat-icon>
                         <span class="ml-1 text-secondary">{{
-                            leaseAgreement?.name
+                            leaseAgreement?.type
                         }}</span>
                     </div>
                 </div>
@@ -44,25 +44,9 @@
                 <h2
                     class="text-3xl md:text-4xl font-extrabold tracking-tight leading-7 sm:leading-10 truncate"
                 >
-                    {{ leaseAgreement?.name }}
+                    {{ leaseAgreement?.type }}
                 </h2>
             </div>
-        </div>
-        <!-- Actions -->
-        <div class="flex shrink-0 items-center mt-6 sm:mt-0 sm:ml-4">
-            <button
-                mat-stroked-button
-                type="submit"
-                [color]="'secondary'"
-                form="ngForm"
-                (click)="onSave($event)"
-            >
-                <mat-icon
-                    class="icon-size-7 pr-2"
-                    [svgIcon]="'heroicons_outline:plus-circle'"
-                ></mat-icon>
-                Save
-            </button>
         </div>
     </div>
 

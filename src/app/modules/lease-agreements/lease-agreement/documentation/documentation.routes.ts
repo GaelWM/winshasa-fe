@@ -10,7 +10,7 @@ import { FileManagerService } from 'app/shared/components/file-manager/file-mana
 import { DocumentOwnerType } from 'app/shared/components/file-manager/file-manager.types';
 import { FileManagerDetailsComponent } from 'app/shared/components/file-manager/details/details.component';
 import { FileManagerListComponent } from 'app/shared/components/file-manager/list/list.component';
-import { DocumentationComponent } from './documentation.component';
+import { LeaseDocumentationComponent } from './documentation.component';
 import { LeaseAgreementsService } from 'app/services/lease-agreements.service.';
 import { LeaseAgreement } from 'app/shared/models';
 
@@ -145,7 +145,7 @@ const settingsResolver = (
 export default [
     {
         path: '',
-        component: DocumentationComponent,
+        component: LeaseDocumentationComponent,
         children: [
             {
                 path: 'folders/:folderId',

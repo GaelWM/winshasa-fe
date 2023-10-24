@@ -107,13 +107,17 @@
                         </ng-container>
 
                         <ng-container *ngSwitchCase="'permissions'">
-                            <mat-chip-listbox aria-label="User permissions">
+                            <mat-chip-listbox
+                                aria-label="User permissions"
+                                class=""
+                            >
                                 <mat-chip-option
-                                    color="primary"
+                                    color="secondary"
+                                    [selected]="true"
                                     *ngFor="
                                         let permission of user().permissions
                                     "
-                                    >{{ permission }}</mat-chip-option
+                                    >{{ permission.name }}</mat-chip-option
                                 >
                             </mat-chip-listbox>
                         </ng-container>

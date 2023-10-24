@@ -1,12 +1,18 @@
-import { CommonModule } from '@angular/common';
+import { CommonModule, formatDate } from '@angular/common';
 import {
+    AfterViewInit,
     Component,
+    DestroyRef,
+    Input,
+    ViewChild,
+    ViewEncapsulation,
     WritableSignal,
     computed,
+    effect,
     inject,
     signal,
 } from '@angular/core';
-import { toSignal } from '@angular/core/rxjs-interop';
+import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import {
     FormBuilder,
     FormsModule,
@@ -16,26 +22,42 @@ import {
 } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCheckboxModule } from '@angular/material/checkbox';
-import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import { MAT_DATE_LOCALE } from '@angular/material/core';
+import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
+import { MatMenuModule } from '@angular/material/menu';
+import { MatRadioModule } from '@angular/material/radio';
 import { MatSelectModule } from '@angular/material/select';
+import { MatTabsModule } from '@angular/material/tabs';
+import { MatTooltipModule } from '@angular/material/tooltip';
 import { FuseAlertComponent } from '@fuse/components/alert';
 import { LeaseAgreementsService } from 'app/services/lease-agreements.service.';
 import { MetadataService } from 'app/services/metadata.service';
+import { ProductsService } from 'app/services/products.service';
+import { SitesService } from 'app/services/sites.service';
 import { TemplatesService } from 'app/services/templates.service';
+import { UserService } from 'app/services/user.service';
 import { ErrorFormTemplateComponent } from 'app/shared/components/error-form-template/error-form-template.component';
+import { WinFormBuilder } from 'app/shared/components/modal-template/modal-template.component';
+import { ModalTemplateService } from 'app/shared/components/modal-template/modal-template.service';
 import {
     FormError,
-    Metadata,
     LeaseAgreement,
     Template,
+    User,
+    MetadataEntityType,
+    Product,
+    Site,
+    PaymentFrequency,
 } from 'app/shared/models';
+import { catchError, map, of } from 'rxjs';
 
 @Component({
     selector: 'app-lease-agreement-form',
     templateUrl: './lease-agreement-form.component.html',
+    styleUrls: ['./lease-agreement-form.component.scss'],
     imports: [
         CommonModule,
         MatIconModule,
@@ -47,30 +69,48 @@ import {
         MatInputModule,
         MatCheckboxModule,
         MatSelectModule,
+        MatDatepickerModule,
         FuseAlertComponent,
+        MatRadioModule,
         ErrorFormTemplateComponent,
+        MatMenuModule,
+        MatTooltipModule,
+        MatTabsModule,
     ],
+    providers: [{ provide: MAT_DATE_LOCALE, useValue: 'fr-FR' }],
     standalone: true,
+    encapsulation: ViewEncapsulation.None,
 })
-export class LeaseAgreementFormComponent {
-    public data = inject(MAT_DIALOG_DATA) as {
-        title: string;
-        leaseAgreement: LeaseAgreement;
-        action: string;
-    };
-    public dialogRef = inject(MatDialogRef<LeaseAgreementFormComponent>);
-    private _templatesService = inject(TemplatesService);
-    private _leaseAgreementService = inject(LeaseAgreementsService);
-    private _metadataService = inject(MetadataService);
-    private _formBuilder = inject(FormBuilder);
+export class LeaseAgreementFormComponent
+    extends WinFormBuilder
+    implements AfterViewInit
+{
+    #templatesService = inject(TemplatesService);
+    #formBuilder = inject(FormBuilder);
+    #userService = inject(UserService);
+    #metadataService = inject(MetadataService);
+    #productsService = inject(ProductsService);
+    #sitesService = inject(SitesService);
+    #leaseService = inject(LeaseAgreementsService);
+    #modalService = inject(ModalTemplateService);
+    #destroyRef = inject(DestroyRef);
+
+    @Input() showSaveButton = false;
+
+    @ViewChild('leaseAgreementNgForm') _form: NgForm;
+    form: NgForm = {} as NgForm;
 
     formFieldHelpers: string = '';
     submitted: boolean = false;
-    errors: WritableSignal<FormError[]> = signal([]);
+    paymentFrequency = PaymentFrequency;
+    paymentFrequencyOpts = Object.values(PaymentFrequency);
 
-    leaseAgreementForm = computed(() => {
-        const leaseAgreement = this.data.leaseAgreement;
-        return this._formBuilder.group({
+    errors: WritableSignal<FormError[]> = signal([]);
+    $leaseForm = computed(() => {
+        const leaseAgreement = this.#leaseService.selectedLeaseAgreement()
+            .data as LeaseAgreement;
+
+        return this.#formBuilder.group({
             id: [leaseAgreement?.id ?? ''],
             type: [leaseAgreement?.type ?? '', [Validators.required]],
             status: [leaseAgreement?.status ?? '', [Validators.required]],
@@ -80,62 +120,137 @@ export class LeaseAgreementFormComponent {
             landlordId: [leaseAgreement?.landlordId ?? ''],
             startDate: [leaseAgreement?.startDate ?? ''],
             endDate: [leaseAgreement?.endDate ?? ''],
-            dailyRent: [leaseAgreement?.dailyRent ?? ''],
-            monthlyRent: [leaseAgreement?.monthlyRent ?? ''],
-            weeklyRent: [leaseAgreement?.weeklyRent ?? ''],
-            annualRent: [leaseAgreement?.annualRent ?? ''],
-            securityDeposit: [leaseAgreement?.securityDeposit ?? ''],
             paymentFrequency: [leaseAgreement?.paymentFrequency ?? ''],
+            rent: [leaseAgreement?.rent ?? ''],
+            securityDeposit: [leaseAgreement?.securityDeposit ?? ''],
             leaseTerm: [leaseAgreement?.leaseTerm ?? ''],
             moveInCondition: [leaseAgreement?.moveInCondition ?? ''],
             moveOutCondition: [leaseAgreement?.moveOutCondition ?? ''],
             templateId: [leaseAgreement?.templateId ?? ''],
             isActive: [leaseAgreement?.isActive ?? true],
-            details: this._formBuilder.group({
+            details: this.#formBuilder.group({
                 description: [leaseAgreement?.details?.description ?? ''],
             }),
         });
     });
 
-    templates$ = this._templatesService.all<Template[]>({ perPage: 100 });
-    templates = toSignal(this.templates$);
+    #templates$ = this.#templatesService.all<Template[]>({ perPage: 100 });
+    $templates = toSignal(this.#templates$);
 
-    metadata$ = this._metadataService.all<Metadata[]>({ perPage: 100 });
-    metadata = toSignal(this.metadata$);
-
-    templateOptions = computed(() => {
-        const templates = this.templates()?.data as Template[];
+    $templateOpts = computed(() => {
+        const templates = this.$templates()?.data as Template[];
         return templates
-            ?.filter((t) => t.type === 'LeaseAgreement')
-            .map((t) => ({
-                id: t.id,
-                name: t.name,
-            }));
+            ?.filter((t) => t.type === MetadataEntityType.LEASE)
+            .map((t) => ({ id: t.id, name: t.name }));
     });
 
-    leaseAgreementTypeOptions = computed(() => {
-        const metadata = this.metadata()?.data as Metadata[];
-        return metadata
-            ?.filter((t) => t.type === 'type' && t.entity === 'Lease')
-            .map((t) => ({
-                id: t.id,
-                name: t.value,
-            }));
+    #users$ = this.#userService.getUsersWithRole('landlord,tenant').pipe(
+        takeUntilDestroyed(),
+        map((d) => d.data as User[]),
+        catchError(() => of([] as User[]))
+    );
+
+    #landlord$ = this.#users$.pipe(
+        map((users) => users.filter((user) => user.roles.includes('landlord'))),
+        map((users) => users.map((u) => ({ id: u.id, name: u.fullName })))
+    );
+
+    #tenant$ = this.#users$.pipe(
+        map((users) => users.filter((user) => user.roles.includes('tenant'))),
+        map((users) => users.map((u) => ({ id: u.id, name: u.fullName })))
+    );
+
+    $tenants = toSignal(this.#tenant$, {
+        initialValue: [] as { id: string; name: string }[],
+    });
+    $landlords = toSignal(this.#landlord$, {
+        initialValue: [] as { id: string; name: string }[],
     });
 
-    leaseAgreementStatusOptions = computed(() => {
-        const metadata = this.metadata()?.data as Metadata[];
-        return metadata
-            ?.filter((t) => t.type === 'status' && t.entity === 'Lease')
-            .map((t) => ({
-                id: t.id,
-                name: t.value,
-            }));
+    $types = this.#metadataService.getComputedOptions(
+        'type',
+        MetadataEntityType.LEASE
+    );
+    $propertyTypes = this.#metadataService.getComputedOptions(
+        'propertyType',
+        MetadataEntityType.LEASE
+    );
+    $statuses = this.#metadataService.getComputedOptions(
+        'status',
+        MetadataEntityType.LEASE
+    );
+
+    #products$ = this.#productsService.all({ perPage: 100 }).pipe(
+        takeUntilDestroyed(),
+        map((d) => d.data as Product[]),
+        map((products) => products.map((p) => ({ id: p.id, name: p.name }))),
+        catchError(() => of([] as { id: string; name: string }[]))
+    );
+    $products = toSignal(this.#products$, {
+        initialValue: [] as { id: string; name: string }[],
     });
+    #sites$ = this.#sitesService.all({ perPage: 100 }).pipe(
+        takeUntilDestroyed(),
+        map((d) => d.data as Site[]),
+        map((sites) => sites.map((s) => ({ id: s.id, name: s.name }))),
+        catchError(() => of([] as { id: string; name: string }[]))
+    );
+    $sites = toSignal(this.#sites$, {
+        initialValue: [] as { id: string; name: string }[],
+    });
+    $properties: WritableSignal<{ id: string; name: string }[]> = signal([]);
+
+    constructor() {
+        super();
+        effect(
+            () => {
+                this.$leaseForm()
+                    .valueChanges.pipe(takeUntilDestroyed(this.#destroyRef))
+                    .subscribe((value) => this.onValuesChange(value));
+            },
+            { allowSignalWrites: true }
+        );
+        effect(
+            () => {
+                const leaseAgreement =
+                    this.#leaseService.selectedLeaseAgreement()
+                        .data as LeaseAgreement;
+                leaseAgreement && this.onValuesChange(leaseAgreement);
+            },
+            { allowSignalWrites: true }
+        );
+    }
+
+    ngAfterViewInit(): void {
+        this.form = this._form;
+    }
+
+    onValuesChange(formData: any): void {
+        if (formData.propertyType === 'SITE') {
+            this.$properties.set(this.$sites());
+        }
+        if (formData.propertyType === 'PRODUCT') {
+            this.$properties.set(this.$products());
+        }
+    }
 
     onSubmitNewLeaseAgreement(leaseAgreementForm: NgForm): void {
         this.submitted = true;
-        if (this.data.action === 'edit' && this.data.leaseAgreement.id) {
+        leaseAgreementForm.value.startDate = formatDate(
+            leaseAgreementForm.value.startDate,
+            'yyyy-MM-dd',
+            'en-US'
+        );
+        leaseAgreementForm.value.endDate = formatDate(
+            leaseAgreementForm.value.endDate,
+            'yyyy-MM-dd',
+            'en-US'
+        );
+
+        const leaseAgreement = this.#leaseService.selectedLeaseAgreement()
+            .data as LeaseAgreement;
+
+        if (leaseAgreement?.id) {
             this.editLeaseAgreement(leaseAgreementForm);
         } else {
             this.addLeaseAgreement(leaseAgreementForm);
@@ -143,11 +258,11 @@ export class LeaseAgreementFormComponent {
     }
 
     private addLeaseAgreement(leaseAgreementForm: NgForm): void {
-        this._leaseAgreementService
+        this.#leaseService
             .storeLeaseAgreement(leaseAgreementForm.value)
             .subscribe({
                 next: () => {
-                    this.dialogRef.close();
+                    this.#modalService.closeModal();
                 },
                 error: (err) => {
                     if (err?.error) {
@@ -161,14 +276,13 @@ export class LeaseAgreementFormComponent {
     }
 
     private editLeaseAgreement(leaseAgreementForm: NgForm): void {
-        this._leaseAgreementService
-            .updateLeaseAgreement(
-                this.data.leaseAgreement.id,
-                leaseAgreementForm.value
-            )
+        const leaseAgreement = this.#leaseService.selectedLeaseAgreement()
+            .data as LeaseAgreement;
+        this.#leaseService
+            .updateLeaseAgreement(leaseAgreement.id, leaseAgreementForm.value)
             .subscribe({
                 next: () => {
-                    this.dialogRef.close();
+                    this.#modalService.closeModal();
                 },
                 error: (err) => {
                     if (err?.error) {
@@ -179,11 +293,5 @@ export class LeaseAgreementFormComponent {
                     }
                 },
             });
-    }
-
-    onCloseModal(event: Event): void {
-        event.preventDefault();
-        event.stopImmediatePropagation();
-        this.dialogRef.close('modal closed');
     }
 }
