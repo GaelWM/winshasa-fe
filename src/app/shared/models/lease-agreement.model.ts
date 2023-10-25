@@ -1,5 +1,6 @@
 import { DocModel } from './file-manager.model';
 import { v4 as uuidv4 } from 'uuid';
+import { PaymentFrequency } from './payment.model';
 
 export interface ILeaseAgreement {
     id?: string;
@@ -170,25 +171,3 @@ export enum PropertyType {
     PRODUCT = 'PRODUCT',
     OTHER = 'OTHER',
 }
-
-export enum PaymentFrequency {
-    DAILY = 'DAILY',
-    WEEKLY = 'WEEKLY',
-    BI_WEEKLY = 'BI-WEEKLY',
-    MONTHLY = 'MONTHLY',
-    QUARTERLY = 'QUARTERLY',
-    ANNUALLY = 'ANNUALLY',
-    BI_ANNUALLY = 'BI-ANNUALLY',
-    OTHER = 'OTHER',
-}
-
-export const PaymentFrequencyMap = new Map([
-    [PaymentFrequency.DAILY, 'Daily'],
-    [PaymentFrequency.WEEKLY, 'Weekly'],
-    [PaymentFrequency['BI-WEEKLY'], 'Bi-Weekly'],
-    [PaymentFrequency.MONTHLY, 'Monthly'],
-    [PaymentFrequency.QUARTERLY, 'Quarterly'],
-    [PaymentFrequency.ANNUALLY, 'Annually'],
-    [PaymentFrequency['BI-ANNUALLY'], 'Bi-Annually'],
-    [PaymentFrequency.OTHER, 'Other'],
-]);

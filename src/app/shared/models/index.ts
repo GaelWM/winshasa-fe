@@ -8,3 +8,4 @@ export * from './site.model';
 export * from './file-manager.model';
 export * from './user.model';
 export * from './app.model';
+export * from './payment.model';

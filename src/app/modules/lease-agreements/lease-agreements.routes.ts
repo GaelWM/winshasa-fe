@@ -21,6 +21,13 @@ export default [
                     ).then((m) => m.GeneralDetailsComponent),
             },
             {
+                path: 'payments',
+                loadComponent: () =>
+                    import(
+                        './lease-agreement/lease-payment/lease-payment.component'
+                    ).then((m) => m.LeasePaymentComponent),
+            },
+            {
                 path: 'documentation',
                 loadChildren: () =>
                     import(
