@@ -44,6 +44,15 @@ export class PaymentsService extends BaseService {
         return this.patch<Payment>(id, payload).pipe(
             tap((result) => {
                 this.selectedPayment.set(result);
+                this.payments.mutate((payments: ApiResult<Payment[]>) => {
+                    payments.data = [
+                        result.data as Payment,
+                        ...(payments.data as Payment[]).filter(
+                            (t: Payment) => t.id !== id
+                        ),
+                    ];
+                    return payments;
+                });
             })
         );
     }

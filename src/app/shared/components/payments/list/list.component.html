@@ -1,0 +1,487 @@
+<div class="absolute inset-0 flex flex-col min-w-0 overflow-hidden">
+    <mat-drawer-container
+        class="flex-auto h-full bg-card dark:bg-transparent"
+        (backdropClick)="onBackdropClicked()"
+    >
+        <!-- Drawer -->
+        <mat-drawer
+            class="w-full md:w-160 dark:bg-gray-900"
+            [mode]="drawerMode"
+            [opened]="false"
+            [position]="'end'"
+            [disableClose]="true"
+            #matDrawer
+        >
+            <router-outlet></router-outlet>
+        </mat-drawer>
+
+        <mat-drawer-content class="flex flex-col">
+            <!-- Main -->
+            <div class="flex-auto">
+                <!-- Header -->
+                <div
+                    class="flex flex-row flex-auto justify-between py-8 px-6 md:px-8 border-b"
+                >
+                    <!-- Title -->
+                    <div>
+                        <div
+                            class="text-4xl font-extrabold tracking-tight leading-none"
+                        >
+                            Payments
+                        </div>
+                        <div class="ml-0.5 font-medium text-secondary">
+                            <ng-container
+                                *ngIf="$paymentsCount().totalCount > 0"
+                            >
+                                {{ $paymentsCount().totalCount }}
+                            </ng-container>
+                            {{
+                                $paymentsCount().totalCount
+                                    | i18nPlural
+                                        : {
+                                              "=0": "No payments",
+                                              "=1": "payment",
+                                              other: "payments"
+                                          }
+                            }}
+                        </div>
+                    </div>
+
+                    <!-- Add payment button -->
+                    <button
+                        class="ml-4"
+                        mat-flat-button
+                        [color]="'primary'"
+                        (click)="createPayment()"
+                    >
+                        <mat-icon
+                            [svgIcon]="'heroicons_outline:plus'"
+                        ></mat-icon>
+                        <span class="ml-2 mr-1">Add</span>
+                    </button>
+                </div>
+
+                <!-- Payments list -->
+                <div class="relative">
+                    <ng-container *ngIf="$payments().data">
+                        <ng-container
+                            *ngIf="$payments().data.length > 0; else noPayments"
+                        >
+                            <ng-container
+                                *ngFor="
+                                    let payment of $payments().data;
+                                    let i = index;
+                                    trackBy: trackByFn
+                                "
+                            >
+                                <!-- Group -->
+                                <ng-container
+                                    *ngIf="
+                                        i === 0 ||
+                                        payment.status !==
+                                            $payments().data[i - 1].status
+                                    "
+                                >
+                                    <div
+                                        class="z-10 sticky top-0 -mt-px w-full flex items-start gap-3 px-6 py-1 md:px-8 border-t border-b font-medium uppercase text-secondary bg-gray-50 dark:bg-gray-900"
+                                    >
+                                        <span class="text-secondary"
+                                            >{{ payment.status }}
+                                        </span>
+                                        <span class="text-secondary"
+                                            >{{
+                                                $paymentsCount().countPerStatus[
+                                                    payment.status
+                                                ]
+                                            }}
+                                        </span>
+                                        <span class="text-secondary ml-auto">
+                                            {{
+                                                $paymentsCount()
+                                                    .totalAmountPerStatus[
+                                                    payment.status
+                                                ]
+                                                    | currency
+                                                        : payment.currency
+                                                        : "symbol"
+                                            }}
+                                        </span>
+                                    </div>
+                                </ng-container>
+
+                                <!-- Payment -->
+                                <a
+                                    class="z-20 flex items-center px-6 py-4 md:px-8 cursor-pointer border-b"
+                                    [ngClass]="{
+                                        'hover:bg-gray-100 dark:hover:bg-hover':
+                                            !selectedPayment ||
+                                            selectedPayment.id !== payment.id,
+                                        'bg-primary-50 dark:bg-hover':
+                                            selectedPayment &&
+                                            selectedPayment.id === payment.id
+                                    }"
+                                    [routerLink]="['./', payment.id]"
+                                >
+                                    <div
+                                        class="flex flex-wrap items-center justify-center w-10 h-10 rounded-full overflow-hidden"
+                                    >
+                                        <ng-container>
+                                            <div
+                                                class="flex items-center justify-center w-full h-full rounded-full text-lg uppercase bg-gray-200 text-gray-600 dark:bg-gray-700 dark:text-gray-200"
+                                            >
+                                                {{
+                                                    payment.currency
+                                                        | currencySymbol
+                                                }}
+                                            </div>
+                                        </ng-container>
+                                    </div>
+                                    <div
+                                        class="min-w-0 ml-4 flex items-start gap-8"
+                                    >
+                                        <div class="w-44 flex flex-col gap-0">
+                                            <div
+                                                class="font-medium leading-5 truncate text-lg"
+                                            >
+                                                <span
+                                                    [ngClass]="{
+                                                        'text-primary-600':
+                                                            payment.status ===
+                                                            PaymentStatus.PENDING,
+                                                        'text-green-500':
+                                                            payment.status ===
+                                                            PaymentStatus.PAID,
+                                                        'text-red-500':
+                                                            payment.status ===
+                                                                PaymentStatus.FAILED ||
+                                                            payment.status ===
+                                                                PaymentStatus.OVERDUE
+                                                    }"
+                                                >
+                                                    {{
+                                                        payment.amount
+                                                            | currency
+                                                                : payment.currency
+                                                                : "symbol"
+                                                    }}
+                                                </span>
+                                            </div>
+                                            <div
+                                                class="leading-5 truncate text-secondary"
+                                            >
+                                                {{ payment.paymentMethod }}
+                                            </div>
+                                        </div>
+                                        <div class="w-44 flex flex-col gap-0">
+                                            <div
+                                                class="font-medium leading-5 truncate"
+                                            >
+                                                <span
+                                                    [ngClass]="{
+                                                        'text-primary-600':
+                                                            payment.status ===
+                                                            PaymentStatus.PENDING,
+                                                        'text-green-500':
+                                                            payment.status ===
+                                                            PaymentStatus.PAID,
+                                                        'text-red-500':
+                                                            payment.status ===
+                                                                PaymentStatus.FAILED ||
+                                                            payment.status ===
+                                                                PaymentStatus.OVERDUE
+                                                    }"
+                                                >
+                                                    Due Date
+                                                </span>
+                                            </div>
+                                            <div
+                                                class="leading-5 truncate text-secondary"
+                                            >
+                                                {{
+                                                    payment.dueDate
+                                                        | date : "mediumDate"
+                                                }}
+                                            </div>
+                                        </div>
+                                        <div class="w-44 flex flex-col gap-0">
+                                            <div
+                                                class="font-medium leading-5 truncate"
+                                            >
+                                                <span
+                                                    [ngClass]="{
+                                                        'text-primary-600':
+                                                            payment.status ===
+                                                            PaymentStatus.PENDING,
+                                                        'text-green-500':
+                                                            payment.status ===
+                                                            PaymentStatus.PAID,
+                                                        'text-red-500':
+                                                            payment.status ===
+                                                                PaymentStatus.FAILED ||
+                                                            payment.status ===
+                                                                PaymentStatus.OVERDUE
+                                                    }"
+                                                >
+                                                    Payment Status
+                                                </span>
+                                            </div>
+                                            <div
+                                                class="leading-5 truncate text-secondary"
+                                            >
+                                                {{ payment.status }}
+                                            </div>
+                                        </div>
+                                        <div class="w-44 flex flex-col gap-0">
+                                            <div
+                                                class="font-medium leading-5 truncate"
+                                            >
+                                                <span
+                                                    [ngClass]="{
+                                                        'text-primary-600':
+                                                            payment.status ===
+                                                            PaymentStatus.PENDING,
+                                                        'text-green-500':
+                                                            payment.status ===
+                                                            PaymentStatus.PAID,
+                                                        'text-red-500':
+                                                            payment.status ===
+                                                                PaymentStatus.FAILED ||
+                                                            payment.status ===
+                                                                PaymentStatus.OVERDUE
+                                                    }"
+                                                >
+                                                    Tenant
+                                                </span>
+                                            </div>
+                                            <div class="flex flex-col">
+                                                <span
+                                                    class="leading-5 truncate text-secondary"
+                                                >
+                                                    {{
+                                                        payment?.owner?.tenant
+                                                            ?.fullName
+                                                    }}
+                                                </span>
+                                                <span
+                                                    class="leading-5 truncate text-secondary"
+                                                >
+                                                    {{
+                                                        payment?.owner?.tenant
+                                                            ?.phone
+                                                    }}
+                                                </span>
+                                            </div>
+                                        </div>
+                                        <div class="w-44 flex flex-col gap-0">
+                                            <div
+                                                class="font-medium leading-5 truncate"
+                                            >
+                                                <span
+                                                    [ngClass]="{
+                                                        'text-primary-600':
+                                                            payment.status ===
+                                                            PaymentStatus.PENDING,
+                                                        'text-green-500':
+                                                            payment.status ===
+                                                            PaymentStatus.PAID,
+                                                        'text-red-500':
+                                                            payment.status ===
+                                                                PaymentStatus.FAILED ||
+                                                            payment.status ===
+                                                                PaymentStatus.OVERDUE
+                                                    }"
+                                                >
+                                                    Landlord
+                                                </span>
+                                            </div>
+                                            <div class="flex flex-col">
+                                                <span
+                                                    class="leading-5 truncate text-secondary"
+                                                >
+                                                    {{
+                                                        payment?.owner?.landlord
+                                                            ?.fullName
+                                                    }}
+                                                </span>
+                                                <span
+                                                    class="leading-5 truncate text-secondary"
+                                                >
+                                                    {{
+                                                        payment?.owner?.landlord
+                                                            ?.phone
+                                                    }}
+                                                </span>
+                                            </div>
+                                        </div>
+                                        <div class="w-44 flex flex-col gap-0">
+                                            <div
+                                                class="font-medium leading-5 truncate"
+                                            >
+                                                <span
+                                                    [ngClass]="{
+                                                        'text-primary-600':
+                                                            payment.status ===
+                                                            PaymentStatus.PENDING,
+                                                        'text-green-500':
+                                                            payment.status ===
+                                                            PaymentStatus.PAID,
+                                                        'text-red-500':
+                                                            payment.status ===
+                                                                PaymentStatus.FAILED ||
+                                                            payment.status ===
+                                                                PaymentStatus.OVERDUE
+                                                    }"
+                                                >
+                                                    Property
+                                                </span>
+                                            </div>
+                                            <div class="flex flex-col">
+                                                <span
+                                                    class="leading-5 truncate text-secondary"
+                                                >
+                                                    {{
+                                                        payment?.owner?.property
+                                                            ?.name
+                                                    }}
+                                                </span>
+                                                <span
+                                                    class="leading-5 truncate text-secondary"
+                                                >
+                                                    {{
+                                                        payment?.owner
+                                                            ?.propertyType
+                                                    }}
+                                                </span>
+                                            </div>
+                                        </div>
+                                        <div class="w-44 flex flex-col gap-0">
+                                            <div
+                                                class="font-medium leading-5 truncate"
+                                            >
+                                                <span
+                                                    [ngClass]="{
+                                                        'text-primary-600':
+                                                            payment.status ===
+                                                            PaymentStatus.PENDING,
+                                                        'text-green-500':
+                                                            payment.status ===
+                                                            PaymentStatus.PAID,
+                                                        'text-red-500':
+                                                            payment.status ===
+                                                                PaymentStatus.FAILED ||
+                                                            payment.status ===
+                                                                PaymentStatus.OVERDUE
+                                                    }"
+                                                >
+                                                    Leasing Duration
+                                                </span>
+                                            </div>
+                                            <div class="flex flex-col">
+                                                <span
+                                                    class="leading-5 truncate text-secondary"
+                                                >
+                                                    {{
+                                                        payment?.owner
+                                                            ?.startDate
+                                                            | date
+                                                                : "mediumDate"
+                                                    }}
+                                                </span>
+                                                <span
+                                                    class="leading-5 truncate text-secondary"
+                                                >
+                                                    {{
+                                                        payment?.owner?.endDate
+                                                            | date
+                                                                : "mediumDate"
+                                                    }}
+                                                </span>
+                                            </div>
+                                        </div>
+                                        <div
+                                            class="w-64 flex flex-wrap items-center gap-2"
+                                        >
+                                            <button
+                                                *ngIf="
+                                                    payment.status !==
+                                                    PaymentStatus.PAID
+                                                "
+                                                class="w-full"
+                                                mat-flat-button
+                                                [color]="'accent'"
+                                                (click)="
+                                                    markAsPaidPayment(
+                                                        $event,
+                                                        payment
+                                                    )
+                                                "
+                                            >
+                                                Mark As Paid
+                                            </button>
+
+                                            <div
+                                                *ngIf="
+                                                    payment.status ===
+                                                    PaymentStatus.PAID
+                                                "
+                                                class="w-full flex flex-col items-center gap-1"
+                                            >
+                                                <div
+                                                    class="w-full h-10 flex items-center justify-center rounded-full bg-green-500 gap-2 p-1"
+                                                >
+                                                    <mat-icon
+                                                        class="icon-size-8 text-white"
+                                                        [svgIcon]="
+                                                            'heroicons_solid:check-badge'
+                                                        "
+                                                    ></mat-icon>
+                                                    PAID
+                                                </div>
+                                                <span class="text-green-500">{{
+                                                    payment.paymentDate
+                                                        | date : "mediumDate"
+                                                }}</span>
+                                            </div>
+
+                                            <button
+                                                class="w-full"
+                                                *ngIf="
+                                                    payment.status !==
+                                                        PaymentStatus.PAID &&
+                                                    payment.paymentMethod !==
+                                                        PaymentMethod.CASH
+                                                "
+                                                mat-flat-button
+                                                [color]="'primary'"
+                                                (click)="
+                                                    payPayment($event, payment)
+                                                "
+                                            >
+                                                Pay
+                                                {{
+                                                    payment.amount
+                                                        | currency
+                                                            : payment.currency
+                                                            : "symbol"
+                                                }}
+                                            </button>
+                                        </div>
+                                    </div>
+                                </a>
+                            </ng-container>
+                        </ng-container>
+                    </ng-container>
+
+                    <!-- No payments -->
+                    <ng-template #noPayments>
+                        <div
+                            class="p-8 sm:p-16 border-t text-4xl font-semibold tracking-tight text-center"
+                        >
+                            There are no payments!
+                        </div>
+                    </ng-template>
+                </div>
+            </div>
+        </mat-drawer-content>
+    </mat-drawer-container>
+</div>

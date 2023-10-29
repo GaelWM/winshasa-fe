@@ -1,5 +1,5 @@
-import { DocModel } from './file-manager.model';
 import { v4 as uuidv4 } from 'uuid';
+import { LeaseAgreement } from './lease-agreement.model';
 
 export interface IPayment {
     id?: string;
@@ -11,9 +11,11 @@ export interface IPayment {
     paymentDate: string;
     dueDate: string;
     status: PaymentStatus;
-    paymentReference: string;
-    paymentSlip: string;
+    paymentReference?: string;
+    paymentSlip?: string;
     generatedBy: string;
+    notes?: string;
+    owner: LeaseAgreement;
     createdAt?: Date;
     createdBy?: string;
     updatedAt?: Date;
@@ -31,9 +33,11 @@ export class Payment {
     paymentDate: string;
     dueDate: string;
     status: PaymentStatus;
-    paymentReference: string;
-    paymentSlip: string;
-    generatedBy: string;
+    paymentReference?: string;
+    paymentSlip?: string;
+    generatedBy?: string;
+    notes?: string;
+    owner: LeaseAgreement;
     createdAt?: Date;
     createdBy?: string;
     updatedAt?: Date;
@@ -54,6 +58,8 @@ export class Payment {
         this.paymentReference = model.paymentReference;
         this.paymentSlip = model.paymentSlip;
         this.generatedBy = model.generatedBy;
+        this.notes = model.notes;
+        this.owner = model.owner;
         this.createdAt = model.createdAt;
         this.createdBy = model.createdBy;
         this.updatedAt = model.updatedAt;
@@ -87,6 +93,7 @@ export enum PaymentStatus {
     PENDING = 'PENDING',
     PAID = 'PAID',
     FAILED = 'FAILED',
+    OVERDUE = 'OVERDUE',
 }
 
 export const PAYMENT_METHODS = [

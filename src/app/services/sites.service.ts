@@ -46,6 +46,15 @@ export class SitesService extends BaseService {
         return this.patch<Site>(id, payload).pipe(
             tap((result) => {
                 this.selectedSite.set(result);
+                this.sites.mutate((sites: ApiResult<Site[]>) => {
+                    sites.data = [
+                        result.data as Site,
+                        ...(sites.data as Site[]).filter(
+                            (t: Site) => t.id !== id
+                        ),
+                    ];
+                    return sites;
+                });
             })
         );
     }

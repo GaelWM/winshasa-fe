@@ -40,8 +40,8 @@ export class BaseService {
             const page = params.page;
             const limit = params.limit;
             const perPage = params.perPage;
-            const sortBy = params.sortBy;
-            const sortOrder = params.sortOrder;
+            const orderBy = params.orderBy;
+            const groupBy = params.groupBy;
             const search = searchQuery;
             return {
                 ...(page && !search && { page: page }),
@@ -50,8 +50,8 @@ export class BaseService {
                     ? { perPage: this.perPage }
                     : { perPage: perPage }),
                 ...(search && { name: search }),
-                ...(sortBy && !search && { sortBy: sortBy }),
-                ...(sortOrder && !search && { sortOrder: sortOrder }),
+                ...(orderBy && !search && { orderBy: orderBy }),
+                ...(groupBy && !search && { groupBy: groupBy }),
             };
         })
     );

@@ -23,6 +23,13 @@ export const defaultNavigation: FuseNavigationItem[] = [
         link: '/lease-agreements',
     },
     {
+        id: 'payments',
+        title: 'payments',
+        type: 'basic',
+        icon: 'heroicons_outline:banknotes',
+        link: '/payments',
+    },
+    {
         id: 'templates',
         title: 'Templates',
         type: 'basic',
@@ -65,6 +72,13 @@ export const compactNavigation: FuseNavigationItem[] = [
         type: 'basic',
         icon: 'heroicons_outline:document-text',
         link: '/lease-agreements',
+    },
+    {
+        id: 'payments',
+        title: 'payments',
+        type: 'basic',
+        icon: 'heroicons_outline:banknotes',
+        link: '/payments',
     },
     {
         id: 'templates',
@@ -111,6 +125,13 @@ export const futuristicNavigation: FuseNavigationItem[] = [
         link: '/lease-agreements',
     },
     {
+        id: 'payments',
+        title: 'payments',
+        type: 'basic',
+        icon: 'heroicons_outline:banknotes',
+        link: '/payments',
+    },
+    {
         id: 'templates',
         title: 'Templates',
         type: 'basic',
@@ -153,6 +174,13 @@ export const horizontalNavigation: FuseNavigationItem[] = [
         type: 'basic',
         icon: 'heroicons_outline:document-text',
         link: '/lease-agreements',
+    },
+    {
+        id: 'payments',
+        title: 'payments',
+        type: 'basic',
+        icon: 'heroicons_outline:banknotes',
+        link: '/payments',
     },
     {
         id: 'templates',
