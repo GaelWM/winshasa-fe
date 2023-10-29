@@ -35,12 +35,16 @@ export class WinTableComponent {
     @Input() allowRowClick: boolean = false;
     @Input() allowCellClick: boolean = false;
 
+    currentOrderByParam: string = '';
+
     @Input() set columns(value: ColumnSetting[]) {
         const queries = this._route.snapshot.queryParams;
-        if (queries.sortBy && queries.sortOrder) {
-            const column = value.find((c) => c.sortKey === queries.sortBy);
+        if (queries.orderBy) {
+            this.currentOrderByParam = queries.orderBy;
+            const [key, order] = queries.orderBy.split(':');
+            const column = value.find((c) => c.sortKey === key);
             if (column) {
-                column.sortOrder = queries.sortOrder;
+                column.sortOrder = order;
             }
         }
         this._columns = value;
@@ -68,6 +72,7 @@ export class WinTableComponent {
 
     onSort(column: ColumnSetting): void {
         column.sortOrder = column.sortOrder === 'asc' ? 'desc' : 'asc';
+        this.currentOrderByParam = `${column.sortKey}:${column.sortOrder}`;
         if (this.serverSideSorting) {
             this.sort.emit(column);
         } else {

@@ -1,66 +1,81 @@
-<div class="table__container">
-    <caption *ngIf="caption !== ''">
-        {{
-            caption
-        }}
-    </caption>
-    <table>
-        <thead>
-            <tr>
-                <th *ngFor="let column of columns">
-                    <button
-                        class="w-full flex justify-between items-center gap-2"
-                        (click)="
-                            column.clickEvent && allowSort && onSort(column)
-                        "
-                    >
+<div class="table-auto lg:table w-full border border-gray-800 overflow-auto">
+    <div class="table-header-group">
+        <div class="table-row">
+            <div
+                class="table-cell text-left first:border-l-none border-l border-gray-800 p-2"
+                *ngFor="let column of columns"
+            >
+                <span
+                    *ngIf="
+                        column.sortKey === null || column.sortKey === undefined
+                    "
+                    >{{ column.title }}</span
+                >
+                <button
+                    *ngIf="allowSort && column.sortKey"
+                    mat-stroked-button
+                    class="w-auto flex items-center gap-2 rounded text-left"
+                    (click)="onSort(column)"
+                >
+                    <div class="flex items-center gap-1 justify-between">
                         <span>{{ column.title }}</span>
-                        <a
-                            mat-icon-button
-                            type="button"
-                            color="secondary"
-                            *ngIf="column.clickEvent && allowSort"
-                        >
+                        <div>
                             <mat-icon
-                                *ngIf="column.sortOrder === 'asc'"
+                                [class]="
+                                    column.sortOrder === 'asc' &&
+                                    currentOrderByParam ===
+                                        column.sortKey + ':' + column.sortOrder
+                                        ? 'text-primary font-semibold'
+                                        : ''
+                                "
                                 class="text-md"
                                 >arrow_upward</mat-icon
                             >
                             <mat-icon
-                                *ngIf="column.sortOrder === 'desc'"
+                                [class]="
+                                    column.sortOrder === 'desc' &&
+                                    currentOrderByParam ===
+                                        column.sortKey + ':' + column.sortOrder
+                                        ? 'text-primary font-semibold'
+                                        : ''
+                                "
                                 class="text-md"
                                 >arrow_downward</mat-icon
                             >
-                        </a>
-                    </button>
-                </th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr
-                *ngFor="let row of data"
-                class="hover:bg-gray-800 text-primary font-bold py-2 px-4 rounded transition duration-300"
-                [ngClass]="{ 'cursor-pointer': allowRowClick }"
-                (click)="allowRowClick && onRowClick(row)"
-            >
-                <ng-container *ngFor="let column of columns">
-                    <ng-container
-                        *ngTemplateOutlet="
-                            column.template ? column.template : tableRow;
-                            context: { row: row, column: column }
-                        "
-                    ></ng-container>
-                </ng-container>
-            </tr>
-        </tbody>
-    </table>
+                        </div>
+                    </div>
+                </button>
+            </div>
+        </div>
+    </div>
+    <div class="table-row-group">
+        <div
+            *ngFor="let row of data; let i = index; let last = last"
+            class="table-row hover:bg-gray-800 rounded transition duration-300"
+            [ngClass]="{ 'cursor-pointer': allowRowClick }"
+            (click)="allowRowClick && onRowClick(row)"
+        >
+            <ng-container *ngFor="let column of columns">
+                <ng-container
+                    *ngTemplateOutlet="
+                        column.template ? column.template : tableRow;
+                        context: { row: row, column: column, last: last }
+                    "
+                ></ng-container>
+            </ng-container>
+        </div>
+    </div>
 </div>
 
 <ng-template let-row="row" let-column="column" #tableRow>
-    <td
+    <div
+        class="table-cell flex items-center first:border-l-none border-l border-t border-gray-800 p-2"
         [style]="column.style ?? ''"
         [class]="column.customClass ?? ''"
-        [ngClass]="{ 'cursor-pointer': column.clickEvent }"
+        [ngClass]="{
+            'cursor-pointer': column.clickEvent,
+           
+        }"
         (click)="allowCellClick && onCellClick(row, column)"
     >
         <ng-container
@@ -96,5 +111,5 @@
                 [innerHtml]="row | winNestedValue : column.key | winSafeHtml"
             ></div>
         </ng-container>
-    </td>
+    </div>
 </ng-template>
