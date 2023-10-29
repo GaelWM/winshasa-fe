@@ -137,6 +137,11 @@ export const appRoutes: Route[] = [
                     import('app/modules/products/products.routes'),
             },
             {
+                path: 'projects',
+                loadChildren: () =>
+                    import('app/modules/projects/projects.routes'),
+            },
+            {
                 path: 'lease-agreements',
                 loadChildren: () =>
                     import(

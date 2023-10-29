@@ -16,6 +16,14 @@ export const defaultNavigation: FuseNavigationItem[] = [
         link: '/products',
     },
     {
+        id: 'projects',
+        title: 'Projects',
+        type: 'basic',
+        icon: 'heroicons_outline:newspaper',
+        link: '/projects',
+    },
+
+    {
         id: 'leases',
         title: 'Leases',
         type: 'basic',
@@ -66,6 +74,14 @@ export const compactNavigation: FuseNavigationItem[] = [
         icon: 'heroicons_outline:lifebuoy',
         link: '/products',
     },
+    {
+        id: 'projects',
+        title: 'Projects',
+        type: 'basic',
+        icon: 'heroicons_outline:newspaper',
+        link: '/projects',
+    },
+
     {
         id: 'leases',
         title: 'Leases',
@@ -118,6 +134,14 @@ export const futuristicNavigation: FuseNavigationItem[] = [
         link: '/products',
     },
     {
+        id: 'projects',
+        title: 'Projects',
+        type: 'basic',
+        icon: 'heroicons_outline:newspaper',
+        link: '/projects',
+    },
+
+    {
         id: 'leases',
         title: 'Leases',
         type: 'basic',
@@ -167,6 +191,13 @@ export const horizontalNavigation: FuseNavigationItem[] = [
         type: 'basic',
         icon: 'heroicons_outline:lifebuoy',
         link: '/products',
+    },
+    {
+        id: 'projects',
+        title: 'Projects',
+        type: 'basic',
+        icon: 'heroicons_outline:newspaper',
+        link: '/projects',
     },
     {
         id: 'leases',

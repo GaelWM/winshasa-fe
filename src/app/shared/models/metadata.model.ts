@@ -27,4 +27,7 @@ export enum MetadataEntityType {
     LEASE = 'lease_agreements',
     PAYMENT = 'payments',
     DOCUMENT = 'documents',
+    PROJECT = 'projects',
+    USER = 'users',
+    TASK = 'tasks',
 }
