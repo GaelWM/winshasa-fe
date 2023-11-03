@@ -13,10 +13,10 @@
             </div>
         </app-toolbar>
     </div>
-    <div class="w-full p-3">
+    <div class="w-full p-3" *ngIf="$projects() as projects">
         <win-table
             [columns]="columns"
-            [data]="$projects().data"
+            [data]="projects.data"
             [allowSort]="true"
             [allowRowClick]="true"
             [serverSideSorting]="true"
@@ -25,7 +25,7 @@
         ></win-table>
         <div class="flex justify-center items-center py-2">
             <win-paginator
-                [meta]="$projects().meta"
+                [meta]="projects.meta"
                 (pageChange)="onPageChange($event)"
             >
             </win-paginator>

@@ -47,13 +47,13 @@ import {
     User,
     MetadataEntityType,
     PaymentFrequency,
+    ProjectStatus,
 } from 'app/shared/models';
 import { catchError, map, of } from 'rxjs';
 
 @Component({
     selector: 'app-project-form',
     templateUrl: './project-form.component.html',
-    styleUrls: ['./project-form.component.scss'],
     imports: [
         CommonModule,
         MatIconModule,
@@ -107,7 +107,10 @@ export class ProjectFormComponent
             id: [project?.id ?? ''],
             name: [project?.name ?? '', [Validators.required]],
             type: [project?.type ?? '', [Validators.required]],
-            status: [project?.status ?? '', [Validators.required]],
+            status: [
+                project?.status ?? ProjectStatus.PENDING,
+                [Validators.required],
+            ],
             ownerId: [project?.ownerId ?? ''],
             startDate: [project?.startDate ?? ''],
             endDate: [project?.endDate ?? ''],
@@ -150,7 +153,6 @@ export class ProjectFormComponent
 
         effect(
             () => {
-                console.log('$statuses: ', this.$statuses());
                 this.$projectForm()
                     .valueChanges.pipe(takeUntilDestroyed(this.#destroyRef))
                     .subscribe((value) => this.onValuesChange(value));

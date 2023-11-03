@@ -18,7 +18,7 @@ export class WinNestedValuePipe implements PipeTransform {
     transformPlain(value: any, key: string): string {
         const keys = key?.split('.');
         keys?.forEach((_key: string) => {
-            value = value[_key];
+            value = value && value[_key];
         });
         return value;
     }

@@ -43,6 +43,10 @@ import { ErrorFormTemplateComponent } from 'app/shared/components/error-form-tem
 import { WinFormBuilder } from 'app/shared/components/modal-template/modal-template.component';
 import { ModalTemplateService } from 'app/shared/components/modal-template/modal-template.service';
 import {
+    TOAST_STATE,
+    ToastService,
+} from 'app/shared/components/toast/toast.service';
+import {
     FormError,
     LeaseAgreement,
     Template,
@@ -51,6 +55,7 @@ import {
     Product,
     Site,
     PaymentFrequency,
+    CURRENCIES,
 } from 'app/shared/models';
 import { catchError, map, of } from 'rxjs';
 
@@ -94,6 +99,7 @@ export class LeaseAgreementFormComponent
     #leaseService = inject(LeaseAgreementsService);
     #modalService = inject(ModalTemplateService);
     #destroyRef = inject(DestroyRef);
+    #toastService = inject(ToastService);
 
     @Input() showSaveButton = false;
 
@@ -104,6 +110,7 @@ export class LeaseAgreementFormComponent
     submitted: boolean = false;
     paymentFrequency = PaymentFrequency;
     paymentFrequencyOpts = Object.values(PaymentFrequency);
+    paymentCurrenciesOpts = CURRENCIES;
 
     errors: WritableSignal<FormError[]> = signal([]);
     $leaseForm = computed(() => {
@@ -121,13 +128,13 @@ export class LeaseAgreementFormComponent
             startDate: [leaseAgreement?.startDate ?? ''],
             endDate: [leaseAgreement?.endDate ?? ''],
             paymentFrequency: [leaseAgreement?.paymentFrequency ?? ''],
+            currency: [leaseAgreement?.currency ?? ''],
             rent: [leaseAgreement?.rent ?? ''],
             securityDeposit: [leaseAgreement?.securityDeposit ?? ''],
             leaseTerm: [leaseAgreement?.leaseTerm ?? ''],
             moveInCondition: [leaseAgreement?.moveInCondition ?? ''],
             moveOutCondition: [leaseAgreement?.moveOutCondition ?? ''],
             templateId: [leaseAgreement?.templateId ?? ''],
-            isActive: [leaseAgreement?.isActive ?? true],
             details: this.#formBuilder.group({
                 description: [leaseAgreement?.details?.description ?? ''],
             }),
@@ -263,6 +270,10 @@ export class LeaseAgreementFormComponent
             .subscribe({
                 next: () => {
                     this.#modalService.closeModal();
+                    this.#toastService.showToast(
+                        TOAST_STATE.SUCCESS,
+                        'Leased added successfully!'
+                    );
                 },
                 error: (err) => {
                     if (err?.error) {
@@ -283,6 +294,10 @@ export class LeaseAgreementFormComponent
             .subscribe({
                 next: () => {
                     this.#modalService.closeModal();
+                    this.#toastService.showToast(
+                        TOAST_STATE.SUCCESS,
+                        'Lease updated successfully!'
+                    );
                 },
                 error: (err) => {
                     if (err?.error) {

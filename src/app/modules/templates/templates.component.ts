@@ -97,6 +97,7 @@ export class TemplatesComponent {
                     key: 'isActive',
                     customClass: 'w-2/12',
                     pipe: { class: { obj: IsActivePipe } },
+                    sortKey: 'isActive',
                 },
                 {
                     title: 'Description',
@@ -108,7 +109,7 @@ export class TemplatesComponent {
                     key: 'createdAt',
                     clickEvent: true,
                     customClass: 'w-2/12',
-                    sortKey: 'address',
+                    sortKey: 'createdAt',
                     pipe: {
                         class: { obj: DatePipe, constructor: 'en-US' },
                         args: 'MMM d, y, hh:mm:ss',
@@ -142,10 +143,7 @@ export class TemplatesComponent {
 
     onSort(event: ColumnSetting): void {
         this._router.navigate([], {
-            queryParams: {
-                sortBy: event.sortKey,
-                sortOrder: event.sortOrder,
-            },
+            queryParams: { orderBy: `${event.sortKey}:${event.sortOrder}` },
             queryParamsHandling: 'merge',
             relativeTo: this._route,
         });

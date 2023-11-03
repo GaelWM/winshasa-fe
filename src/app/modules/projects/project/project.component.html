@@ -1,0 +1,77 @@
+<div
+    class="relative w-full flex flex-col min-w-0 overflow-hidden"
+    *ngIf="$project().data as project"
+>
+    <div
+        class="flex flex-col sm:flex-row flex-0 sm:items-center sm:justify-between p-4 sm:py-4 sm:px-6 border-b bg-card dark:bg-transparent"
+    >
+        <div class="flex-1 min-w-0">
+            <div>
+                <div class="hidden sm:flex flex-wrap items-center font-medium">
+                    <div>
+                        <a
+                            class="whitespace-nowrap text-primary-500"
+                            [routerLink]="'./..'"
+                            >Project</a
+                        >
+                    </div>
+
+                    <div class="flex items-center ml-1 whitespace-nowrap">
+                        <mat-icon
+                            class="icon-size-5 text-secondary"
+                            [svgIcon]="'heroicons_solid:chevron-right'"
+                        ></mat-icon>
+                        <span class="ml-1 text-secondary">{{
+                            project?.type
+                        }}</span>
+                    </div>
+                </div>
+                <div class="flex sm:hidden">
+                    <a
+                        class="inline-flex items-center -ml-1.5 text-secondary font-medium"
+                        [routerLink]="'./..'"
+                    >
+                        <mat-icon
+                            class="icon-size-5 text-secondary"
+                            [svgIcon]="'heroicons_solid:chevron-left'"
+                        ></mat-icon>
+                        <span class="ml-1">Back</span>
+                    </a>
+                </div>
+            </div>
+            <!-- Title -->
+            <div class="mt-2">
+                <h2
+                    class="z-9999 text-3xl md:text-4xl font-extrabold tracking-tight leading-7 sm:leading-10 truncate"
+                >
+                    {{ project?.name }}
+                </h2>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main -->
+    <div class="">
+        <nav
+            mat-tab-nav-bar
+            [backgroundColor]="background"
+            [tabPanel]="tabPanel"
+        >
+            <a
+                mat-tab-link
+                routerLink="general-details"
+                routerLinkActive="mat-tab-label-active"
+                >General Details
+            </a>
+            <a
+                mat-tab-link
+                routerLink="documentation"
+                routerLinkActive="mat-tab-label-active"
+                >Documentation</a
+            >
+        </nav>
+        <mat-tab-nav-panel #tabPanel>
+            <router-outlet></router-outlet
+        ></mat-tab-nav-panel>
+    </div>
+</div>

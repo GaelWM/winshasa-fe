@@ -1,0 +1,23 @@
+.toast-toast {
+    @apply z-9999 absolute top-0 right-10 bg-slate-800 
+        inline-flex min-w-60 min-h-16 max-h-16 
+        shadow-md 
+        flex-row items-center justify-between 
+        border-l-8 p-6 
+        rounded text-sm;
+}
+
+.success-toast {
+    @extend .toast-toast;
+    @apply border-green-500;
+}
+
+.error-toast {
+    @extend .toast-toast;
+    @apply border-red-500;
+}
+
+.warning-toast {
+    @extend .toast-toast;
+    @apply border-yellow-500;
+}

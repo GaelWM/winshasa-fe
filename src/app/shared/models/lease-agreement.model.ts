@@ -1,6 +1,6 @@
 import { DocModel } from './file-manager.model';
 import { v4 as uuidv4 } from 'uuid';
-import { PaymentFrequency } from './payment.model';
+import { Currency, PaymentFrequency } from './payment.model';
 
 export interface ILeaseAgreement {
     id?: string;
@@ -28,6 +28,7 @@ export interface ILeaseAgreement {
     };
     startDate: Date;
     endDate: Date;
+    currency: Currency;
     paymentFrequency?: PaymentFrequency;
     rent?: number;
     securityDeposit?: number;
@@ -39,7 +40,6 @@ export interface ILeaseAgreement {
         id: string;
         name: string;
     };
-    isActive: boolean;
     details?: {
         description: string;
         category: string;
@@ -78,6 +78,7 @@ export class LeaseAgreement {
     };
     startDate: Date;
     endDate: Date;
+    currency: Currency;
     paymentFrequency?: PaymentFrequency;
     rent?: number;
     securityDeposit?: number;
@@ -89,7 +90,6 @@ export class LeaseAgreement {
         id: string;
         name: string;
     };
-    isActive: boolean;
     details?: {
         description: string;
         category: string;
@@ -115,6 +115,7 @@ export class LeaseAgreement {
         this.landlord = model.landlord;
         this.startDate = model.startDate;
         this.endDate = model.endDate;
+        this.currency = model.currency;
         this.paymentFrequency = model.paymentFrequency;
         this.rent = model.rent;
         this.securityDeposit = model.securityDeposit;
@@ -123,7 +124,6 @@ export class LeaseAgreement {
         this.moveOutCondition = model.moveOutCondition;
         this.templateId = model.templateId;
         this.template = model.template;
-        this.isActive = model.isActive ?? true;
         this.details = model.details;
         this.createdAt = model.createdAt;
         this.createdBy = model.createdBy;

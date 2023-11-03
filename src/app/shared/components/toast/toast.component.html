@@ -1,0 +1,15 @@
+<div
+    [@toastTrigger]="(toastService.showsToast$ | async) ? 'open' : 'close'"
+    class="min-w-72 z-9999 absolute top-5 right-3"
+>
+    <fuse-alert
+        [type]="(toastService.toastState$ | async) ?? 'info'"
+        [appearance]="'border'"
+        (dismissedChange)="onDismiss(true)"
+    >
+        <span fuseAlertTitle>{{
+            (toastService.toastTitle$ | async) ?? title
+        }}</span>
+        {{ toastService.toastMessage$ | async }}
+    </fuse-alert>
+</div>

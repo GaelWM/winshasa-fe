@@ -26,6 +26,15 @@ export default [
                     import(
                         './lease-agreement/lease-payment/lease-payment.component'
                     ).then((m) => m.LeasePaymentComponent),
+                children: [
+                    {
+                        path: ':id',
+                        loadComponent: () =>
+                            import(
+                                './lease-agreement/lease-payment/lease-payment.component'
+                            ).then((m) => m.LeasePaymentComponent),
+                    },
+                ],
             },
             {
                 path: 'documentation',

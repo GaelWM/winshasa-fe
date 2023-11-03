@@ -1,14 +1,17 @@
 import {
     ChangeDetectorRef,
     Component,
-    Inject,
+    DestroyRef,
     ViewChild,
     computed,
+    effect,
     inject,
+    signal,
 } from '@angular/core';
 import {
     AsyncPipe,
     CommonModule,
+    CurrencyPipe,
     DOCUMENT,
     I18nPluralPipe,
 } from '@angular/common';
@@ -29,20 +32,33 @@ import {
     Router,
 } from '@angular/router';
 import { FuseMediaWatcherService } from '@fuse/services/media-watcher';
-import { Contact } from 'app/layout/common/quick-chat/quick-chat.types';
 import {
     Observable,
     Subject,
-    takeUntil,
     switchMap,
+    map,
+    takeUntil,
     fromEvent,
     filter,
-    map,
+    tap,
+    catchError,
+    of,
 } from 'rxjs';
 import { PaymentsService } from 'app/services/payments.service';
-import { ApiResult, Payment } from 'app/shared/models';
-import { takeUntilDestroyed, toObservable } from '@angular/core/rxjs-interop';
+import {
+    ApiResult,
+    Payment,
+    PaymentMethod,
+    PaymentStatus,
+} from 'app/shared/models';
+import {
+    takeUntilDestroyed,
+    toObservable,
+    toSignal,
+} from '@angular/core/rxjs-interop';
 import { toWritableSignal } from 'app/shared/utils/common.util';
+import { CurrencySymbolPipe } from 'app/shared/pipes/currency-symbol/currency-symbol.pipe';
+import { ThemePalette } from '@angular/material/core';
 
 @Component({
     selector: 'app-lease-payment',
@@ -60,6 +76,9 @@ import { toWritableSignal } from 'app/shared/utils/common.util';
         RouterLink,
         AsyncPipe,
         I18nPluralPipe,
+        CurrencySymbolPipe,
+        CurrencyPipe,
+        MatButtonModule,
     ],
     templateUrl: './lease-payment.component.html',
     styleUrls: ['./lease-payment.component.scss'],
@@ -70,7 +89,13 @@ export class LeasePaymentComponent {
     #changeDetectorRef = inject(ChangeDetectorRef);
     #document = inject(DOCUMENT) as any;
     #router = inject(Router);
+    #route = inject(ActivatedRoute);
     #fuseMediaWatcherService = inject(FuseMediaWatcherService);
+    #destroyRef = inject(DestroyRef);
+
+    PaymentStatus = PaymentStatus;
+    PaymentMethod = PaymentMethod;
+    color: ThemePalette;
 
     @ViewChild('matDrawer', { static: true }) matDrawer: MatDrawer;
 
@@ -88,125 +113,70 @@ export class LeasePaymentComponent {
     );
     $payments = toWritableSignal(this.#payments$, {} as ApiResult<Payment[]>);
 
+    selectedPayment = this.#paymentsService.selectedPayment;
+
     paymentCount = computed(() => this.$payments().data?.length ?? 0);
 
-    contactsTableColumns: string[] = ['name', 'email', 'phoneNumber', 'job'];
+    paymentsTableColumns: string[] = ['name', 'email', 'phone'];
     drawerMode: 'side' | 'over';
     searchInputControl: UntypedFormControl = new UntypedFormControl();
-    selectedContact: Contact;
-    private _unsubscribeAll: Subject<any> = new Subject<any>();
 
     /**
      * Constructor
      */
-    constructor() {}
+    constructor() {
+        // effect(
+        //     () => {
+        //         this.selectedPayment.set(this.paymentTemp());
+        //     },
+        //     { allowSignalWrites: true }
+        // );
 
-    // -----------------------------------------------------------------------------------------------------
-    // @ Lifecycle hooks
-    // -----------------------------------------------------------------------------------------------------
+        effect(() => {
+            this.matDrawer.openedChange
+                .pipe(takeUntilDestroyed(this.#destroyRef))
+                .subscribe((opened) => {
+                    if (!opened) {
+                        // Remove the selected payment when drawer closed
+                        this.selectedPayment.set({} as ApiResult<Payment>);
 
-    /**
-     * On init
-     */
-    // ngOnInit(): void {
-    //     // Get the contacts
+                        // Mark for check
+                        this.#changeDetectorRef.markForCheck();
+                    }
+                });
+        });
 
-    //     this._contactsService.contacts$
-    //         .pipe(takeUntil(this._unsubscribeAll))
-    //         .subscribe((contacts: Contact[]) => {
-    //             // Update the counts
-    //             this.contactsCount = contacts.length;
+        effect(() => {
+            this.#fuseMediaWatcherService.onMediaChange$
+                .pipe(takeUntilDestroyed(this.#destroyRef))
+                .subscribe(({ matchingAliases }) => {
+                    // Set the drawerMode if the given breakpoint is active
+                    if (matchingAliases.includes('lg')) {
+                        this.drawerMode = 'side';
+                    } else {
+                        this.drawerMode = 'over';
+                    }
 
-    //             // Mark for check
-    //             this.#changeDetectorRef.markForCheck();
-    //         });
+                    // Mark for check
+                    this.#changeDetectorRef.markForCheck();
+                });
+        });
 
-    //     // Get the contact
-    //     this._contactsService.contact$
-    //         .pipe(takeUntil(this._unsubscribeAll))
-    //         .subscribe((contact: Contact) => {
-    //             // Update the selected contact
-    //             this.selectedContact = contact;
-
-    //             // Mark for check
-    //             this.#changeDetectorRef.markForCheck();
-    //         });
-
-    //     // Get the countries
-    //     this._contactsService.countries$
-    //         .pipe(takeUntil(this._unsubscribeAll))
-    //         .subscribe((countries: Country[]) => {
-    //             // Update the countries
-    //             this.countries = countries;
-
-    //             // Mark for check
-    //             this.#changeDetectorRef.markForCheck();
-    //         });
-
-    //     // Subscribe to search input field value changes
-    //     this.searchInputControl.valueChanges
-    //         .pipe(
-    //             takeUntil(this._unsubscribeAll),
-    //             switchMap((query) =>
-    //                 // Search
-    //                 this._contactsService.searchContacts(query)
-    //             )
-    //         )
-    //         .subscribe();
-
-    //     // Subscribe to MatDrawer opened change
-    //     this.matDrawer.openedChange.subscribe((opened) => {
-    //         if (!opened) {
-    //             // Remove the selected contact when drawer closed
-    //             this.selectedContact = null;
-
-    //             // Mark for check
-    //             this.#changeDetectorRef.markForCheck();
-    //         }
-    //     });
-
-    //     // Subscribe to media changes
-    //     this.#fuseMediaWatcherService.onMediaChange$
-    //         .pipe(takeUntil(this._unsubscribeAll))
-    //         .subscribe(({ matchingAliases }) => {
-    //             // Set the drawerMode if the given breakpoint is active
-    //             if (matchingAliases.includes('lg')) {
-    //                 this.drawerMode = 'side';
-    //             } else {
-    //                 this.drawerMode = 'over';
-    //             }
-
-    //             // Mark for check
-    //             this.#changeDetectorRef.markForCheck();
-    //         });
-
-    //     // Listen for shortcuts
-    //     fromEvent(this.#document, 'keydown')
-    //         .pipe(
-    //             takeUntil(this._unsubscribeAll),
-    //             filter<KeyboardEvent>(
-    //                 (event) =>
-    //                     (event.ctrlKey === true || event.metaKey) && // Ctrl or Cmd
-    //                     event.key === '/' // '/'
-    //             )
-    //         )
-    //         .subscribe(() => {
-    //             this.createContact();
-    //         });
-    // }
-
-    /**
-     * On destroy
-     */
-    ngOnDestroy(): void {
-        // Unsubscribe from all subscriptions
-        this._unsubscribeAll.next(null);
-        this._unsubscribeAll.complete();
+        effect(() => {
+            fromEvent(this.#document, 'keydown')
+                .pipe(
+                    takeUntilDestroyed(this.#destroyRef),
+                    filter<KeyboardEvent>(
+                        (event) =>
+                            (event.ctrlKey === true || event.metaKey) && // Ctrl or Cmd
+                            event.key === '/' // '/'
+                    )
+                )
+                .subscribe(() => {
+                    this.createPayment();
+                });
+        });
     }
-
-    // -----------------------------------------------------------------------------------------------------
-    // @ Public methods
-    // -----------------------------------------------------------------------------------------------------
 
     /**
      * On backdrop clicked
@@ -220,13 +190,44 @@ export class LeasePaymentComponent {
     }
 
     /**
-     * Create contact
+     * Create payment
      */
     createPayment(): void {
-        // Create the contact
-        // this._contactsService.createContact().subscribe((newContact) => {
-        //     // Go to the new contact
-        //     this.#router.navigate(['./', newContact.id], {
+        // Create the payment
+        // this._paymentsService.createPayment().subscribe((newPayment) => {
+        //     // Go to the new payment
+        //     this.#router.navigate(['./', newPayment.id], {
+        //         relativeTo: this.#activatedRoute,
+        //     });
+        //     // Mark for check
+        //     this.#changeDetectorRef.markForCheck();
+        // });
+    }
+
+    /**
+     * Mark as paid payment
+     * @param payment
+     * @returns {Promise<void>}
+     */
+    markAsPaidPayment(payment: Payment): void {
+        // Mark as paid
+        // this._paymentsService.markAsPaidPayment(payment.id).subscribe();
+    }
+
+    payPayment(payment: Payment): void {
+        // Make payment
+        // this._paymentsService.makePayment(payment.id).subscribe();
+    }
+
+    /**
+     * Delete payment
+     * @param payment
+     */
+    deletePayment(payment: Payment): void {
+        // Delete the payment
+        // this._paymentsService.deletePayment(payment.id).subscribe(() => {
+        //     // Go back to the list
+        //     this.#router.navigate(['./'], {
         //         relativeTo: this.#activatedRoute,
         //     });
         //     // Mark for check

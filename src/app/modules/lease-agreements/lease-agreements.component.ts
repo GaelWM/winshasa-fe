@@ -136,11 +136,6 @@ export class LeaseAgreementsComponent {
                     },
                 },
                 {
-                    title: 'Active',
-                    key: 'isActive',
-                    pipe: { class: { obj: IsActivePipe } },
-                },
-                {
                     title: 'Created At',
                     key: 'createdAt',
                     clickEvent: true,
@@ -183,10 +178,7 @@ export class LeaseAgreementsComponent {
 
     onSort(event: ColumnSetting): void {
         this.#router.navigate([], {
-            queryParams: {
-                sortBy: event.sortKey,
-                sortOrder: event.sortOrder,
-            },
+            queryParams: { orderBy: `${event.sortKey}:${event.sortOrder}` },
             queryParamsHandling: 'merge',
             relativeTo: this.#route,
         });

@@ -26,8 +26,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { FuseConfirmationService } from '@fuse/services/confirmation';
 import { IsActivePipe } from 'app/shared/pipes/is-active/is-active.pipe';
 import { WinTableComponent } from 'app/shared/components/win-table/win-table.component';
-import { Observable, map, switchMap } from 'rxjs';
-import { toWritableSignal } from 'app/shared/utils/common.util';
+import { Observable, distinctUntilChanged, map, switchMap } from 'rxjs';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { DateHelperPipe } from 'app/shared/pipes/date-helper-pipe/date-helper.pipe';
 import { ProjectFormComponent } from './project-form/project-form.component';
@@ -62,6 +61,7 @@ export class ProjectsComponent {
     #projects$: Observable<ApiResult<Project[]>> = toObservable(
         this.#projectsService.queries
     ).pipe(
+        distinctUntilChanged(),
         switchMap((params) => this.#projectsService.all<Project[]>(params)),
         map((result: ApiResult<Project[]>) => {
             if (result.data) {
@@ -71,7 +71,7 @@ export class ProjectsComponent {
         }),
         takeUntilDestroyed()
     );
-    $projects = toWritableSignal(this.#projects$, {} as ApiResult<Project[]>);
+    $projects = toSignal(this.#projects$);
 
     columns: ColumnSetting[] = [];
     user = toSignal(this.#userService.user$, { initialValue: {} as User });
@@ -171,7 +171,6 @@ export class ProjectsComponent {
         event.stopPropagation();
         this.#projectsService.selectedProject.set({ data: null });
         this.#dialog.open(ModalTemplateComponent, {
-            width: '600px',
             data: {
                 form: ProjectFormComponent,
                 title: 'Add Project',
@@ -184,7 +183,6 @@ export class ProjectsComponent {
         event.stopPropagation();
         this.#projectsService.selectedProject.set({ data: project });
         this.#dialog.open(ModalTemplateComponent, {
-            width: '600px',
             data: {
                 form: ProjectFormComponent,
                 title: 'Edit Project',

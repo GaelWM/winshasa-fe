@@ -67,6 +67,7 @@ export enum DocumentOwnerType {
     PAYMENT = 'payments',
     INVOICE = 'invoices',
     DOCUMENT = 'documents',
+    PROJECT = 'projects',
 }
 
 export enum DocumentStatus {

@@ -10,8 +10,9 @@ export class ProjectsService extends BaseService {
     constructor() {
         super('projects');
     }
+
     public _submitted: BehaviorSubject<boolean> = new BehaviorSubject(false);
-    public onSubmitProjectForm$: Observable<any> =
+    public onSubmitLeaseAgreementForm$: Observable<any> =
         this._submitted.asObservable();
 
     projects: WritableSignal<ApiResult<Project[]>> = signal(
@@ -21,10 +22,6 @@ export class ProjectsService extends BaseService {
     selectedProject: WritableSignal<ApiResult<Project>> = signal(
         {} as ApiResult<Project>
     );
-
-    onProjectFormSubmit(): Observable<boolean> {
-        return this.onSubmitProjectForm$;
-    }
 
     submitProjectForm(flag: boolean): void {
         this._submitted.next(flag);

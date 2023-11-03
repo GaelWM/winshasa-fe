@@ -223,6 +223,35 @@
                         </mat-form-field>
                     </div>
 
+                    <mat-form-field class="w-full">
+                        <mat-label>Currency</mat-label>
+                        <mat-select
+                            formControlName="currency"
+                            placeholder="Currency"
+                            required
+                        >
+                            <mat-option>Select</mat-option>
+                            <mat-option
+                                *ngFor="let option of paymentCurrenciesOpts"
+                                [value]="option"
+                                >{{ option }}</mat-option
+                            >
+                        </mat-select>
+                        <mat-hint>Please select a Currency</mat-hint>
+                        <mat-error
+                            *ngIf="
+                                leaseForm.controls?.currency?.touched &&
+                                leaseForm.controls?.currency?.invalid
+                            "
+                        >
+                            <app-error-form-template
+                                [form]="leaseForm"
+                                field="currency"
+                                name="Currency"
+                            ></app-error-form-template>
+                        </mat-error>
+                    </mat-form-field>
+
                     <div class="flex items-start gap-3">
                         <mat-form-field
                             [ngClass]="formFieldHelpers"

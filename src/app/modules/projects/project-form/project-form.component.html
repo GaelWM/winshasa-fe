@@ -3,15 +3,17 @@
     #projectNgForm="ngForm"
     (ngSubmit)="onSubmitNewProject(projectNgForm)"
     [formGroup]="projectForm"
-    class="w-full flex flex-col flex-auto md:min-w-160 h-full"
+    class=""
 >
-    <div class="flex flex-col h-full space-y-3">
+    <div
+        class="flex flex-col md:w-160 md:min-w-160 max-h-160 -m-6 overflow-y-auto"
+    >
         <fuse-alert [type]="'error'" *ngIf="errors().length > 0" class="w-full">
             <span fuseAlertTitle>Error</span>
             <span *ngFor="let error of errors()"> {{ error.message }}</span>
         </fuse-alert>
 
-        <div class="w-96">
+        <div class="flex flex-col items-start w-full p-2 sm:p-8 space-y-3">
             <mat-form-field [ngClass]="formFieldHelpers" class="w-full">
                 <mat-label>Project Name</mat-label>
                 <input
@@ -36,63 +38,65 @@
                 </mat-error>
             </mat-form-field>
 
-            <mat-form-field class="w-full">
-                <mat-label>Project Type</mat-label>
-                <mat-select
-                    formControlName="type"
-                    placeholder="Project Type"
-                    required
-                >
-                    <mat-option>Select</mat-option>
-                    <mat-option
-                        *ngFor="let option of $types()"
-                        [value]="option.name"
-                        >{{ option.name }}</mat-option
+            <div class="w-full flex items-center gap-3">
+                <mat-form-field class="w-full">
+                    <mat-label>Project Type</mat-label>
+                    <mat-select
+                        formControlName="type"
+                        placeholder="Project Type"
+                        required
                     >
-                </mat-select>
-                <mat-hint>Pproject select a Project Type</mat-hint>
-                <mat-error
-                    *ngIf="
-                        projectForm.controls?.type?.touched &&
-                        projectForm.controls?.type?.invalid
-                    "
-                >
-                    <app-error-form-template
-                        [form]="projectForm"
-                        field="type"
-                        name="Project Type"
-                    ></app-error-form-template>
-                </mat-error>
-            </mat-form-field>
+                        <mat-option>Select</mat-option>
+                        <mat-option
+                            *ngFor="let option of $types()"
+                            [value]="option.name"
+                            >{{ option.name }}</mat-option
+                        >
+                    </mat-select>
+                    <mat-hint>Pproject select a Project Type</mat-hint>
+                    <mat-error
+                        *ngIf="
+                            projectForm.controls?.type?.touched &&
+                            projectForm.controls?.type?.invalid
+                        "
+                    >
+                        <app-error-form-template
+                            [form]="projectForm"
+                            field="type"
+                            name="Project Type"
+                        ></app-error-form-template>
+                    </mat-error>
+                </mat-form-field>
 
-            <mat-form-field class="w-full">
-                <mat-label>Project Owner</mat-label>
-                <mat-select
-                    formControlName="ownerId"
-                    placeholder="Project Owner"
-                    required
-                >
-                    <mat-option>Select</mat-option>
-                    <mat-option
-                        *ngFor="let option of $owners()"
-                        [value]="option.id"
-                        >{{ option.fullName }}</mat-option
+                <mat-form-field class="w-full">
+                    <mat-label>Project Owner</mat-label>
+                    <mat-select
+                        formControlName="ownerId"
+                        placeholder="Project Owner"
+                        required
                     >
-                </mat-select>
-                <mat-hint>Select a Project owner</mat-hint>
-                <mat-error
-                    *ngIf="
-                        projectForm.controls?.ownerId?.touched &&
-                        projectForm.controls?.ownerId?.invalid
-                    "
-                >
-                    <app-error-form-template
-                        [form]="projectForm"
-                        field="ownerId"
-                        name="Project owner"
-                    ></app-error-form-template>
-                </mat-error>
-            </mat-form-field>
+                        <mat-option>Select</mat-option>
+                        <mat-option
+                            *ngFor="let option of $owners()"
+                            [value]="option.id"
+                            >{{ option.fullName }}</mat-option
+                        >
+                    </mat-select>
+                    <mat-hint>Select a Project owner</mat-hint>
+                    <mat-error
+                        *ngIf="
+                            projectForm.controls?.ownerId?.touched &&
+                            projectForm.controls?.ownerId?.invalid
+                        "
+                    >
+                        <app-error-form-template
+                            [form]="projectForm"
+                            field="ownerId"
+                            name="Project owner"
+                        ></app-error-form-template>
+                    </mat-error>
+                </mat-form-field>
+            </div>
 
             <mat-form-field class="w-full">
                 <mat-label>Project Status</mat-label>
@@ -119,57 +123,6 @@
                         [form]="projectForm"
                         field="status"
                         name="Project Status"
-                    ></app-error-form-template>
-                </mat-error>
-            </mat-form-field>
-
-            <mat-form-field class="w-full">
-                <mat-label>Project Template</mat-label>
-                <mat-select
-                    formControlName="templateId"
-                    placeholder="Project Template"
-                >
-                    <mat-option>Select</mat-option>
-                    <mat-option
-                        *ngFor="let option of $templateOpts()"
-                        [value]="option.id"
-                        >{{ option.name }}</mat-option
-                    >
-                </mat-select>
-                <mat-hint>Pproject select a Project Template</mat-hint>
-                <mat-error
-                    *ngIf="
-                        projectForm.controls?.templateId?.touched &&
-                        projectForm.controls?.templateId?.invalid
-                    "
-                >
-                    <app-error-form-template
-                        [form]="projectForm"
-                        field="templateId"
-                        name="Project Template"
-                    ></app-error-form-template>
-                </mat-error>
-            </mat-form-field>
-
-            <mat-form-field [ngClass]="formFieldHelpers" class="w-full">
-                <mat-label>Project Cost</mat-label>
-                <input
-                    type="number"
-                    formControlName="cost"
-                    matInput
-                    placeholder="Cost"
-                />
-                <mat-hint>Project cost </mat-hint>
-                <mat-error
-                    *ngIf="
-                        projectForm.controls?.cost?.touched &&
-                        projectForm.controls?.cost?.invalid
-                    "
-                >
-                    <app-error-form-template
-                        [form]="projectForm"
-                        field="cost"
-                        name="Cost"
                     ></app-error-form-template>
                 </mat-error>
             </mat-form-field>
@@ -212,6 +165,29 @@
                 >
             </mat-form-field>
 
+            <mat-form-field [ngClass]="formFieldHelpers" class="w-full">
+                <mat-label>Project Cost</mat-label>
+                <input
+                    type="number"
+                    formControlName="cost"
+                    matInput
+                    placeholder="Cost"
+                />
+                <mat-hint>Project cost </mat-hint>
+                <mat-error
+                    *ngIf="
+                        projectForm.controls?.cost?.touched &&
+                        projectForm.controls?.cost?.invalid
+                    "
+                >
+                    <app-error-form-template
+                        [form]="projectForm"
+                        field="cost"
+                        name="Cost"
+                    ></app-error-form-template>
+                </mat-error>
+            </mat-form-field>
+
             <mat-form-field class="w-full">
                 <mat-label>Project Description</mat-label>
                 <textarea
@@ -223,6 +199,34 @@
                 >
                 </textarea>
                 <mat-hint>Project enter Project Description</mat-hint>
+            </mat-form-field>
+
+            <mat-form-field class="w-full">
+                <mat-label>Project Template</mat-label>
+                <mat-select
+                    formControlName="templateId"
+                    placeholder="Project Template"
+                >
+                    <mat-option>Select</mat-option>
+                    <mat-option
+                        *ngFor="let option of $templateOpts()"
+                        [value]="option.id"
+                        >{{ option.name }}</mat-option
+                    >
+                </mat-select>
+                <mat-hint>Pproject select a Project Template</mat-hint>
+                <mat-error
+                    *ngIf="
+                        projectForm.controls?.templateId?.touched &&
+                        projectForm.controls?.templateId?.invalid
+                    "
+                >
+                    <app-error-form-template
+                        [form]="projectForm"
+                        field="templateId"
+                        name="Project Template"
+                    ></app-error-form-template>
+                </mat-error>
             </mat-form-field>
         </div>
     </div>

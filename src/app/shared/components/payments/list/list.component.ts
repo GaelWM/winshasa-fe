@@ -296,7 +296,7 @@ export class PaymentsListComponent implements OnInit {
                             paymentDate: formatDate(
                                 new Date(),
                                 'yyyy-MM-dd',
-                                'en'
+                                'en-US'
                             ),
                         })
                         .pipe(takeUntilDestroyed(this.#destroyRef))
