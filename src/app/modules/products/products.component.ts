@@ -30,6 +30,7 @@ import { WinTableComponent } from 'app/shared/components/win-table/win-table.com
 import { Observable, map, switchMap } from 'rxjs';
 import { toWritableSignal } from 'app/shared/utils/common.util';
 import { MatTooltipModule } from '@angular/material/tooltip';
+import { ModalTemplateComponent } from 'app/shared/components/modal-template/modal-template.component';
 
 @Component({
     selector: 'app-product',
@@ -47,32 +48,32 @@ import { MatTooltipModule } from '@angular/material/tooltip';
     templateUrl: './products.component.html',
 })
 export class ProductsComponent {
-    private _userService = inject(UserService);
-    private _productsService = inject(ProductsService);
-    private _router = inject(Router);
-    private _route = inject(ActivatedRoute);
-    private _dialog = inject(MatDialog);
-    private _fuseConfirmationService = inject(FuseConfirmationService);
-    private destroyRef = inject(DestroyRef);
+    #userService = inject(UserService);
+    #productsService = inject(ProductsService);
+    #router = inject(Router);
+    #route = inject(ActivatedRoute);
+    #dialog = inject(MatDialog);
+    #fuseConfirmationService = inject(FuseConfirmationService);
+    #destroyRef = inject(DestroyRef);
 
     @ViewChild('actionsTpl', { static: true }) actionsTpl!: TemplateRef<any>;
 
-    private products$: Observable<ApiResult<Product[]>> = toObservable(
-        this._productsService.queries
+    #products$: Observable<ApiResult<Product[]>> = toObservable(
+        this.#productsService.queries
     ).pipe(
-        switchMap((params) => this._productsService.all<Product[]>(params)),
+        switchMap((params) => this.#productsService.all<Product[]>(params)),
         map((result: ApiResult<Product[]>) => {
             if (result.data) {
-                this._productsService.products.set(result);
+                this.#productsService.products.set(result);
             }
             return result;
         }),
         takeUntilDestroyed()
     );
-    products = toWritableSignal(this.products$, {} as ApiResult<Product[]>);
+    products = toWritableSignal(this.#products$, {} as ApiResult<Product[]>);
 
     columns: ColumnSetting[] = [];
-    user = toSignal(this._userService.user$, { initialValue: {} as User });
+    user = toSignal(this.#userService.user$, { initialValue: {} as User });
 
     constructor() {
         effect(() => {
@@ -112,7 +113,7 @@ export class ProductsComponent {
     }
 
     onPageChange(event: PageEvent) {
-        this._router.navigate([], {
+        this.#router.navigate([], {
             queryParams: {
                 page: event.pageIndex + 1,
                 perPage: event.pageSize,
@@ -122,27 +123,25 @@ export class ProductsComponent {
     }
 
     onSort(event: ColumnSetting): void {
-        this._router.navigate([], {
-            queryParams: {
-                sortBy: event.sortKey,
-                sortOrder: event.sortOrder,
-            },
+        this.#router.navigate([], {
+            queryParams: { orderBy: `${event.sortKey}:${event.sortOrder}` },
             queryParamsHandling: 'merge',
-            relativeTo: this._route,
+            relativeTo: this.#route,
         });
     }
 
     onRowClick(event: Product): void {
-        this._router.navigate(['products', event.id, 'general-details']);
+        this.#router.navigate(['products', event.id, 'general-details']);
     }
 
     onAddProduct(event: Event) {
         event.preventDefault();
         event.stopPropagation();
-        this._dialog.open(ProductFormComponent, {
+        this.#dialog.open(ModalTemplateComponent, {
             data: {
-                title: 'Add new product',
-                action: 'add',
+                form: ProductFormComponent,
+                title: 'Add Product',
+                inputs: { asModal: true },
             },
         });
     }
@@ -150,11 +149,11 @@ export class ProductsComponent {
     onEditProduct(event: Event, product: IProduct) {
         event.preventDefault();
         event.stopPropagation();
-        this._dialog.open(ProductFormComponent, {
+        this.#dialog.open(ProductFormComponent, {
             data: {
+                form: ProductFormComponent,
                 title: 'Edit  product',
-                product: product,
-                action: 'edit',
+                inputs: { asModal: true },
             },
         });
     }
@@ -163,7 +162,7 @@ export class ProductsComponent {
         event.preventDefault();
         event.stopPropagation();
 
-        const confirmation = this._fuseConfirmationService.open({
+        const confirmation = this.#fuseConfirmationService.open({
             title: 'Delete product',
             message:
                 'Are you sure you want to delete this product and its groups and fields? This action cannot be undone!',
@@ -176,9 +175,9 @@ export class ProductsComponent {
 
         confirmation.afterClosed().subscribe((result) => {
             if (result === 'confirmed') {
-                this._productsService
+                this.#productsService
                     .deleteProduct(product.id)
-                    .pipe(takeUntilDestroyed(this.destroyRef))
+                    .pipe(takeUntilDestroyed(this.#destroyRef))
                     .subscribe();
             }
         });
