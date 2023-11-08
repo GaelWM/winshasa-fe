@@ -56,6 +56,7 @@ import {
     Site,
     PaymentFrequency,
     CURRENCIES,
+    TemplateType,
 } from 'app/shared/models';
 import { catchError, map, of } from 'rxjs';
 
@@ -147,7 +148,7 @@ export class LeaseAgreementFormComponent
     $templateOpts = computed(() => {
         const templates = this.$templates()?.data as Template[];
         return templates
-            ?.filter((t) => t.type === MetadataEntityType.LEASE)
+            ?.filter((t) => t.type === TemplateType.LEASE)
             .map((t) => ({ id: t.id, name: t.name }));
     });
 
