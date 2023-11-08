@@ -1,179 +1,196 @@
 <form
-    *ngIf="siteForm() as siteForm"
+    *ngIf="$siteForm() as siteForm"
     #siteNgForm="ngForm"
     (ngSubmit)="onSubmitNewSite(siteNgForm)"
     [formGroup]="siteForm"
+    class="w-full flex flex-col flex-auto md:min-w-160 h-full"
 >
-    <div
-        class="flex flex-col flex-auto md:w-160 md:min-w-160 max-h-160 -m-6 overflow-y-auto"
-    >
-        <div
-            class="flex flex-0 items-center justify-between h-16 pr-3 sm:pr-5 pl-6 sm:pl-8 bg-primary text-on-primary"
-        >
-            <div class="text-lg font-medium">{{ data.title }}</div>
-            <button
-                mat-icon-button
-                (click)="onCloseModal($event)"
-                [tabIndex]="-1"
-            >
-                <mat-icon
-                    class="text-current"
-                    [svgIcon]="'heroicons_outline:x-circle'"
-                ></mat-icon>
-            </button>
-        </div>
+    <div class="flex flex-col h-full space-y-3">
+        <fuse-alert [type]="'error'" *ngIf="errors().length > 0" class="w-full">
+            <span fuseAlertTitle>Error</span>
+            <span *ngFor="let error of errors()"> {{ error.message }}</span>
+        </fuse-alert>
 
-        <div
-            class="flex flex-col flex-1 items-start w-full p-6 sm:p-8 space-y-3 overflow-y-auto"
-        >
-            <fuse-alert
-                [type]="'error'"
-                *ngIf="errors().length > 0"
-                class="w-full"
-            >
-                <span fuseAlertTitle>Error</span>
-                <span *ngFor="let error of errors()"> {{ error.message }}</span>
-            </fuse-alert>
-            <mat-form-field [ngClass]="formFieldHelpers" class="w-full">
-                <mat-label>Site Name</mat-label>
-                <input
-                    type="text"
-                    formControlName="name"
-                    matInput
-                    required
-                    [placeholder]="'Site name'"
-                />
-                <mat-hint>Please type in the site name</mat-hint>
-                <mat-error
-                    *ngIf="
-                        siteForm.controls?.name?.touched &&
-                        siteForm.controls?.name?.invalid
-                    "
-                >
-                    <app-error-form-template
-                        [form]="siteForm"
-                        field="name"
-                        name="Site name"
-                    ></app-error-form-template>
-                </mat-error>
-            </mat-form-field>
-
-            <mat-form-field class="w-full">
-                <mat-label>Template</mat-label>
-                <mat-select
-                    formControlName="templateId"
-                    [placeholder]="'Template'"
-                    required
-                >
-                    <mat-option>Select</mat-option>
-                    <mat-option
-                        *ngFor="let option of templateOptions()"
-                        [value]="option.id"
-                        >{{ option.name }}</mat-option
-                    >
-                </mat-select>
-                <mat-hint>Please select a template</mat-hint>
-                <mat-error
-                    *ngIf="
-                        siteForm.controls?.templateId?.touched &&
-                        siteForm.controls?.templateId?.invalid
-                    "
-                >
-                    <app-error-form-template
-                        [form]="siteForm"
-                        field="templateId"
-                        name="Site template"
-                    ></app-error-form-template>
-                </mat-error>
-            </mat-form-field>
-
-            <mat-form-field class="w-full">
-                <mat-label>Site type</mat-label>
-                <mat-select
-                    formControlName="type"
-                    [placeholder]="'Site type'"
-                    required
-                >
-                    <mat-option>Select</mat-option>
-                    <mat-option
-                        *ngFor="let option of siteTypeOptions()"
-                        [value]="option.name"
-                        >{{ option.name }}</mat-option
-                    >
-                </mat-select>
-                <mat-hint>Please select a type</mat-hint>
-                <mat-error
-                    *ngIf="
-                        siteForm.controls?.type?.touched &&
-                        siteForm.controls?.type?.invalid
-                    "
-                >
-                    <app-error-form-template
-                        [form]="siteForm"
-                        field="type"
-                        name="Site type"
-                    ></app-error-form-template>
-                </mat-error>
-            </mat-form-field>
-
-            <mat-form-field class="w-full">
-                <mat-label>Site status</mat-label>
-                <mat-select
-                    formControlName="status"
-                    [placeholder]="'Site status'"
-                    required
-                >
-                    <mat-option>Select</mat-option>
-                    <mat-option
-                        *ngFor="let option of siteStatusOptions()"
-                        [value]="option.name"
-                        >{{ option.name }}</mat-option
-                    >
-                </mat-select>
-                <mat-hint>Please select a status</mat-hint>
-                <mat-error
-                    *ngIf="
-                        siteForm.controls?.status?.touched &&
-                        siteForm.controls?.status?.invalid
-                    "
-                >
-                    <app-error-form-template
-                        [form]="siteForm"
-                        field="status"
-                        name="Site status"
-                    ></app-error-form-template>
-                </mat-error>
-            </mat-form-field>
-            <div class="w-full flex justify-between items-center gap-4">
+        <div class="w-full flex items-start gap-2">
+            <div [class]="asModal ? 'w-full' : 'w-2/5'" class="space-y-3 p-3">
                 <mat-form-field [ngClass]="formFieldHelpers" class="w-full">
-                    <mat-label>Site latitude</mat-label>
+                    <mat-label>Site Name</mat-label>
                     <input
-                        type="number"
-                        formControlName="latitude"
+                        type="text"
+                        formControlName="name"
                         matInput
-                        [placeholder]="'Site latitude'"
+                        required
+                        [placeholder]="'Site name'"
                     />
-                    <mat-hint>Please type in the site latitude </mat-hint>
+                    <mat-hint>Please type in the site name</mat-hint>
+                    <mat-error
+                        *ngIf="
+                            siteForm.controls?.name?.touched &&
+                            siteForm.controls?.name?.invalid
+                        "
+                    >
+                        <app-error-form-template
+                            [form]="siteForm"
+                            field="name"
+                            name="Site name"
+                        ></app-error-form-template>
+                    </mat-error>
                 </mat-form-field>
-                <mat-form-field [ngClass]="formFieldHelpers" class="w-full">
-                    <mat-label>Site Longitude</mat-label>
-                    <input
-                        type="number"
-                        formControlName="longitude"
-                        matInput
-                        [placeholder]="'Site longitude'"
-                    />
-                    <mat-hint>Please type in the site longitude</mat-hint>
+
+                <mat-form-field class="w-full">
+                    <mat-label>Template</mat-label>
+                    <mat-select
+                        formControlName="templateId"
+                        [placeholder]="'Template'"
+                        required
+                    >
+                        <mat-option>Select</mat-option>
+                        <mat-option
+                            *ngFor="let option of $templateOpts()"
+                            [value]="option.id"
+                            >{{ option.name }}</mat-option
+                        >
+                    </mat-select>
+                    <mat-hint>Please select a template</mat-hint>
+                    <mat-error
+                        *ngIf="
+                            siteForm.controls?.templateId?.touched &&
+                            siteForm.controls?.templateId?.invalid
+                        "
+                    >
+                        <app-error-form-template
+                            [form]="siteForm"
+                            field="templateId"
+                            name="Site template"
+                        ></app-error-form-template>
+                    </mat-error>
                 </mat-form-field>
+
+                <mat-form-field class="w-full">
+                    <mat-label>Site type</mat-label>
+                    <mat-select
+                        formControlName="type"
+                        [placeholder]="'Site type'"
+                        required
+                    >
+                        <mat-option>Select</mat-option>
+                        <mat-option
+                            *ngFor="let option of $siteTypeOpts()"
+                            [value]="option.name"
+                            >{{ option.name }}</mat-option
+                        >
+                    </mat-select>
+                    <mat-hint>Please select a type</mat-hint>
+                    <mat-error
+                        *ngIf="
+                            siteForm.controls?.type?.touched &&
+                            siteForm.controls?.type?.invalid
+                        "
+                    >
+                        <app-error-form-template
+                            [form]="siteForm"
+                            field="type"
+                            name="Site type"
+                        ></app-error-form-template>
+                    </mat-error>
+                </mat-form-field>
+
+                <mat-form-field class="w-full">
+                    <mat-label>Site status</mat-label>
+                    <mat-select
+                        formControlName="status"
+                        [placeholder]="'Site status'"
+                        required
+                    >
+                        <mat-option>Select</mat-option>
+                        <mat-option
+                            *ngFor="let option of $siteStatusOpts()"
+                            [value]="option.name"
+                            >{{ option.name }}</mat-option
+                        >
+                    </mat-select>
+                    <mat-hint>Please select a status</mat-hint>
+                    <mat-error
+                        *ngIf="
+                            siteForm.controls?.status?.touched &&
+                            siteForm.controls?.status?.invalid
+                        "
+                    >
+                        <app-error-form-template
+                            [form]="siteForm"
+                            field="status"
+                            name="Site status"
+                        ></app-error-form-template>
+                    </mat-error>
+                </mat-form-field>
+                <mat-form-field class="w-full">
+                    <mat-label>Site category</mat-label>
+                    <mat-select
+                        formControlName="category"
+                        [placeholder]="'Site category'"
+                    >
+                        <mat-option>Select</mat-option>
+                        <mat-option
+                            *ngFor="let option of $siteCategoryOpts()"
+                            [value]="option.name"
+                            >{{ option.name }}</mat-option
+                        >
+                    </mat-select>
+                    <mat-hint>Please select a category</mat-hint>
+                    <mat-error
+                        *ngIf="
+                            siteForm.controls?.category?.touched &&
+                            siteForm.controls?.category?.invalid
+                        "
+                    >
+                        <app-error-form-template
+                            [form]="siteForm"
+                            field="category"
+                            name="Site category"
+                        ></app-error-form-template>
+                    </mat-error>
+                </mat-form-field>
+                <div class="w-full flex justify-between items-center gap-4">
+                    <mat-form-field [ngClass]="formFieldHelpers" class="w-full">
+                        <mat-label>Site latitude</mat-label>
+                        <input
+                            type="number"
+                            formControlName="latitude"
+                            matInput
+                            [placeholder]="'Site latitude'"
+                        />
+                        <mat-hint>Please type in the site latitude </mat-hint>
+                    </mat-form-field>
+                    <mat-form-field [ngClass]="formFieldHelpers" class="w-full">
+                        <mat-label>Site Longitude</mat-label>
+                        <input
+                            type="number"
+                            formControlName="longitude"
+                            matInput
+                            [placeholder]="'Site longitude'"
+                        />
+                        <mat-hint>Please type in the site longitude</mat-hint>
+                    </mat-form-field>
+                </div>
+            </div>
+            <div *ngIf="!asModal" class="w-3/5">
+                <app-json-form
+                    [template]="$selectedTemplate()"
+                    [form]="siteForm"
+                    [values]="$site().data"
+                >
+                </app-json-form>
             </div>
         </div>
+
+        <!-- Footer -->
         <div
-            class="flex items-center justify-end border-t px-8 py-5 bg-gray-50 dark:bg-gray-700"
+            *ngIf="showSaveButton"
+            class="w-full flex items-center justify-end border-t p-2 pb-0 border-gray-50 dark:border-gray-700"
         >
-            <button mat-button (click)="onCloseModal($event)">Close</button>
             <button
                 type="submit"
-                class="px-6 ml-3"
+                class=""
                 mat-flat-button
                 [color]="'primary'"
                 [disabled]="!siteForm.valid"

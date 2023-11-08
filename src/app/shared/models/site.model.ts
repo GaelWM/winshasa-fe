@@ -6,6 +6,7 @@ export interface ISite {
     name: string;
     type: string;
     status: string;
+    category?: string;
     latitude?: number;
     longitude?: number;
     templateId: string;
@@ -28,6 +29,7 @@ export class Site {
     name: string;
     type: string;
     status: string;
+    category?: string;
     latitude?: number;
     longitude?: number;
     position?: { lat: number; lng: number };
@@ -51,6 +53,7 @@ export class Site {
         this.name = model.name;
         this.type = model.type;
         this.status = model.status;
+        this.category = model.category;
         this.latitude = model.latitude;
         this.longitude = model.longitude;
         this.templateId = model.templateId;

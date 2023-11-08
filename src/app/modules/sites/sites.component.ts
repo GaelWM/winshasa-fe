@@ -30,6 +30,7 @@ import { WinTableComponent } from 'app/shared/components/win-table/win-table.com
 import { Observable, map, switchMap } from 'rxjs';
 import { toWritableSignal } from 'app/shared/utils/common.util';
 import { MatTooltipModule } from '@angular/material/tooltip';
+import { ModalTemplateComponent } from 'app/shared/components/modal-template/modal-template.component';
 
 @Component({
     selector: 'app-site',
@@ -47,23 +48,23 @@ import { MatTooltipModule } from '@angular/material/tooltip';
     templateUrl: './sites.component.html',
 })
 export class SitesComponent {
-    private _userService = inject(UserService);
-    private _sitesService = inject(SitesService);
-    private _router = inject(Router);
-    private _route = inject(ActivatedRoute);
-    private _dialog = inject(MatDialog);
-    private _fuseConfirmationService = inject(FuseConfirmationService);
-    private destroyRef = inject(DestroyRef);
+    #userService = inject(UserService);
+    #sitesService = inject(SitesService);
+    #router = inject(Router);
+    #route = inject(ActivatedRoute);
+    #dialog = inject(MatDialog);
+    #fuseConfirmationService = inject(FuseConfirmationService);
+    #destroyRef = inject(DestroyRef);
 
     @ViewChild('actionsTpl', { static: true }) actionsTpl!: TemplateRef<any>;
 
     private sites$: Observable<ApiResult<Site[]>> = toObservable(
-        this._sitesService.queries
+        this.#sitesService.queries
     ).pipe(
-        switchMap((params) => this._sitesService.all<Site[]>(params)),
+        switchMap((params) => this.#sitesService.all<Site[]>(params)),
         map((result: ApiResult<Site[]>) => {
             if (result.data) {
-                this._sitesService.sites.set(result);
+                this.#sitesService.sites.set(result);
             }
             return result;
         }),
@@ -72,7 +73,7 @@ export class SitesComponent {
     sites = toWritableSignal(this.sites$, {} as ApiResult<Site[]>);
 
     columns: ColumnSetting[] = [];
-    user = toSignal(this._userService.user$, { initialValue: {} as User });
+    user = toSignal(this.#userService.user$, { initialValue: {} as User });
 
     constructor() {
         effect(() => {
@@ -118,7 +119,7 @@ export class SitesComponent {
     }
 
     onPageChange(event: PageEvent) {
-        this._router.navigate([], {
+        this.#router.navigate([], {
             queryParams: {
                 page: event.pageIndex + 1,
                 perPage: event.pageSize,
@@ -128,27 +129,25 @@ export class SitesComponent {
     }
 
     onSort(event: ColumnSetting): void {
-        this._router.navigate([], {
-            queryParams: {
-                sortBy: event.sortKey,
-                sortOrder: event.sortOrder,
-            },
+        this.#router.navigate([], {
+            queryParams: { orderBy: `${event.sortKey}:${event.sortOrder}` },
             queryParamsHandling: 'merge',
-            relativeTo: this._route,
+            relativeTo: this.#route,
         });
     }
 
     onRowClick(event: Site): void {
-        this._router.navigate(['sites', event.id, 'general-details']);
+        this.#router.navigate(['sites', event.id, 'general-details']);
     }
 
     onAddSite(event: Event) {
         event.preventDefault();
         event.stopPropagation();
-        this._dialog.open(SiteFormComponent, {
+        this.#dialog.open(ModalTemplateComponent, {
             data: {
-                title: 'Add new site',
-                action: 'add',
+                form: SiteFormComponent,
+                title: 'Add Site',
+                inputs: { asModal: true },
             },
         });
     }
@@ -156,11 +155,11 @@ export class SitesComponent {
     onEditSite(event: Event, site: ISite) {
         event.preventDefault();
         event.stopPropagation();
-        this._dialog.open(SiteFormComponent, {
+        this.#dialog.open(ModalTemplateComponent, {
             data: {
-                title: 'Edit  site',
-                site: site,
-                action: 'edit',
+                form: SiteFormComponent,
+                title: 'Edit Site',
+                inputs: { asModal: true },
             },
         });
     }
@@ -169,7 +168,7 @@ export class SitesComponent {
         event.preventDefault();
         event.stopPropagation();
 
-        const confirmation = this._fuseConfirmationService.open({
+        const confirmation = this.#fuseConfirmationService.open({
             title: 'Delete site',
             message:
                 'Are you sure you want to delete this site and its groups and fields? This action cannot be undone!',
@@ -182,9 +181,9 @@ export class SitesComponent {
 
         confirmation.afterClosed().subscribe((result) => {
             if (result === 'confirmed') {
-                this._sitesService
+                this.#sitesService
                     .deleteSite(site.id)
-                    .pipe(takeUntilDestroyed(this.destroyRef))
+                    .pipe(takeUntilDestroyed(this.#destroyRef))
                     .subscribe();
             }
         });
