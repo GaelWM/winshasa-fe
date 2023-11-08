@@ -6,7 +6,6 @@ import {
     NgIf,
     NgTemplateOutlet,
 } from '@angular/common';
-import { HttpClient } from '@angular/common/http';
 import {
     Component,
     ElementRef,
@@ -18,7 +17,6 @@ import {
     OnDestroy,
     OnInit,
     Output,
-    Renderer2,
     SimpleChanges,
     ViewChild,
     ViewEncapsulation,
@@ -89,19 +87,6 @@ export class SearchComponent implements OnChanges, OnInit, OnDestroy {
     private _unsubscribeAll: Subject<any> = new Subject<any>();
 
     private _searchService = inject(SearchService);
-
-    /**
-     * Constructor
-     */
-    constructor(
-        private _elementRef: ElementRef,
-        private _httpClient: HttpClient,
-        private _renderer2: Renderer2
-    ) {}
-
-    // -----------------------------------------------------------------------------------------------------
-    // @ Accessors
-    // -----------------------------------------------------------------------------------------------------
 
     /**
      * Host binding for component classes
@@ -188,9 +173,25 @@ export class SearchComponent implements OnChanges, OnInit, OnDestroy {
                 this._searchService
                     .post({ q: value })
                     .subscribe((resultSets: any) => {
-                        // Store the result sets
-                        this.resultSets = resultSets;
-
+                        this.resultSets = resultSets.map((resultSet) => {
+                            resultSet.results = resultSet.results.map(
+                                (result) => {
+                                    const generalDetailsIds = [
+                                        'projects',
+                                        'sites',
+                                        'products',
+                                        'lease_agreements',
+                                    ];
+                                    result.url = `${result.link}/${result.id}${
+                                        generalDetailsIds.includes(resultSet.id)
+                                            ? '/general-details'
+                                            : ''
+                                    }`;
+                                    return result;
+                                }
+                            );
+                            return resultSet;
+                        });
                         // Execute the event
                         this.search.next(resultSets);
                     });

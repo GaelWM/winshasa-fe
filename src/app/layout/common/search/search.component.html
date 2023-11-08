@@ -47,7 +47,7 @@
                 >
                     <mat-option
                         class="group relative mb-1 py-0 px-6 text-md rounded-md hover:bg-gray-100 dark:hover:bg-hover"
-                        [routerLink]="[result.link, result.id]"
+                        [routerLink]="[result.url]"
                         [value]="result.value"
                     >
                         <!-- Sites -->
@@ -93,6 +93,15 @@
                             <ng-container
                                 *ngTemplateOutlet="
                                     userResult;
+                                    context: { $implicit: result }
+                                "
+                            ></ng-container>
+                        </ng-container>
+                        <!-- Projects -->
+                        <ng-container *ngIf="resultSet.id === 'projects'">
+                            <ng-container
+                                *ngTemplateOutlet="
+                                    projectResult;
                                     context: { $implicit: result }
                                 "
                             ></ng-container>
@@ -153,7 +162,7 @@
                 >
                     <mat-option
                         class="group relative mb-1 py-0 px-6 text-md rounded-md hover:bg-gray-100 dark:hover:bg-hover"
-                        [routerLink]="[result.link, result.id]"
+                        [routerLink]="[result.url]"
                         [value]="result.id"
                     >
                         <!-- Sites -->
@@ -199,6 +208,15 @@
                             <ng-container
                                 *ngTemplateOutlet="
                                     userResult;
+                                    context: { $implicit: result }
+                                "
+                            ></ng-container>
+                        </ng-container>
+                        <!-- Projects -->
+                        <ng-container *ngIf="resultSet.id === 'projects'">
+                            <ng-container
+                                *ngTemplateOutlet="
+                                    projectResult;
                                     context: { $implicit: result }
                                 "
                             ></ng-container>
@@ -295,6 +313,26 @@
         <div class="ml-3 truncate">
             <span
                 >{{ result.type }} ==> {{ result.property_type }} ==>
+                {{ result.status }}</span
+            >
+        </div>
+    </div>
+</ng-template>
+
+<!-- Project result template -->
+<ng-template #projectResult let-result>
+    <div class="flex items-center">
+        <div
+            class="flex shrink-0 items-center justify-center w-8 h-8 rounded-full overflow-hidden bg-primary-100 dark:bg-primary-800"
+        >
+            <mat-icon
+                class="m-0 icon-size-5 text-primary dark:text-primary-400"
+                [svgIcon]="'heroicons_outline:newspaper'"
+            ></mat-icon>
+        </div>
+        <div class="ml-3 truncate">
+            <span
+                >{{ result.name }} ==> {{ result.type }} ==>
                 {{ result.status }}</span
             >
         </div>
