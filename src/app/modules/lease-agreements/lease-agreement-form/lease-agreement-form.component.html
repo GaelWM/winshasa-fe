@@ -419,6 +419,14 @@
                         <mat-hint>Please enter Move Out Conditions</mat-hint>
                     </mat-form-field>
                 </div>
+                <div *ngIf="!asModal" class="w-3/5">
+                    <app-json-form
+                        [template]="$selectedTemplate()"
+                        [form]="leaseForm"
+                        [values]="$lease().data"
+                    >
+                    </app-json-form>
+                </div>
             </div>
         </div>
     </div>

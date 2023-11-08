@@ -40,6 +40,7 @@ import { SitesService } from 'app/services/sites.service';
 import { TemplatesService } from 'app/services/templates.service';
 import { UserService } from 'app/services/user.service';
 import { ErrorFormTemplateComponent } from 'app/shared/components/error-form-template/error-form-template.component';
+import { JsonFormComponent } from 'app/shared/components/json-form/json-form.component';
 import { WinFormBuilder } from 'app/shared/components/modal-template/modal-template.component';
 import { ModalTemplateService } from 'app/shared/components/modal-template/modal-template.service';
 import {
@@ -82,6 +83,7 @@ import { catchError, map, of } from 'rxjs';
         MatMenuModule,
         MatTooltipModule,
         MatTabsModule,
+        JsonFormComponent,
     ],
     providers: [{ provide: MAT_DATE_LOCALE, useValue: 'fr-FR' }],
     standalone: true,
@@ -114,6 +116,7 @@ export class LeaseAgreementFormComponent
     paymentCurrenciesOpts = CURRENCIES;
 
     errors: WritableSignal<FormError[]> = signal([]);
+    $lease = this.#leaseService.selectedLeaseAgreement;
     $leaseForm = computed(() => {
         const leaseAgreement = this.#leaseService.selectedLeaseAgreement()
             .data as LeaseAgreement;
@@ -151,6 +154,9 @@ export class LeaseAgreementFormComponent
             ?.filter((t) => t.type === TemplateType.LEASE)
             .map((t) => ({ id: t.id, name: t.name }));
     });
+    $selectedTemplate: WritableSignal<Template | undefined> = signal(
+        {} as Template
+    );
 
     #users$ = this.#userService.getUsersWithRole('landlord,tenant').pipe(
         takeUntilDestroyed(),
@@ -240,6 +246,9 @@ export class LeaseAgreementFormComponent
         if (formData.propertyType === 'PRODUCT') {
             this.$properties.set(this.$products());
         }
+
+        const template = this.getSelectedTemplate(formData.templateId);
+        this.$selectedTemplate.set(template);
     }
 
     onSubmitNewLeaseAgreement(leaseAgreementForm: NgForm): void {
@@ -263,6 +272,11 @@ export class LeaseAgreementFormComponent
         } else {
             this.addLeaseAgreement(leaseAgreementForm);
         }
+    }
+
+    private getSelectedTemplate(templateId): Template | undefined {
+        const templates = this.$templates()?.data as Template[];
+        return templates?.find((t) => t.id === templateId);
     }
 
     private addLeaseAgreement(leaseAgreementForm: NgForm): void {
