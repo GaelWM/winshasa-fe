@@ -25,7 +25,7 @@ import { MatSelectModule } from '@angular/material/select';
 import { FuseAlertComponent } from '@fuse/components/alert';
 import { TemplatesService } from 'app/services/templates.service';
 import { ErrorFormTemplateComponent } from 'app/shared/components/error-form-template/error-form-template.component';
-import { FormError, Template } from 'app/shared/models';
+import { FormError, Template, TemplateTypeOptions } from 'app/shared/models';
 
 @Component({
     selector: 'app-template-form',
@@ -59,6 +59,7 @@ export class TemplateFormComponent {
     formFieldHelpers: string = '';
     submitted: boolean = false;
     errors: WritableSignal<FormError[]> = signal([]);
+    templateTypeOpts = TemplateTypeOptions;
     templateForm = computed(() => {
         const template = this.data.template;
         return this._formBuilder.group({

@@ -59,3 +59,15 @@ export type TemplateDetails = {
         uiClassesOverride?: string;
     };
 };
+
+export enum TemplateType {
+    SITE = 'SITE',
+    PROJECT = 'PROJECT',
+    PRODUCT = 'PRODUCT',
+    LEASE = 'LEASE',
+    TASK = 'TASK',
+    FORM = 'FORM',
+    PAYMENT = 'PAYMENT',
+}
+
+export const TemplateTypeOptions = Object.values(TemplateType);

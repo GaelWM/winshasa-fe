@@ -69,9 +69,11 @@
                             formControlName="type"
                             required
                         >
-                            <mat-option [value]="'Form'">Form</mat-option>
-                            <mat-option [value]="'Site'">Site</mat-option>
-                            <mat-option [value]="'Product'">Product</mat-option>
+                            <mat-option
+                                *ngFor="let opt of templateTypeOpts"
+                                [value]="opt"
+                                >{{ opt }}</mat-option
+                            >
                         </mat-select>
                         <mat-hint>Please select the entity type</mat-hint>
                         <mat-error
