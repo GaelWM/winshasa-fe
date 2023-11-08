@@ -48,8 +48,14 @@ import {
     MetadataEntityType,
     PaymentFrequency,
     ProjectStatus,
+    TemplateType,
 } from 'app/shared/models';
 import { catchError, map, of } from 'rxjs';
+import { JsonFormComponent } from 'app/shared/components/json-form/json-form.component';
+import {
+    TOAST_STATE,
+    ToastService,
+} from 'app/shared/components/toast/toast.service';
 
 @Component({
     selector: 'app-project-form',
@@ -72,6 +78,7 @@ import { catchError, map, of } from 'rxjs';
         MatMenuModule,
         MatTooltipModule,
         MatTabsModule,
+        JsonFormComponent,
     ],
     providers: [{ provide: MAT_DATE_LOCALE, useValue: 'fr-FR' }],
     standalone: true,
@@ -88,8 +95,10 @@ export class ProjectFormComponent
     #projectService = inject(ProjectsService);
     #modalService = inject(ModalTemplateService);
     #destroyRef = inject(DestroyRef);
+    #toastService = inject(ToastService);
 
     @Input() showSaveButton = false;
+    @Input() asModal = false;
 
     @ViewChild('projectNgForm') _form: NgForm;
     form: NgForm = {} as NgForm;
@@ -100,6 +109,7 @@ export class ProjectFormComponent
     paymentFrequencyOpts = Object.values(PaymentFrequency);
 
     errors: WritableSignal<FormError[]> = signal([]);
+    $project = this.#projectService.selectedProject;
     $projectForm = computed(() => {
         const project = this.#projectService.selectedProject().data as Project;
 
@@ -127,9 +137,13 @@ export class ProjectFormComponent
     $templateOpts = computed(() => {
         const templates = this.$templates()?.data as Template[];
         return templates
-            ?.filter((t) => t.type === MetadataEntityType.PROJECT)
+            ?.filter((t) => t.type === TemplateType.PROJECT)
             .map((t) => ({ id: t.id, name: t.name }));
     });
+
+    $selectedTemplate: WritableSignal<Template | undefined> = signal(
+        {} as Template
+    );
 
     #users$ = this.#userService.getUsersWithRole('landlord,tenant').pipe(
         takeUntilDestroyed(),
@@ -173,7 +187,15 @@ export class ProjectFormComponent
         this.form = this._form;
     }
 
-    onValuesChange(formData: any): void {}
+    onValuesChange(formData: any): void {
+        const template = this.getSelectedTemplate(formData.templateId);
+        this.$selectedTemplate.set(template);
+    }
+
+    private getSelectedTemplate(templateId): Template | undefined {
+        const templates = this.$templates()?.data as Template[];
+        return templates?.find((t) => t.id === templateId);
+    }
 
     onSubmitNewProject(projectForm: NgForm): void {
         this.submitted = true;
@@ -201,6 +223,10 @@ export class ProjectFormComponent
         this.#projectService.storeProject(projectForm.value).subscribe({
             next: () => {
                 this.#modalService.closeModal();
+                this.#toastService.showToast(
+                    TOAST_STATE.SUCCESS,
+                    'Project added successfully!'
+                );
             },
             error: (err) => {
                 if (err?.error) {
@@ -219,7 +245,10 @@ export class ProjectFormComponent
             .updateProject(project.id, projectForm.value)
             .subscribe({
                 next: () => {
-                    this.#modalService.closeModal();
+                    this.#toastService.showToast(
+                        TOAST_STATE.SUCCESS,
+                        'Project updated successfully!'
+                    );
                 },
                 error: (err) => {
                     if (err?.error) {

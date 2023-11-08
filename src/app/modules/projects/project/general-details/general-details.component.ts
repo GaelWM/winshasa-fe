@@ -10,7 +10,7 @@ import { FuseAlertComponent } from '@fuse/components/alert';
 import { ProjectFormComponent } from '../../project-form/project-form.component';
 
 @Component({
-    selector: 'app-general-details',
+    selector: 'app-project-general-details',
     templateUrl: './general-details.component.html',
     imports: [
         CommonModule,

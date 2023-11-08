@@ -174,6 +174,7 @@ export class ProjectsComponent {
             data: {
                 form: ProjectFormComponent,
                 title: 'Add Project',
+                inputs: { asModal: true },
             },
         });
     }
@@ -186,6 +187,7 @@ export class ProjectsComponent {
             data: {
                 form: ProjectFormComponent,
                 title: 'Edit Project',
+                inputs: { asModal: true },
             },
         });
     }
