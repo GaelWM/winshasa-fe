@@ -1,5 +1,7 @@
 <div
-    [class]="'flex flex-auto overflow-y-auto form-container ' + formClass"
+    [class]="
+        'flex flex-row flex-wrap overflow-auto form-container ' + formClass
+    "
     *ngIf="template"
     [formGroup]="form"
     [ngStyle]="formStyle"
@@ -11,7 +13,7 @@
         "
     ></ng-container>
     <div
-        [class]="'w-full  my-1 form-group ' + formGroupClass"
+        [class]="'w-80  my-1 form-group ' + formGroupClass"
         *ngFor="let group of template?.details?.groups; let i = index"
         formGroupName="details"
     >
