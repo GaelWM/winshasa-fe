@@ -92,7 +92,7 @@ export class PermissionsService extends BaseService {
     storePermission(payload: Permission): Observable<ApiResult<Permission>> {
         return this.post<Permission>(payload).pipe(
             tap((result) => {
-                this.$permissions.mutate(
+                this.$permissions.update(
                     (permissions: ApiResult<Permission[]>) => {
                         permissions.data = [
                             result.data as Permission,
@@ -120,7 +120,7 @@ export class PermissionsService extends BaseService {
     deletePermission(id: string): Observable<ApiResult<Permission>> {
         return this.delete<Permission>(id).pipe(
             tap(() => {
-                this.$permissions.mutate(
+                this.$permissions.update(
                     (permissions: ApiResult<Permission[]>) => {
                         permissions.data = (
                             permissions.data as Permission[]

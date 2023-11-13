@@ -45,7 +45,7 @@ export class RolesService extends BaseService {
     storeRole(payload: Role): Observable<ApiResult<Role>> {
         return this.post<Role>(payload).pipe(
             tap((result) => {
-                this.$roles.mutate((roles: ApiResult<Role[]>) => {
+                this.$roles.update((roles: ApiResult<Role[]>) => {
                     roles.data = [
                         result.data as Role,
                         ...(roles.data as Role[]),
@@ -68,7 +68,7 @@ export class RolesService extends BaseService {
     deleteRole(id: string): Observable<ApiResult<Role>> {
         return this.delete<Role>(id).pipe(
             tap(() => {
-                this.$roles.mutate((roles: ApiResult<Role[]>) => {
+                this.$roles.update((roles: ApiResult<Role[]>) => {
                     roles.data = (roles.data as Role[]).filter(
                         (t: Role) => t.id !== id
                     );

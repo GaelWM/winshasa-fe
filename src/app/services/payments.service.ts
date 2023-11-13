@@ -25,7 +25,7 @@ export class PaymentsService extends BaseService {
     storePayment(payload: Payment): Observable<ApiResult<Payment>> {
         return this.post<Payment>(payload).pipe(
             tap((result) => {
-                this.payments.mutate((payments: ApiResult<Payment[]>) => {
+                this.payments.update((payments: ApiResult<Payment[]>) => {
                     payments.data = [
                         result.data as Payment,
                         ...(payments.data as Payment[]),
@@ -44,7 +44,7 @@ export class PaymentsService extends BaseService {
         return this.patch<Payment>(id, payload).pipe(
             tap((result) => {
                 this.selectedPayment.set(result);
-                this.payments.mutate((payments: ApiResult<Payment[]>) => {
+                this.payments.update((payments: ApiResult<Payment[]>) => {
                     payments.data = [
                         result.data as Payment,
                         ...(payments.data as Payment[]).filter(
@@ -60,7 +60,7 @@ export class PaymentsService extends BaseService {
     deletePayment(id: string): Observable<ApiResult<Payment>> {
         return this.delete<Payment>(id).pipe(
             tap(() => {
-                this.payments.mutate((payments: ApiResult<Payment[]>) => {
+                this.payments.update((payments: ApiResult<Payment[]>) => {
                     payments.data = (payments.data as Payment[]).filter(
                         (t: Payment) => t.id !== id
                     );

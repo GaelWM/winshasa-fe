@@ -93,7 +93,7 @@ export class UserService extends BaseService {
     storeUser(payload: User): Observable<ApiResult<User>> {
         return this.post<User>(payload).pipe(
             tap((result) => {
-                this.users.mutate((users: ApiResult<User[]>) => {
+                this.users.update((users: ApiResult<User[]>) => {
                     users.data = [
                         result.data as User,
                         ...(users.data as User[]),
@@ -109,7 +109,7 @@ export class UserService extends BaseService {
         return this.patch<User>(id, payload).pipe(
             tap((result) => {
                 this.selectedUser.set(result);
-                this.users.mutate((users: ApiResult<User[]>) => {
+                this.users.update((users: ApiResult<User[]>) => {
                     users.data = (users.data as User[]).map((user: User) => {
                         if (user.id === id) {
                             return result.data as User;
@@ -125,7 +125,7 @@ export class UserService extends BaseService {
     deleteUser(id: string): Observable<ApiResult<User>> {
         return this.delete<User>(id).pipe(
             tap(() => {
-                this.users.mutate((users: ApiResult<User[]>) => {
+                this.users.update((users: ApiResult<User[]>) => {
                     users.data = (users.data as User[]).filter(
                         (t: User) => t.id !== id
                     );

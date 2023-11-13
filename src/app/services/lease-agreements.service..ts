@@ -35,7 +35,7 @@ export class LeaseAgreementsService extends BaseService {
     ): Observable<ApiResult<LeaseAgreement>> {
         return this.post<LeaseAgreement>(payload).pipe(
             tap((result) => {
-                this.leaseAgreements.mutate(
+                this.leaseAgreements.update(
                     (leaseAgreements: ApiResult<LeaseAgreement[]>) => {
                         leaseAgreements.data = [
                             result.data as LeaseAgreement,
@@ -63,7 +63,7 @@ export class LeaseAgreementsService extends BaseService {
     deleteLeaseAgreement(id: string): Observable<ApiResult<LeaseAgreement>> {
         return this.delete<LeaseAgreement>(id).pipe(
             tap(() => {
-                this.leaseAgreements.mutate(
+                this.leaseAgreements.update(
                     (leaseAgreements: ApiResult<LeaseAgreement[]>) => {
                         leaseAgreements.data = (
                             leaseAgreements.data as LeaseAgreement[]

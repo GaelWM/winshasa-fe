@@ -63,7 +63,7 @@ export class MetadataService extends BaseService {
     storeMetadata(payload: Metadata): Observable<ApiResult<Metadata>> {
         return this.post<Metadata>(payload).pipe(
             tap((result) => {
-                this.metadata.mutate((metadata: ApiResult<Metadata[]>) => {
+                this.metadata.update((metadata: ApiResult<Metadata[]>) => {
                     metadata.data = [
                         result.data as Metadata,
                         ...(metadata.data as Metadata[]),
@@ -81,7 +81,7 @@ export class MetadataService extends BaseService {
     ): Observable<ApiResult<Metadata>> {
         return this.patch<Metadata>(id, payload).pipe(
             tap((result) => {
-                this.metadata.mutate((metadata: ApiResult<Metadata[]>) => {
+                this.metadata.update((metadata: ApiResult<Metadata[]>) => {
                     metadata.data = (metadata.data as Metadata[]).map(
                         (t: Metadata) =>
                             t.id === (result.data as Metadata)?.id
@@ -97,7 +97,7 @@ export class MetadataService extends BaseService {
     deleteMetadata(id: string): Observable<ApiResult<Metadata>> {
         return this.delete<Metadata>(id).pipe(
             tap(() => {
-                this.metadata.mutate((metadata: ApiResult<Metadata[]>) => {
+                this.metadata.update((metadata: ApiResult<Metadata[]>) => {
                     metadata.data = (metadata.data as Metadata[]).filter(
                         (t: Metadata) => t.id !== id
                     );

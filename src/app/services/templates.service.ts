@@ -30,7 +30,7 @@ export class TemplatesService extends BaseService {
             },
         }).pipe(
             tap((result) => {
-                this.templates.mutate((templates: ApiResult<Template[]>) => {
+                this.templates.update((templates: ApiResult<Template[]>) => {
                     templates.data = [
                         result.data as Template,
                         ...(templates.data as Template[]),
@@ -48,7 +48,7 @@ export class TemplatesService extends BaseService {
     ): Observable<ApiResult<Template>> {
         return this.patch<Template>(id, payload).pipe(
             tap((result) => {
-                this.templates.mutate((templates: ApiResult<Template[]>) => {
+                this.templates.update((templates: ApiResult<Template[]>) => {
                     templates.data = (templates.data as Template[]).map(
                         (t: Template) =>
                             t.id === (result.data as Template)?.id
@@ -64,7 +64,7 @@ export class TemplatesService extends BaseService {
     deleteTemplate(id: string): Observable<ApiResult<Template>> {
         return this.delete<Template>(id).pipe(
             tap(() => {
-                this.templates.mutate((templates: ApiResult<Template[]>) => {
+                this.templates.update((templates: ApiResult<Template[]>) => {
                     templates.data = (templates.data as Template[]).filter(
                         (t: Template) => t.id !== id
                     );

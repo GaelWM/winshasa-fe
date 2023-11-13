@@ -30,7 +30,7 @@ export class ProjectsService extends BaseService {
     storeProject(payload: Project): Observable<ApiResult<Project>> {
         return this.post<Project>(payload).pipe(
             tap((result) => {
-                this.projects.mutate((projects: ApiResult<Project[]>) => {
+                this.projects.update((projects: ApiResult<Project[]>) => {
                     projects.data = [
                         result.data as Project,
                         ...(projects.data as Project[]),
@@ -49,7 +49,7 @@ export class ProjectsService extends BaseService {
         return this.patch<Project>(id, payload).pipe(
             tap((result) => {
                 this.selectedProject.set(result);
-                this.projects.mutate((projects: ApiResult<Project[]>) => {
+                this.projects.update((projects: ApiResult<Project[]>) => {
                     projects.data = [
                         result.data as Project,
                         ...(projects.data as Project[]).filter(
@@ -65,7 +65,7 @@ export class ProjectsService extends BaseService {
     deleteProject(id: string): Observable<ApiResult<Project>> {
         return this.delete<Project>(id).pipe(
             tap(() => {
-                this.projects.mutate((projects: ApiResult<Project[]>) => {
+                this.projects.update((projects: ApiResult<Project[]>) => {
                     projects.data = (projects.data as Project[]).filter(
                         (t: Project) => t.id !== id
                     );

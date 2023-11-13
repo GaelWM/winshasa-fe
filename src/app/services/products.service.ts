@@ -33,7 +33,7 @@ export class ProductsService extends BaseService {
     storeProduct(payload: Product): Observable<ApiResult<Product>> {
         return this.post<Product>(payload).pipe(
             tap((result) => {
-                this.products.mutate((products: ApiResult<Product[]>) => {
+                this.products.update((products: ApiResult<Product[]>) => {
                     products.data = [
                         result.data as Product,
                         ...(products.data as Product[]),
@@ -59,7 +59,7 @@ export class ProductsService extends BaseService {
     deleteProduct(id: string): Observable<ApiResult<Product>> {
         return this.delete<Product>(id).pipe(
             tap(() => {
-                this.products.mutate((products: ApiResult<Product[]>) => {
+                this.products.update((products: ApiResult<Product[]>) => {
                     products.data = (products.data as Product[]).filter(
                         (t: Product) => t.id !== id
                     );

@@ -30,7 +30,7 @@ export class SitesService extends BaseService {
     storeSite(payload: Site): Observable<ApiResult<Site>> {
         return this.post<Site>(payload).pipe(
             tap((result) => {
-                this.sites.mutate((sites: ApiResult<Site[]>) => {
+                this.sites.update((sites: ApiResult<Site[]>) => {
                     sites.data = [
                         result.data as Site,
                         ...(sites.data as Site[]),
@@ -46,7 +46,7 @@ export class SitesService extends BaseService {
         return this.patch<Site>(id, payload).pipe(
             tap((result) => {
                 this.selectedSite.set(result);
-                this.sites.mutate((sites: ApiResult<Site[]>) => {
+                this.sites.update((sites: ApiResult<Site[]>) => {
                     sites.data = [
                         result.data as Site,
                         ...(sites.data as Site[]).filter(
@@ -62,7 +62,7 @@ export class SitesService extends BaseService {
     deleteSite(id: string): Observable<ApiResult<Site>> {
         return this.delete<Site>(id).pipe(
             tap(() => {
-                this.sites.mutate((sites: ApiResult<Site[]>) => {
+                this.sites.update((sites: ApiResult<Site[]>) => {
                     sites.data = (sites.data as Site[]).filter(
                         (t: Site) => t.id !== id
                     );
