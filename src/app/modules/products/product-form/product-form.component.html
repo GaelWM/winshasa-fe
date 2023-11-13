@@ -1,15 +1,20 @@
+@if ($productForm(); as productForm) {
 <form
-    *ngIf="$productForm() as productForm"
+   
     #productNgForm="ngForm"
     (ngSubmit)="onSubmitNewProduct(productNgForm)"
     [formGroup]="productForm"
     class="w-full flex flex-col flex-auto md:min-w-160 h-full"
 >
     <div class="flex flex-col h-full space-y-3">
-        <fuse-alert [type]="'error'" *ngIf="errors().length > 0" class="w-full">
+        @if (errors().length > 0) {
+<fuse-alert [type]="'error'" class="w-full">
             <span fuseAlertTitle>Error</span>
-            <span *ngFor="let error of errors()"> {{ error.message }}</span>
+            @for (error of errors(); track error) {
+  <span> {{ error.message }}</span>
+}
         </fuse-alert>
+}
 
         <div class="w-full flex items-start gap-2">
             <div [class]="asModal ? 'w-full' : 'w-2/5'" class="space-y-3 p-3">
@@ -23,11 +28,12 @@
                         [placeholder]="'Product name'"
                     />
                     <mat-hint>Please type in the product name</mat-hint>
-                    <mat-error
-                        *ngIf="
+                    @if (
                             productForm.controls?.name?.touched &&
                             productForm.controls?.name?.invalid
-                        "
+                        ) {
+<mat-error
+                       
                     >
                         <app-error-form-template
                             [form]="productForm"
@@ -35,6 +41,7 @@
                             name="Product name"
                         ></app-error-form-template>
                     </mat-error>
+}
                 </mat-form-field>
 
                 <mat-form-field class="w-full">
@@ -45,18 +52,21 @@
                         required
                     >
                         <mat-option>Select</mat-option>
-                        <mat-option
-                            *ngFor="let option of $templateOpts()"
+                        @for (option of $templateOpts(); track option) {
+  <mat-option
+                           
                             [value]="option.id"
                             >{{ option.name }}</mat-option
                         >
+}
                     </mat-select>
                     <mat-hint>Please select a template</mat-hint>
-                    <mat-error
-                        *ngIf="
+                    @if (
                             productForm.controls?.name?.touched &&
                             productForm.controls?.name?.invalid
-                        "
+                        ) {
+<mat-error
+                       
                     >
                         <app-error-form-template
                             [form]="productForm"
@@ -64,6 +74,7 @@
                             name="Product template"
                         ></app-error-form-template>
                     </mat-error>
+}
                 </mat-form-field>
 
                 <mat-form-field class="w-full">
@@ -74,18 +85,21 @@
                         required
                     >
                         <mat-option>Select</mat-option>
-                        <mat-option
-                            *ngFor="let option of $productTypeOpts()"
+                        @for (option of $productTypeOpts(); track option) {
+  <mat-option
+                           
                             [value]="option.name"
                             >{{ option.name }}</mat-option
                         >
+}
                     </mat-select>
                     <mat-hint>Please select a type</mat-hint>
-                    <mat-error
-                        *ngIf="
+                    @if (
                             productForm.controls?.name?.touched &&
                             productForm.controls?.name?.invalid
-                        "
+                        ) {
+<mat-error
+                       
                     >
                         <app-error-form-template
                             [form]="productForm"
@@ -93,6 +107,7 @@
                             name="Product type"
                         ></app-error-form-template>
                     </mat-error>
+}
                 </mat-form-field>
 
                 <mat-form-field class="w-full">
@@ -103,18 +118,21 @@
                         required
                     >
                         <mat-option>Select</mat-option>
-                        <mat-option
-                            *ngFor="let option of $productStatusOpts()"
+                        @for (option of $productStatusOpts(); track option) {
+  <mat-option
+                           
                             [value]="option.name"
                             >{{ option.name }}</mat-option
                         >
+}
                     </mat-select>
                     <mat-hint>Please select a status</mat-hint>
-                    <mat-error
-                        *ngIf="
+                    @if (
                             productForm.controls?.name?.touched &&
                             productForm.controls?.name?.invalid
-                        "
+                        ) {
+<mat-error
+                       
                     >
                         <app-error-form-template
                             [form]="productForm"
@@ -122,6 +140,7 @@
                             name="Product status"
                         ></app-error-form-template>
                     </mat-error>
+}
                 </mat-form-field>
 
                 <mat-form-field class="w-full">
@@ -131,18 +150,21 @@
                         [placeholder]="'Product category'"
                     >
                         <mat-option>Select</mat-option>
-                        <mat-option
-                            *ngFor="let option of $productCategoryOpts()"
+                        @for (option of $productCategoryOpts(); track option) {
+  <mat-option
+                           
                             [value]="option.name"
                             >{{ option.name }}</mat-option
                         >
+}
                     </mat-select>
                     <mat-hint>Please select a category</mat-hint>
-                    <mat-error
-                        *ngIf="
+                    @if (
                             productForm.controls?.name?.touched &&
                             productForm.controls?.name?.invalid
-                        "
+                        ) {
+<mat-error
+                       
                     >
                         <app-error-form-template
                             [form]="productForm"
@@ -150,6 +172,7 @@
                             name="Product category"
                         ></app-error-form-template>
                     </mat-error>
+}
                 </mat-form-field>
 
                 <mat-form-field class="w-full">
@@ -159,18 +182,21 @@
                         placeholder="Project Template"
                     >
                         <mat-option>Select</mat-option>
-                        <mat-option
-                            *ngFor="let option of $templateOpts()"
+                        @for (option of $templateOpts(); track option) {
+  <mat-option
+                           
                             [value]="option.id"
                             >{{ option.name }}</mat-option
                         >
+}
                     </mat-select>
                     <mat-hint>Select a product Template</mat-hint>
-                    <mat-error
-                        *ngIf="
+                    @if (
                             productForm.controls?.templateId?.touched &&
                             productForm.controls?.templateId?.invalid
-                        "
+                        ) {
+<mat-error
+                       
                     >
                         <app-error-form-template
                             [form]="productForm"
@@ -178,9 +204,11 @@
                             name="Project Template"
                         ></app-error-form-template>
                     </mat-error>
+}
                 </mat-form-field>
             </div>
-            <div *ngIf="!asModal" class="w-3/5">
+            @if (!asModal) {
+<div class="w-3/5">
                 <app-json-form
                     [template]="$selectedTemplate()"
                     [form]="productForm"
@@ -188,11 +216,13 @@
                 >
                 </app-json-form>
             </div>
+}
         </div>
     </div>
     <!-- Footer -->
-    <div
-        *ngIf="showSaveButton"
+    @if (showSaveButton) {
+<div
+       
         class="w-full flex items-center justify-end border-t p-2 pb-0 border-gray-50 dark:border-gray-700"
     >
         <button
@@ -205,4 +235,6 @@
             Save
         </button>
     </div>
+}
 </form>
+}

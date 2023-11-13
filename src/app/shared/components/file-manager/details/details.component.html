@@ -11,18 +11,26 @@
         <div
             class="flex items-center justify-center h-full border rounded-lg bg-gray-50 dark:bg-card"
         >
-            <ng-container *ngIf="item.type === 'folder'">
-                <mat-icon
-                    class="icon-size-24 text-hint"
-                    [svgIcon]="'heroicons_outline:folder'"
-                ></mat-icon>
-            </ng-container>
-            <ng-container *ngIf="item.type !== 'folder'">
-                <mat-icon
-                    class="icon-size-24 text-hint"
-                    [svgIcon]="'heroicons_outline:document'"
-                ></mat-icon>
-            </ng-container>
+            @if (item.type === 'folder') {
+
+            <mat-icon
+                class="icon-size-24 text-hint"
+                [svgIcon]="'heroicons_outline:folder'"
+            ></mat-icon>
+
+            } @if (item.type !== 'folder') { @if(item.type === docType.JPEG ||
+            item.type === docType.JPG || item.type === docType.PNG ){
+            <img
+                class="object-contain aspect-[9/6]"
+                [src]="item.url"
+                alt="preview"
+            />
+            } @else {
+            <mat-icon
+                class="icon-size-24 text-hint"
+                [svgIcon]="'heroicons_outline:document'"
+            ></mat-icon>
+            } }
         </div>
     </div>
 
@@ -71,12 +79,14 @@
             <div class="text-secondary">Size</div>
             <div>{{ item.size }}</div>
         </div>
-        <ng-container *ngIf="item.details?.contents">
-            <div class="flex items-center justify-between py-3">
-                <div class="text-secondary">Contents</div>
-                <div>{{ item.contents }}</div>
-            </div>
-        </ng-container>
+        @if (item.details?.contents) {
+
+        <div class="flex items-center justify-between py-3">
+            <div class="text-secondary">Contents</div>
+            <div>{{ item.details?.contents }}</div>
+        </div>
+
+        }
     </div>
 
     <!-- Description -->
@@ -91,14 +101,17 @@
     </div>
     <div class="flex mt-2 border-t">
         <div class="py-3">
-            <ng-container *ngIf="item.details?.description">
-                <div>{{ item.description }}</div>
-            </ng-container>
-            <ng-container *ngIf="!item.details?.description">
-                <div class="italic text-secondary">
-                    Click here to add a description
-                </div>
-            </ng-container>
+            @if (item.details?.description) {
+
+            <div>{{ item.details?.description }}</div>
+
+            } @if (!item.details?.description) {
+
+            <div class="italic text-secondary">
+                Click here to add a description
+            </div>
+
+            }
         </div>
     </div>
 

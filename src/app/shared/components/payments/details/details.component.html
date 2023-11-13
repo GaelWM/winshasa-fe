@@ -1,6 +1,7 @@
 <div class="flex flex-col w-full">
     <!-- View mode -->
-    <ng-container *ngIf="!editMode">
+    @if (!editMode) {
+
         <!-- Header -->
         <div
             class="relative w-full flex items-center justify-between h-18 px-8 sm:px-12 bg-accent-100 dark:bg-accent-700"
@@ -32,7 +33,8 @@
 
                 <div class="flex flex-col mt-4 pt-6 border-t space-y-8">
                     <!-- Amount -->
-                    <ng-container *ngIf="$payment()?.data?.amount">
+                    @if ($payment()?.data?.amount) {
+
                         <div class="flex sm:items-center">
                             <mat-icon
                                 [svgIcon]="'heroicons_outline:briefcase'"
@@ -41,10 +43,12 @@
                                 {{ $payment()?.data?.amount }}
                             </div>
                         </div>
-                    </ng-container>
+                    
+}
 
                     <!-- Due Date -->
-                    <ng-container *ngIf="$payment()?.data?.dueDate">
+                    @if ($payment()?.data?.dueDate) {
+
                         <div class="flex sm:items-center">
                             <mat-icon
                                 [svgIcon]="
@@ -58,10 +62,12 @@
                                 }}
                             </div>
                         </div>
-                    </ng-container>
+                    
+}
 
                     <!-- Notes -->
-                    <ng-container *ngIf="$payment()?.data?.notes">
+                    @if ($payment()?.data?.notes) {
+
                         <div class="flex">
                             <mat-icon
                                 [svgIcon]="
@@ -73,14 +79,17 @@
                                 [innerHTML]="$payment()?.data?.notes"
                             ></div>
                         </div>
-                    </ng-container>
+                    
+}
                 </div>
             </div>
         </div>
-    </ng-container>
+    
+}
 
     <!-- Edit mode -->
-    <ng-container *ngIf="editMode">
+    @if (editMode) {
+
         <!-- Header -->
         <div
             class="relative w-full h-18 flex items-center justify-between px-8 sm:px-12 bg-accent-100 dark:bg-accent-700"
@@ -99,7 +108,8 @@
             class="relative flex flex-col flex-auto items-center px-6 sm:px-12"
         >
             <div class="w-full max-w-3xl">
-                <form *ngIf="$paymentForm()" [formGroup]="$paymentForm()">
+                @if ($paymentForm()) {
+<form [formGroup]="$paymentForm()">
                     <!-- Name -->
                     <div class="mt-8">
                         <mat-form-field
@@ -179,7 +189,9 @@
                         </button>
                     </div>
                 </form>
+}
             </div>
         </div>
-    </ng-container>
+    
+}
 </div>

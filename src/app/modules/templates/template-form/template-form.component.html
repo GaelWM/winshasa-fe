@@ -1,5 +1,5 @@
+@if (templateForm(); as templateForm) {
 <form
-    *ngIf="templateForm() as templateForm"
     #templateNgForm="ngForm"
     (ngSubmit)="onSubmitNewTemplate(templateNgForm)"
     [formGroup]="templateForm"
@@ -26,14 +26,14 @@
         <div
             class="flex flex-col flex-1 items-start w-full p-3 sm:p-8 space-y-6 overflow-y-auto"
         >
-            <fuse-alert
-                [type]="'error'"
-                *ngIf="errors().length > 0"
-                class="w-full"
-            >
+            @if (errors().length > 0) {
+            <fuse-alert [type]="'error'" class="w-full">
                 <span fuseAlertTitle>Error</span>
-                <span *ngFor="let error of errors()"> {{ error.message }}</span>
+                @for (error of errors(); track error) {
+                <span> {{ error.message }}</span>
+                }
             </fuse-alert>
+            }
             <div class="w-full flex justify-start gap-3">
                 <div class="w-2/3">
                     <mat-form-field [ngClass]="formFieldHelpers" class="w-full">
@@ -46,18 +46,16 @@
                             [placeholder]="'Template name'"
                         />
                         <mat-hint>Please type in the template name</mat-hint>
-                        <mat-error
-                            *ngIf="
-                                templateForm.controls?.name?.touched &&
-                                templateForm.controls?.name?.invalid
-                            "
-                        >
+                        @if ( templateForm.controls?.name?.touched &&
+                        templateForm.controls?.name?.invalid ) {
+                        <mat-error>
                             <app-error-form-template
                                 [form]="templateForm"
                                 field="name"
                                 name="Template name"
                             ></app-error-form-template>
                         </mat-error>
+                        }
                     </mat-form-field>
                 </div>
                 <div class="w-1/3">
@@ -69,25 +67,21 @@
                             formControlName="type"
                             required
                         >
-                            <mat-option
-                                *ngFor="let opt of templateTypeOpts"
-                                [value]="opt"
-                                >{{ opt }}</mat-option
-                            >
+                            @for (opt of templateTypeOpts; track opt) {
+                            <mat-option [value]="opt">{{ opt }}</mat-option>
+                            }
                         </mat-select>
                         <mat-hint>Please select the entity type</mat-hint>
-                        <mat-error
-                            *ngIf="
-                                templateForm.controls?.type?.touched &&
-                                templateForm.controls?.type?.invalid
-                            "
-                        >
+                        @if ( templateForm.controls?.type?.touched &&
+                        templateForm.controls?.type?.invalid ) {
+                        <mat-error>
                             <app-error-form-template
                                 [form]="templateForm"
                                 field="type"
                                 name="Template type"
                             ></app-error-form-template>
                         </mat-error>
+                        }
                     </mat-form-field>
                 </div>
             </div>
@@ -117,13 +111,9 @@
                                 <mat-option [value]="'cols'">Column</mat-option>
                             </mat-select>
                         </mat-form-field>
-                        <mat-form-field
-                            class="w-full"
-                            *ngIf="
-                                templateForm?.value?.details?.settings
-                                    ?.gridType !== ''
-                            "
-                        >
+                        @if ( templateForm?.value?.details?.settings ?.gridType
+                        !== '' ) {
+                        <mat-form-field class="w-full">
                             <mat-label
                                 >No. of
                                 {{
@@ -142,6 +132,7 @@
                                 "
                             />
                         </mat-form-field>
+                        }
                         <mat-form-field class="w-full">
                             <mat-label>Grid Flow</mat-label>
                             <mat-select
@@ -181,3 +172,4 @@
         </div>
     </div>
 </form>
+}

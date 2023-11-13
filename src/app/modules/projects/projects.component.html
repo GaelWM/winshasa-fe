@@ -13,7 +13,8 @@
             </div>
         </app-toolbar>
     </div>
-    <div class="w-full p-3" *ngIf="$projects() as projects">
+    @if ($projects(); as projects) {
+<div class="w-full p-3">
         <win-table
             [columns]="columns"
             [data]="projects.data"
@@ -31,6 +32,7 @@
             </win-paginator>
         </div>
     </div>
+}
 </div>
 
 <ng-template #actionsTpl let-row="row">

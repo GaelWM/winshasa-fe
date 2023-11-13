@@ -5,7 +5,8 @@
     class="flex flex-auto justify-center w-full sm:p-4 md:p-8 bg-gray-200 dark:bg-card"
 >
     <!-- Navigation -->
-    <ng-container *ngIf="isScreenSmall">
+    @if (isScreenSmall) {
+
         <fuse-vertical-navigation
             class="dark bg-gray-900 print:hidden"
             [mode]="'over'"
@@ -24,7 +25,8 @@
                 </div>
             </ng-container>
         </fuse-vertical-navigation>
-    </ng-container>
+    
+}
 
     <!-- Wrapper -->
     <div
@@ -34,7 +36,8 @@
         <div
             class="relative flex flex-0 items-center w-full h-16 sm:h-20 px-4 md:px-6 z-49 bg-card border-b dark:bg-default print:hidden"
         >
-            <ng-container *ngIf="!isScreenSmall">
+            @if (!isScreenSmall) {
+
                 <!-- Logo -->
                 <div class="flex items-center mx-2 lg:mr-8">
                     <div class="hidden lg:flex">
@@ -64,9 +67,11 @@
                     [name]="'mainNavigation'"
                     [navigation]="navigation.horizontal"
                 ></fuse-horizontal-navigation>
-            </ng-container>
+            
+}
             <!-- Navigation toggle button -->
-            <ng-container *ngIf="isScreenSmall">
+            @if (isScreenSmall) {
+
                 <button
                     class="mr-2"
                     mat-icon-button
@@ -74,7 +79,8 @@
                 >
                     <mat-icon [svgIcon]="'heroicons_outline:bars-3'"></mat-icon>
                 </button>
-            </ng-container>
+            
+}
             <!-- Components -->
             <div class="flex items-center pl-2 ml-auto space-x-1 sm:space-x-2">
                 <languages></languages>
@@ -91,7 +97,9 @@
         <div class="flex flex-col flex-auto w-full bg-default">
             <!-- *ngIf="true" hack is required here for router-outlet to work correctly.
                  Otherwise, layout changes won't be registered and the view won't be updated! -->
-            <router-outlet *ngIf="true"></router-outlet>
+            @if (true) {
+<router-outlet></router-outlet>
+}
         </div>
 
         <!-- Footer -->

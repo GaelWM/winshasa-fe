@@ -20,44 +20,44 @@
             </div>
             <!-- Panel links -->
             <div class="flex flex-col divide-y border-t border-b">
-                <ng-container *ngFor="let panel of panels; trackBy: trackByFn">
-                    <div
-                        class="flex px-8 py-5 cursor-pointer"
+                @for (panel of panels; track trackByFn($index, panel)) {
+
+                <div
+                    class="flex px-8 py-5 cursor-pointer"
+                    [ngClass]="{
+                        'hover:bg-gray-100 dark:hover:bg-hover':
+                            !selectedPanel || selectedPanel !== panel.id,
+                        'bg-primary-50 dark:bg-hover':
+                            selectedPanel && selectedPanel === panel.id
+                    }"
+                    (click)="goToPanel(panel.id)"
+                >
+                    <mat-icon
                         [ngClass]="{
-                            'hover:bg-gray-100 dark:hover:bg-hover':
+                            'text-hint':
                                 !selectedPanel || selectedPanel !== panel.id,
-                            'bg-primary-50 dark:bg-hover':
+                            'text-primary dark:text-primary-500':
                                 selectedPanel && selectedPanel === panel.id
                         }"
-                        (click)="goToPanel(panel.id)"
-                    >
-                        <mat-icon
+                        [svgIcon]="panel.icon"
+                    ></mat-icon>
+                    <div class="ml-3">
+                        <div
+                            class="font-medium leading-6"
                             [ngClass]="{
-                                'text-hint':
-                                    !selectedPanel ||
-                                    selectedPanel !== panel.id,
                                 'text-primary dark:text-primary-500':
                                     selectedPanel && selectedPanel === panel.id
                             }"
-                            [svgIcon]="panel.icon"
-                        ></mat-icon>
-                        <div class="ml-3">
-                            <div
-                                class="font-medium leading-6"
-                                [ngClass]="{
-                                    'text-primary dark:text-primary-500':
-                                        selectedPanel &&
-                                        selectedPanel === panel.id
-                                }"
-                            >
-                                {{ panel.title }}
-                            </div>
-                            <div class="mt-0.5 text-secondary">
-                                {{ panel.description }}
-                            </div>
+                        >
+                            {{ panel.title }}
+                        </div>
+                        <div class="mt-0.5 text-secondary">
+                            {{ panel.description }}
                         </div>
                     </div>
-                </ng-container>
+                </div>
+
+                }
             </div>
         </mat-drawer>
 
@@ -90,16 +90,11 @@
 
                 <!-- Load settings panel -->
                 <div class="mt-8 flex-1 overflow-y-auto">
-                    <ng-container [ngSwitch]="selectedPanel">
-                        <ng-container *ngSwitchCase="'user-roles-assignment'">
-                            <app-user-role></app-user-role>
-                        </ng-container>
-                        <ng-container
-                            *ngSwitchCase="'roles-permissions-assignment'"
-                        >
-                            <app-role-permission></app-role-permission>
-                        </ng-container>
-                    </ng-container>
+                    @switch (selectedPanel) { @case ('user-roles-assignment') {
+                    <app-user-role></app-user-role>
+                    } @case ('roles-permissions-assignment') {
+                    <app-role-permission></app-role-permission>
+                    } }
                 </div>
             </div>
         </mat-drawer-content>

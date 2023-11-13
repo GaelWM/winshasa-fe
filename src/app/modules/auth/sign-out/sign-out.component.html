@@ -16,15 +16,19 @@
             </div>
             <div class="flex justify-center mt-0.5 font-medium">
                 <!-- Redirect countdown -->
-                <ng-container *ngIf="countdown > 0">
+                @if (countdown > 0) {
+
                     Redirecting in
                     {{ countdown | i18nPlural : countdownMapping }}
-                </ng-container>
+                
+}
 
                 <!-- Redirect message -->
-                <ng-container *ngIf="countdown === 0">
+                @if (countdown === 0) {
+
                     You are now being redirected!
-                </ng-container>
+                
+}
             </div>
 
             <!-- Form footer -->

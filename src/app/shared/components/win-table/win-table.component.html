@@ -1,18 +1,22 @@
 <div class="table-auto md:table w-full border border-gray-800 overflow-auto">
     <div class="table-header-group">
         <div class="table-row">
-            <div
+            @for (column of columns; track column) {
+  <div
                 class="table-cell text-left first:border-l-none border-l border-gray-800 p-2"
-                *ngFor="let column of columns"
+               
             >
-                <span
-                    *ngIf="
+                @if (
                         column.sortKey === null || column.sortKey === undefined
-                    "
+                    ) {
+<span
+                   
                     >{{ column.title }}</span
                 >
-                <button
-                    *ngIf="allowSort && column.sortKey"
+}
+                @if (allowSort && column.sortKey) {
+<button
+                   
                     mat-stroked-button
                     class="w-auto flex items-center gap-2 rounded text-left"
                     (click)="onSort(column)"
@@ -45,25 +49,31 @@
                         </div>
                     </div>
                 </button>
+}
             </div>
+}
         </div>
     </div>
     <div class="table-row-group">
-        <div
-            *ngFor="let row of data; let i = index; let last = last"
+        @for (row of data; track row; let i = $index; let last = $last) {
+  <div
+           
             class="table-row hover:bg-gray-800 rounded transition duration-300"
             [ngClass]="{ 'cursor-pointer': allowRowClick }"
             (click)="allowRowClick && onRowClick(row)"
         >
-            <ng-container *ngFor="let column of columns">
+            @for (column of columns; track column) {
+  
                 <ng-container
                     *ngTemplateOutlet="
                         column.template ? column.template : tableRow;
                         context: { row: row, column: column, last: last }
                     "
                 ></ng-container>
-            </ng-container>
+            
+}
         </div>
+}
     </div>
 </div>
 
@@ -78,19 +88,23 @@
         }"
         (click)="allowCellClick && onCellClick(row, column)"
     >
-        <ng-container
-            *ngIf="column.pipe"
+        @if (column.pipe) {
+<ng-container
+           
             [winDynamicDirective]="column.directive"
         >
-            <div *ngIf="!column.safeHtml">
+            @if (!column.safeHtml) {
+<div>
                 {{
                     row
                         | winNestedValue : column.key
                         | winDynamicPipe : column.pipe.class : column.pipe.args
                 }}
             </div>
-            <div
-                *ngIf="column.safeHtml"
+}
+            @if (column.safeHtml) {
+<div
+               
                 [innerHTML]="
                     row
                         | winNestedValue : column.key
@@ -98,18 +112,26 @@
                         | winSafeHtml
                 "
             ></div>
+}
         </ng-container>
-        <ng-container
-            *ngIf="!column.pipe"
+}
+        @if (!column.pipe) {
+<ng-container
+           
             [winDynamicDirective]="column.directive"
         >
-            <div *ngIf="!column.safeHtml">
+            @if (!column.safeHtml) {
+<div>
                 {{ row | winNestedValue : column.key }}
             </div>
-            <div
-                *ngIf="column.safeHtml"
+}
+            @if (column.safeHtml) {
+<div
+               
                 [innerHtml]="row | winNestedValue : column.key | winSafeHtml"
             ></div>
+}
         </ng-container>
+}
     </div>
 </ng-template>

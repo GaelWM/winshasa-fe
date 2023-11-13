@@ -1,6 +1,7 @@
+@if (site().data; as site) {
 <div
     class="w-full h-full flex flex-col min-w-0 overflow-hidden"
-    *ngIf="site().data as site"
+   
 >
     <div
         class="flex flex-col sm:flex-row flex-0 sm:items-center sm:justify-between p-4 sm:py-4 sm:px-6 border-b bg-card dark:bg-transparent"
@@ -97,3 +98,4 @@
         ></mat-tab-nav-panel>
     </div>
 </div>
+}

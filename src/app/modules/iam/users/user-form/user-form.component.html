@@ -1,5 +1,5 @@
+@if (userForm(); as userForm) {
 <form
-    *ngIf="userForm() as userForm"
     #userNgForm="ngForm"
     (ngSubmit)="onSubmitNewUser(userNgForm)"
     [formGroup]="userForm"
@@ -26,14 +26,14 @@
         <div
             class="flex flex-col flex-1 items-start w-full p-6 sm:p-8 space-y-3 overflow-y-auto"
         >
-            <fuse-alert
-                [type]="'error'"
-                *ngIf="errors().length > 0"
-                class="w-full"
-            >
+            @if (errors().length > 0) {
+            <fuse-alert [type]="'error'" class="w-full">
                 <span fuseAlertTitle>Error</span>
-                <span *ngFor="let error of errors()"> {{ error.message }}</span>
+                @for (error of errors(); track error) {
+                <span> {{ error.message }}</span>
+                }
             </fuse-alert>
+            }
             <mat-form-field [ngClass]="formFieldHelpers" class="w-full">
                 <mat-label>First Name</mat-label>
                 <input
@@ -44,18 +44,16 @@
                     [placeholder]="'First name'"
                 />
                 <mat-hint>Please type in the user first name</mat-hint>
-                <mat-error
-                    *ngIf="
-                        userForm.controls?.name?.touched &&
-                        userForm.controls?.name?.invalid
-                    "
-                >
+                @if ( userForm.controls?.firstName?.touched &&
+                userForm.controls?.firstName?.invalid ) {
+                <mat-error>
                     <app-error-form-template
                         [form]="userForm"
                         field="firstName"
                         name="User first name"
                     ></app-error-form-template>
                 </mat-error>
+                }
             </mat-form-field>
             <mat-form-field [ngClass]="formFieldHelpers" class="w-full">
                 <mat-label>Last Name</mat-label>
@@ -66,18 +64,16 @@
                     [placeholder]="'Last name'"
                 />
                 <mat-hint>Please type in the user last name</mat-hint>
-                <mat-error
-                    *ngIf="
-                        userForm.controls?.name?.touched &&
-                        userForm.controls?.name?.invalid
-                    "
-                >
+                @if ( userForm.controls?.lastName?.touched &&
+                userForm.controls?.lastName?.invalid ) {
+                <mat-error>
                     <app-error-form-template
                         [form]="userForm"
                         field="lastName"
                         name="User last name"
                     ></app-error-form-template>
                 </mat-error>
+                }
             </mat-form-field>
             <mat-form-field [ngClass]="formFieldHelpers" class="w-full">
                 <mat-label>Email</mat-label>
@@ -89,18 +85,16 @@
                     [placeholder]="'Email'"
                 />
                 <mat-hint>Please type in the user email</mat-hint>
-                <mat-error
-                    *ngIf="
-                        userForm.controls?.name?.touched &&
-                        userForm.controls?.name?.invalid
-                    "
-                >
+                @if ( userForm.controls?.email?.touched &&
+                userForm.controls?.email?.invalid ) {
+                <mat-error>
                     <app-error-form-template
                         [form]="userForm"
                         field="email"
                         name="User email"
                     ></app-error-form-template>
                 </mat-error>
+                }
             </mat-form-field>
 
             <mat-form-field [ngClass]="formFieldHelpers" class="w-full">
@@ -112,18 +106,16 @@
                     [placeholder]="'Phone'"
                 />
                 <mat-hint>Please type in the user phone</mat-hint>
-                <mat-error
-                    *ngIf="
-                        userForm.controls?.name?.touched &&
-                        userForm.controls?.name?.invalid
-                    "
-                >
+                @if ( userForm.controls?.phone?.touched &&
+                userForm.controls?.phone?.invalid ) {
+                <mat-error>
                     <app-error-form-template
                         [form]="userForm"
                         field="phone"
                         name="User phone"
                     ></app-error-form-template>
                 </mat-error>
+                }
             </mat-form-field>
 
             <mat-form-field [ngClass]="formFieldHelpers" class="w-full">
@@ -135,18 +127,16 @@
                     [placeholder]="'address'"
                 ></textarea>
                 <mat-hint>Please type in the user address</mat-hint>
-                <mat-error
-                    *ngIf="
-                        userForm.controls?.name?.touched &&
-                        userForm.controls?.name?.invalid
-                    "
-                >
+                @if ( userForm.controls?.address?.touched &&
+                userForm.controls?.address?.invalid ) {
+                <mat-error>
                     <app-error-form-template
                         [form]="userForm"
                         field="address"
                         name="User address"
                     ></app-error-form-template>
                 </mat-error>
+                }
             </mat-form-field>
         </div>
         <div
@@ -165,3 +155,4 @@
         </div>
     </div>
 </form>
+}

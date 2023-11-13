@@ -54,7 +54,6 @@ export class PermissionsService extends BaseService {
                 loggedInUser = user;
             });
 
-        console.log('loggedInUser: ', loggedInUser);
         const permissions = loggedInUser.permissions.map((perm) => perm.name);
 
         if (!loggedInUser) {

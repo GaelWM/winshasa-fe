@@ -41,6 +41,7 @@ import {
 import { TemplateGroupField } from 'app/shared/models/template-group-field.model';
 import { TextFieldComponent } from './controls/text-field/text-field.component';
 import { NumberFieldComponent } from './controls/number-field/number-field.component';
+import { MatAutocompleteModule } from '@angular/material/autocomplete';
 
 export interface JsonFormData {
     controls: TemplateGroupField[];
@@ -55,6 +56,7 @@ export interface JsonFormData {
         MatButtonModule,
         MatIconModule,
         MatInputModule,
+        MatAutocompleteModule,
         MatExpansionModule,
         MatSelectModule,
         MatDialogModule,
@@ -69,7 +71,6 @@ export interface JsonFormData {
         ReactiveFormsModule,
         MatSliderModule,
         MatTimepickerModule,
-
         TextFieldComponent,
         NumberFieldComponent,
     ],
@@ -160,6 +161,7 @@ export class JsonFormComponent implements OnChanges {
             }
             if (control.type === FieldType.Slider) {
                 console.log('control: ', control);
+                control.value = control.value || 0;
             }
             if (control.type === FieldType.DateRange) {
                 const group = this.form.get('details') as FormGroup;

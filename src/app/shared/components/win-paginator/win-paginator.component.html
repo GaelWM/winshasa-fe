@@ -1,5 +1,6 @@
+@if (meta) {
 <mat-paginator
-    *ngIf="meta"
+   
     #paginator
     [length]="meta.total"
     [pageIndex]="meta.current_page - 1"
@@ -10,3 +11,4 @@
     aria-label="Select page"
 >
 </mat-paginator>
+}

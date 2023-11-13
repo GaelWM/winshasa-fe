@@ -1,30 +1,39 @@
-<div class="w-full max-w-3xl" *ngIf="user() as user">
+@if (user(); as user) {
+<div class="w-full max-w-3xl">
     <div>
         <div class="w-full">
             <div class="text-secondary">
                 Following information is publicly displayed within the system
             </div>
         </div>
-        <fuse-alert [type]="'error'" *ngIf="errors().length > 0" class="w-full">
+        @if (errors().length > 0) {
+<fuse-alert [type]="'error'" class="w-full">
             <span fuseAlertTitle>Error</span>
-            <span *ngFor="let error of errors()"> {{ error.message }}</span>
+            @for (error of errors(); track error) {
+  <span> {{ error.message }}</span>
+}
         </fuse-alert>
+}
         <div class="grid sm:grid-cols-4 gap-6 w-full mt-8">
             <div
                 class="sm:col-span-2 flex flex-col gap-1 justify-center items-center"
             >
                 <div class="rounded-full">
-                    <img
-                        *ngIf="user?.avatar"
+                    @if (user?.avatar) {
+<img
+                       
                         class="w-32 h-32 rounded-full ring-4 ring-bg-card"
                         [src]="user?.avatar"
                         alt="User avatar"
                     />
-                    <mat-icon
-                        *ngIf="!user?.avatar"
+}
+                    @if (!user?.avatar) {
+<mat-icon
+                       
                         class="w-32 h-32 rounded-full ring-4 ring-bg-card"
                         [svgIcon]="'heroicons_solid:user'"
                     ></mat-icon>
+}
                 </div>
                 <app-file-upload
                     [url]="'users/' + user.id"
@@ -93,3 +102,4 @@
         </div>
     </div>
 </div>
+}

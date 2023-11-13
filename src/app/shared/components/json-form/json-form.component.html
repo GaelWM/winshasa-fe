@@ -1,10 +1,8 @@
+@if (template) {
 <div
-    [class]="
-        'flex flex-row flex-wrap overflow-auto form-container ' + formClass
-    "
-    *ngIf="template"
+    class="flex flex-row flex-wrap overflow-auto form-container"
+    [class]="formClass"
     [formGroup]="form"
-    [ngStyle]="formStyle"
 >
     <ng-container
         *ngTemplateOutlet="
@@ -12,9 +10,9 @@
             context: { form: form, template: template }
         "
     ></ng-container>
+    @for (group of template?.details?.groups; track group; let i = $index) {
     <div
         [class]="'w-80  my-1 form-group ' + formGroupClass"
-        *ngFor="let group of template?.details?.groups; let i = index"
         formGroupName="details"
     >
         <mat-expansion-panel
@@ -29,499 +27,408 @@
                     <span>{{ group.fields.length }} field(s)</span>
                 </mat-panel-description>
             </mat-expansion-panel-header>
-            <ng-container *ngIf="group.fields.length > 0">
-                <div
-                    [ngClass]="{ 'mt-3': fieldIndex === 0 }"
-                    class="w-full"
-                    *ngFor="let field of group.fields; let fieldIndex = index"
-                >
-                    <!-- Text fields -->
-                    <mat-form-field
-                        *ngIf="isTextField(field.type)"
-                        class="w-full"
-                    >
-                        <mat-label *ngIf="field.name !== ''">{{
-                            field.name
-                        }}</mat-label>
-                        <input
-                            matInput
-                            [type]="field.type"
-                            [formControlName]="field.name"
-                            [placeholder]="field.placeholder ?? field.name"
-                        />
-                        <mat-hint *ngIf="field?.hintMessage">{{
-                            field.hintMessage
-                        }}</mat-hint>
-
-                        <mat-error
-                            *ngIf="
-                                form.controls &&
-                                form.controls[field.name]?.touched &&
-                                form.controls[field.name]?.invalid
-                            "
-                            class="flex flex-col gap-2"
-                        >
-                            <ng-container
-                                [ngTemplateOutlet]="errorTemplate"
-                                [ngTemplateOutletContext]="{ field: field }"
-                            >
-                            </ng-container>
-                        </mat-error>
-                    </mat-form-field>
-
-                    <!-- Number -->
-                    <mat-form-field
-                        *ngIf="field.type === 'number'"
-                        class="w-full"
-                    >
-                        <mat-label *ngIf="field.name !== ''">{{
-                            field.name
-                        }}</mat-label>
-                        <input
-                            matInput
-                            [type]="field.type"
-                            [formControlName]="field.name"
-                            [placeholder]="field.placeholder ?? field.name"
-                        />
-                        <mat-hint *ngIf="field?.hintMessage">{{
-                            field.hintMessage
-                        }}</mat-hint>
-
-                        <mat-error
-                            *ngIf="
-                                form.controls &&
-                                form.controls[field.name]?.touched &&
-                                form.controls[field.name]?.invalid
-                            "
-                            class="flex flex-col gap-2"
-                        >
-                            <ng-container
-                                [ngTemplateOutlet]="errorTemplate"
-                                [ngTemplateOutletContext]="{ field: field }"
-                            >
-                            </ng-container>
-                        </mat-error>
-                    </mat-form-field>
-
-                    <!-- Textarea -->
-                    <mat-form-field
-                        *ngIf="field.type === 'textarea'"
-                        class="w-full"
-                    >
-                        <mat-label *ngIf="field.name !== ''">{{
-                            field.name
-                        }}</mat-label>
-                        <textarea
-                            matInput
-                            [formControlName]="field.name"
-                            [placeholder]="field.placeholder ?? field.name"
-                        ></textarea>
-                        <mat-hint *ngIf="field?.hintMessage">{{
-                            field.hintMessage
-                        }}</mat-hint>
-                        <mat-error
-                            *ngIf="
-                                form.controls &&
-                                form.controls[field.name]?.touched &&
-                                form.controls[field.name]?.invalid
-                            "
-                            class="flex flex-col gap-2"
-                        >
-                            <ng-container
-                                [ngTemplateOutlet]="errorTemplate"
-                                [ngTemplateOutletContext]="{ field: field }"
-                            >
-                            </ng-container>
-                        </mat-error>
-                    </mat-form-field>
-
-                    <!-- Checkbox -->
-                    <mat-checkbox
-                        class="pb-4"
-                        *ngIf="field.type === 'checkbox'"
+            @if (group.fields.length > 0) { @for (field of group.fields; track
+            field; let fieldIndex = $index) {
+            <div [ngClass]="{ 'mt-3': fieldIndex === 0 }" class="w-full">
+                <!-- Text fields -->
+                @if (isTextField(field.type)) {
+                <mat-form-field class="w-full">
+                    @if (field.name !== '') {
+                    <mat-label>{{ field.name }}</mat-label>
+                    }
+                    <input
+                        matInput
+                        [type]="field.type"
                         [formControlName]="field.name"
-                        [labelPosition]="field.labelPosition"
-                        [color]="'primary'"
-                    >
-                        {{ field.name }}
-                        <mat-hint *ngIf="field?.hintMessage">{{
-                            field.hintMessage
-                        }}</mat-hint>
-                        <mat-error
-                            *ngIf="
-                                form.controls &&
-                                form.controls[field.name]?.touched &&
-                                form.controls[field.name]?.invalid
-                            "
-                            class="flex flex-col gap-2"
+                        [placeholder]="field.placeholder ?? field.name"
+                    />
+                    @if (field?.hintMessage) {
+                    <mat-hint>{{ field.hintMessage }}</mat-hint>
+                    } @if ( form.controls && form.controls[field.name]?.touched
+                    && form.controls[field.name]?.invalid ) {
+                    <mat-error class="flex flex-col gap-2">
+                        <ng-container
+                            [ngTemplateOutlet]="errorTemplate"
+                            [ngTemplateOutletContext]="{ field: field }"
                         >
-                            <ng-container
-                                [ngTemplateOutlet]="errorTemplate"
-                                [ngTemplateOutletContext]="{ field: field }"
-                            >
-                            </ng-container>
-                        </mat-error>
-                    </mat-checkbox>
+                        </ng-container>
+                    </mat-error>
+                    }
+                </mat-form-field>
+                }
 
-                    <!-- Radio -->
-                    <div
-                        *ngIf="field.type === 'radio'"
-                        class="flex flex-col gap-1 w-full pb-4"
-                    >
-                        <label class="font-bold">{{ field.name }}</label>
-                        <mat-radio-group
-                            [formControlName]="field.name"
-                            class="flex gap-2"
+                <!-- Number -->
+                @if (field.type === 'number') {
+                <mat-form-field class="w-full">
+                    @if (field.name !== '') {
+                    <mat-label>{{ field.name }}</mat-label>
+                    }
+                    <input
+                        matInput
+                        [type]="field.type"
+                        [formControlName]="field.name"
+                        [placeholder]="field.placeholder ?? field.name"
+                    />
+                    @if (field?.hintMessage) {
+                    <mat-hint>{{ field.hintMessage }}</mat-hint>
+                    } @if ( form.controls && form.controls[field.name]?.touched
+                    && form.controls[field.name]?.invalid ) {
+                    <mat-error class="flex flex-col gap-2">
+                        <ng-container
+                            [ngTemplateOutlet]="errorTemplate"
+                            [ngTemplateOutletContext]="{ field: field }"
                         >
-                            <ng-container *ngIf="field.options">
-                                <mat-radio-button
-                                    *ngFor="
-                                        let option of field.options.split(';')
-                                    "
-                                    [value]="option"
-                                    [color]="'primary'"
-                                    [labelPosition]="field.labelPosition"
-                                >
-                                    {{ option | uppercase }}
-                                </mat-radio-button>
-                            </ng-container>
-                        </mat-radio-group>
-                        <mat-error
-                            *ngIf="
-                                form.controls &&
-                                form.controls[field.name]?.touched &&
-                                form.controls[field.name]?.invalid
-                            "
-                            class="flex flex-col gap-2"
-                        >
-                            <ng-container
-                                [ngTemplateOutlet]="errorTemplate"
-                                [ngTemplateOutletContext]="{ field: field }"
-                            >
-                            </ng-container>
-                        </mat-error>
-                    </div>
+                        </ng-container>
+                    </mat-error>
+                    }
+                </mat-form-field>
+                }
 
-                    <!-- Select -->
-                    <mat-form-field
-                        *ngIf="field.type === 'select'"
-                        class="w-full"
-                    >
-                        <mat-label *ngIf="field.name !== ''">{{
-                            field.name
-                        }}</mat-label>
-                        <mat-select
-                            [placeholder]="field.placeholder ?? field.name"
-                            [formControlName]="field.name"
+                <!-- Textarea -->
+                @if (field.type === 'textarea') {
+                <mat-form-field class="w-full">
+                    @if (field.name !== '') {
+                    <mat-label>{{ field.name }}</mat-label>
+                    }
+                    <textarea
+                        matInput
+                        [formControlName]="field.name"
+                        [placeholder]="field.placeholder ?? field.name"
+                    ></textarea>
+                    @if (field?.hintMessage) {
+                    <mat-hint>{{ field.hintMessage }}</mat-hint>
+                    } @if ( form.controls && form.controls[field.name]?.touched
+                    && form.controls[field.name]?.invalid ) {
+                    <mat-error class="flex flex-col gap-2">
+                        <ng-container
+                            [ngTemplateOutlet]="errorTemplate"
+                            [ngTemplateOutletContext]="{ field: field }"
                         >
-                            <mat-option>Select</mat-option>
-                            <ng-container *ngIf="field.options">
-                                <mat-option
-                                    *ngFor="
-                                        let option of field.options.split(';')
-                                    "
-                                    [value]="option"
-                                    >{{ option }}</mat-option
-                                >
-                            </ng-container>
-                        </mat-select>
-                        <mat-hint *ngIf="field?.hintMessage">{{
-                            field.hintMessage
-                        }}</mat-hint>
-                        <mat-error
-                            *ngIf="
-                                form.controls &&
-                                form.controls[field.name]?.touched &&
-                                form.controls[field.name]?.invalid
-                            "
-                            class="flex flex-col gap-2"
-                        >
-                            <ng-container
-                                [ngTemplateOutlet]="errorTemplate"
-                                [ngTemplateOutletContext]="{ field: field }"
-                            >
-                            </ng-container>
-                        </mat-error>
-                    </mat-form-field>
+                        </ng-container>
+                    </mat-error>
+                    }
+                </mat-form-field>
+                }
 
-                    <!-- Multi Select -->
-                    <mat-form-field
-                        *ngIf="field.type === 'multi-select'"
-                        class="w-full"
-                    >
-                        <mat-label *ngIf="field.name !== ''">{{
-                            field.name
-                        }}</mat-label>
-                        <mat-select
-                            [placeholder]="field.placeholder ?? field.name"
-                            [formControlName]="field.name"
-                            multiple
+                <!-- Checkbox -->
+                @if (field.type === 'checkbox') {
+                <mat-checkbox
+                    class="pb-4"
+                    [formControlName]="field.name"
+                    [labelPosition]="field.labelPosition"
+                    [color]="'primary'"
+                >
+                    {{ field.name }}
+                    @if (field?.hintMessage) {
+                    <mat-hint>{{ field.hintMessage }}</mat-hint>
+                    } @if ( form.controls && form.controls[field.name]?.touched
+                    && form.controls[field.name]?.invalid ) {
+                    <mat-error class="flex flex-col gap-2">
+                        <ng-container
+                            [ngTemplateOutlet]="errorTemplate"
+                            [ngTemplateOutletContext]="{ field: field }"
                         >
-                            <mat-option [value]="">Select</mat-option>
-                            <ng-container *ngIf="field.options">
-                                <mat-option
-                                    *ngFor="
-                                        let option of field.options.split(';')
-                                    "
-                                    [value]="option"
-                                    >{{ option }}</mat-option
-                                >
-                            </ng-container>
-                        </mat-select>
-                        <mat-hint *ngIf="field?.hintMessage">{{
-                            field.hintMessage
-                        }}</mat-hint>
-                        <mat-error
-                            *ngIf="
-                                form.controls &&
-                                form.controls[field.name]?.touched &&
-                                form.controls[field.name]?.invalid
-                            "
-                            class="flex flex-col gap-2"
-                        >
-                            <ng-container
-                                [ngTemplateOutlet]="errorTemplate"
-                                [ngTemplateOutletContext]="{ field: field }"
-                            >
-                            </ng-container>
-                        </mat-error>
-                    </mat-form-field>
+                        </ng-container>
+                    </mat-error>
+                    }
+                </mat-checkbox>
+                }
 
-                    <!-- Date -->
-                    <mat-form-field
-                        *ngIf="field.type === 'date'"
-                        class="w-full"
+                <!-- Radio -->
+                @if (field.type === 'radio') {
+                <div class="flex flex-col gap-1 w-full pb-4">
+                    <label class="font-bold">{{ field.name }}</label>
+                    <mat-radio-group
+                        [formControlName]="field.name"
+                        class="flex gap-2"
                     >
-                        <mat-label *ngIf="field.name !== ''">{{
-                            field.name
-                        }}</mat-label>
-                        <input
-                            matInput
-                            [matDatepicker]="picker"
-                            [formControlName]="field.name"
-                        />
-                        <mat-hint *ngIf="field?.hintMessage">{{
-                            field.hintMessage ?? "MM/DD/YYYY"
-                        }}</mat-hint>
-                        <mat-datepicker-toggle
-                            matSuffix
-                            [for]="picker"
-                        ></mat-datepicker-toggle>
-                        <mat-datepicker #picker></mat-datepicker>
-                        <mat-error
-                            *ngIf="
-                                form.controls &&
-                                form.controls[field.name]?.touched &&
-                                form.controls[field.name]?.invalid
-                            "
-                            class="flex flex-col gap-2"
-                        >
-                            <ng-container
-                                [ngTemplateOutlet]="errorTemplate"
-                                [ngTemplateOutletContext]="{ field: field }"
-                            >
-                            </ng-container>
-                        </mat-error>
-                    </mat-form-field>
-
-                    <!-- Date Range -->
-                    <mat-form-field
-                        *ngIf="field.type === 'date-range'"
-                        class="w-full"
-                    >
-                        <mat-label *ngIf="field.name !== ''">{{
-                            field.name
-                        }}</mat-label>
-                        <mat-date-range-input
-                            [rangePicker]="picker"
-                            [formGroupName]="field.name"
-                        >
-                            <input
-                                matStartDate
-                                [formControlName]="'start'"
-                                placeholder="Start date"
-                            />
-                            <input
-                                matEndDate
-                                [formControlName]="'end'"
-                                placeholder="End date"
-                            />
-                        </mat-date-range-input>
-                        <mat-hint *ngIf="field?.hintMessage">{{
-                            field.hintMessage ?? "MM/DD/YYYY - MM/DD/YYYY"
-                        }}</mat-hint>
-                        <mat-datepicker-toggle
-                            matSuffix
-                            [for]="picker"
-                        ></mat-datepicker-toggle>
-                        <mat-date-range-picker #picker></mat-date-range-picker>
-                        <mat-error
-                            *ngIf="
-                                form.controls &&
-                                form.controls[field.name]?.touched &&
-                                form.controls[field.name]?.invalid
-                            "
-                            class="flex flex-col gap-2"
-                        >
-                            <ng-container
-                                [ngTemplateOutlet]="errorTemplate"
-                                [ngTemplateOutletContext]="{ field: field }"
-                            >
-                            </ng-container>
-                        </mat-error>
-                    </mat-form-field>
-
-                    <!-- Time -->
-                    <mat-form-field
-                        *ngIf="field.type === 'time'"
-                        class="w-full"
-                    >
-                        <mat-label *ngIf="field.name !== ''">{{
-                            field.name
-                        }}</mat-label>
-                        <input
-                            matTimepicker
-                            [formControlName]="field.name"
-                            [placeholder]="field.placeholder ?? field.name"
-                        />
-                        <mat-hint *ngIf="field?.hintMessage">{{
-                            field.hintMessage ?? "HH:mm:ss"
-                        }}</mat-hint>
-                        <mat-error
-                            *ngIf="
-                                form.controls &&
-                                form.controls[field.name]?.touched &&
-                                form.controls[field.name]?.invalid
-                            "
-                            class="flex flex-col gap-2"
-                        >
-                            <ng-container
-                                [ngTemplateOutlet]="errorTemplate"
-                                [ngTemplateOutletContext]="{ field: field }"
-                            >
-                            </ng-container>
-                        </mat-error>
-                    </mat-form-field>
-
-                    <!-- Slider -->
-                    <div
-                        *ngIf="field.type === 'slider'"
-                        class="flex flex-col gap-1 w-full pb-4"
-                    >
-                        <label *ngIf="field.name !== ''">{{
-                            field.name
-                        }}</label>
-                        <mat-slider
-                            [min]="
-                                field &&
-                                field.sliderOptions &&
-                                field.sliderOptions.min
-                            "
-                            [max]="
-                                field &&
-                                field.sliderOptions &&
-                                field.sliderOptions.max
-                            "
-                            [step]="
-                                field &&
-                                field.sliderOptions &&
-                                field.sliderOptions.step
-                            "
-                            [showTickMarks]="field.sliderOptions.showTicks"
-                            [discrete]="field.sliderOptions.thumbLabel"
-                            [disabled]="field.sliderOptions.disabled"
+                        @if (field.options) { @for ( option of
+                        field.options.split(';') ; track option) {
+                        <mat-radio-button
+                            [value]="option"
                             [color]="'primary'"
-                            [displayWith]="formatSliderLabel"
-                            [value]="slider.value"
+                            [labelPosition]="field.labelPosition"
                         >
-                            <input
-                                #slider
-                                matSliderThumb
-                                [formControlName]="field.name"
-                            />
-                        </mat-slider>
-
-                        <mat-hint *ngIf="field?.hintMessage">{{
-                            field.hintMessage
-                        }}</mat-hint>
-                        <mat-error
-                            *ngIf="
-                                form.controls &&
-                                form.controls[field.name]?.touched &&
-                                form.controls[field.name]?.invalid
-                            "
-                            class="flex flex-col gap-2"
+                            {{ option | uppercase }}
+                        </mat-radio-button>
+                        } }
+                    </mat-radio-group>
+                    @if ( form.controls && form.controls[field.name]?.touched &&
+                    form.controls[field.name]?.invalid ) {
+                    <mat-error class="flex flex-col gap-2">
+                        <ng-container
+                            [ngTemplateOutlet]="errorTemplate"
+                            [ngTemplateOutletContext]="{ field: field }"
                         >
-                            <ng-container
-                                [ngTemplateOutlet]="errorTemplate"
-                                [ngTemplateOutletContext]="{ field: field }"
-                            >
-                            </ng-container>
-                        </mat-error>
-                    </div>
+                        </ng-container>
+                    </mat-error>
+                    }
+                </div>
+                }
 
-                    <!-- Autocomplete  -->
-                    <mat-form-field
-                        class="w-full"
-                        appearance="fill"
-                        *ngIf="field.type === 'autocomplete'"
+                <!-- Select -->
+                @if (field.type === 'select') {
+                <mat-form-field class="w-full">
+                    @if (field.name !== '') {
+                    <mat-label>{{ field.name }}</mat-label>
+                    }
+                    <mat-select
+                        [placeholder]="field.placeholder ?? field.name"
+                        [formControlName]="field.name"
                     >
-                        <mat-label *ngIf="field.name !== ''">{{
-                            field.name
-                        }}</mat-label>
+                        <mat-option>Select</mat-option>
+                        @if (field.options) { @for ( option of
+                        field.options.split(';') ; track option) {
+                        <mat-option [value]="option">{{ option }}</mat-option>
+                        } }
+                    </mat-select>
+                    @if (field?.hintMessage) {
+                    <mat-hint>{{ field.hintMessage }}</mat-hint>
+                    } @if ( form.controls && form.controls[field.name]?.touched
+                    && form.controls[field.name]?.invalid ) {
+                    <mat-error class="flex flex-col gap-2">
+                        <ng-container
+                            [ngTemplateOutlet]="errorTemplate"
+                            [ngTemplateOutletContext]="{ field: field }"
+                        >
+                        </ng-container>
+                    </mat-error>
+                    }
+                </mat-form-field>
+                }
+
+                <!-- Multi Select -->
+                @if (field.type === 'multi-select') {
+                <mat-form-field class="w-full">
+                    @if (field.name !== '') {
+                    <mat-label>{{ field.name }}</mat-label>
+                    }
+                    <mat-select
+                        [placeholder]="field.placeholder ?? field.name"
+                        [formControlName]="field.name"
+                        multiple
+                    >
+                        <mat-option [value]="">Select</mat-option>
+                        @if (field.options) { @for ( option of
+                        field.options.split(';') ; track option) {
+                        <mat-option [value]="option">{{ option }}</mat-option>
+                        } }
+                    </mat-select>
+                    @if (field?.hintMessage) {
+                    <mat-hint>{{ field.hintMessage }}</mat-hint>
+                    } @if ( form.controls && form.controls[field.name]?.touched
+                    && form.controls[field.name]?.invalid ) {
+                    <mat-error class="flex flex-col gap-2">
+                        <ng-container
+                            [ngTemplateOutlet]="errorTemplate"
+                            [ngTemplateOutletContext]="{ field: field }"
+                        >
+                        </ng-container>
+                    </mat-error>
+                    }
+                </mat-form-field>
+                }
+
+                <!-- Date -->
+                @if (field.type === 'date') {
+                <mat-form-field class="w-full">
+                    @if (field.name !== '') {
+                    <mat-label>{{ field.name }}</mat-label>
+                    }
+                    <input
+                        matInput
+                        [matDatepicker]="picker"
+                        [formControlName]="field.name"
+                    />
+                    @if (field?.hintMessage) {
+                    <mat-hint>{{ field.hintMessage ?? "MM/DD/YYYY" }}</mat-hint>
+                    }
+                    <mat-datepicker-toggle
+                        matSuffix
+                        [for]="picker"
+                    ></mat-datepicker-toggle>
+                    <mat-datepicker #picker></mat-datepicker>
+                    @if ( form.controls && form.controls[field.name]?.touched &&
+                    form.controls[field.name]?.invalid ) {
+                    <mat-error class="flex flex-col gap-2">
+                        <ng-container
+                            [ngTemplateOutlet]="errorTemplate"
+                            [ngTemplateOutletContext]="{ field: field }"
+                        >
+                        </ng-container>
+                    </mat-error>
+                    }
+                </mat-form-field>
+                }
+
+                <!-- Date Range -->
+                @if (field.type === 'date-range') {
+                <mat-form-field class="w-full">
+                    @if (field.name !== '') {
+                    <mat-label>{{ field.name }}</mat-label>
+                    }
+                    <mat-date-range-input
+                        [rangePicker]="picker"
+                        [formGroupName]="field.name"
+                    >
                         <input
-                            type="text"
-                            aria-label="
-                                {{ field.placeholder ?? field.name }}
-                            "
-                            matInput
-                            [placeholder]="field.placeholder ?? field.name"
-                            [formControlName]="field.name"
-                            [matAutocomplete]="auto"
+                            matStartDate
+                            [formControlName]="'start'"
+                            placeholder="Start date"
                         />
-                        <mat-autocomplete
-                            autoActiveFirstOption
-                            #auto="matAutocomplete"
+                        <input
+                            matEndDate
+                            [formControlName]="'end'"
+                            placeholder="End date"
+                        />
+                    </mat-date-range-input>
+                    @if (field?.hintMessage) {
+                    <mat-hint>{{
+                        field.hintMessage ?? "MM/DD/YYYY - MM/DD/YYYY"
+                    }}</mat-hint>
+                    }
+                    <mat-datepicker-toggle
+                        matSuffix
+                        [for]="picker"
+                    ></mat-datepicker-toggle>
+                    <mat-date-range-picker #picker></mat-date-range-picker>
+                    @if ( form.controls && form.controls[field.name]?.touched &&
+                    form.controls[field.name]?.invalid ) {
+                    <mat-error class="flex flex-col gap-2">
+                        <ng-container
+                            [ngTemplateOutlet]="errorTemplate"
+                            [ngTemplateOutletContext]="{ field: field }"
                         >
-                            <ng-container *ngIf="field.options">
-                                <mat-option
-                                    *ngFor="
-                                        let option of field.options.split(';')
-                                    "
-                                    [value]="option"
-                                    >{{ option }}</mat-option
-                                >
-                            </ng-container>
-                        </mat-autocomplete>
-                        <mat-error
-                            *ngIf="
-                                form.controls[field.name]?.touched &&
-                                form.controls[field.name]?.invalid
-                            "
-                            class="flex flex-col gap-2"
-                        >
-                            <ng-container
-                                [ngTemplateOutlet]="errorTemplate"
-                                [ngTemplateOutletContext]="{ field: field }"
-                            >
-                            </ng-container>
-                        </mat-error>
-                    </mat-form-field>
+                        </ng-container>
+                    </mat-error>
+                    }
+                </mat-form-field>
+                }
 
-                    <!-- Multi Autocomplete -->
-                    <mat-form-field
-                        class="w-full"
-                        appearance="fill"
-                        *ngIf="field.type === 'multi-autocomplete'"
-                    >
-                        <mat-label *ngIf="field.name !== ''">{{
-                            field.name
-                        }}</mat-label>
-                        <mat-chip-list
-                            #chipList
-                            aria-label="{{ field.placeholder ?? field.name }}"
+                <!-- Time -->
+                @if (field.type === 'time') {
+                <mat-form-field class="w-full">
+                    @if (field.name !== '') {
+                    <mat-label>{{ field.name }}</mat-label>
+                    }
+                    <input
+                        matTimepicker
+                        [formControlName]="field.name"
+                        [placeholder]="field.placeholder ?? field.name"
+                    />
+                    @if (field?.hintMessage) {
+                    <mat-hint>{{ field.hintMessage ?? "HH:mm:ss" }}</mat-hint>
+                    } @if ( form.controls && form.controls[field.name]?.touched
+                    && form.controls[field.name]?.invalid ) {
+                    <mat-error class="flex flex-col gap-2">
+                        <ng-container
+                            [ngTemplateOutlet]="errorTemplate"
+                            [ngTemplateOutletContext]="{ field: field }"
                         >
-                            <!-- <mat-chip
+                        </ng-container>
+                    </mat-error>
+                    }
+                </mat-form-field>
+                }
+
+                <!-- Slider -->
+                @if (field.type === 'slider') {
+                <div class="flex flex-col gap-1 w-full pb-4">
+                    @if (field.name !== '') {
+                    <label>{{ field.name }}</label>
+                    }
+                    <mat-slider
+                        [min]="
+                            field &&
+                            field.sliderOptions &&
+                            field.sliderOptions.min
+                        "
+                        [max]="
+                            field &&
+                            field.sliderOptions &&
+                            field.sliderOptions.max
+                        "
+                        [step]="
+                            field &&
+                            field.sliderOptions &&
+                            field.sliderOptions.step
+                        "
+                        [showTickMarks]="field.sliderOptions.showTicks"
+                        [discrete]="field.sliderOptions.thumbLabel"
+                        [disabled]="field.sliderOptions.disabled"
+                        [color]="'primary'"
+                        [displayWith]="formatSliderLabel"
+                        [formControlName]="field.name"
+                    >
+                        <input
+                            #slider
+                            matSliderThumb
+                            [formControlName]="field.name"
+                        />
+                    </mat-slider>
+
+                    @if (field?.hintMessage) {
+                    <mat-hint>{{ field.hintMessage }}</mat-hint>
+                    } @if ( form.controls && form.controls[field.name]?.touched
+                    && form.controls[field.name]?.invalid ) {
+                    <mat-error class="flex flex-col gap-2">
+                        <ng-container
+                            [ngTemplateOutlet]="errorTemplate"
+                            [ngTemplateOutletContext]="{ field: field }"
+                        >
+                        </ng-container>
+                    </mat-error>
+                    }
+                </div>
+                }
+
+                <!-- Autocomplete  -->
+                @if (field.type === 'autocomplete') {
+                <mat-form-field class="w-full" appearance="fill">
+                    @if (field.name !== '') {
+                    <mat-label>{{ field.name }}</mat-label>
+                    }
+                    <input
+                        matInput
+                        type="text"
+                        [attr.aria-label]="field.placeholder ?? field.name"
+                        [placeholder]="field.placeholder ?? field.name"
+                        [formControlName]="field.name"
+                        [matAutocomplete]="auto"
+                    />
+                    <mat-autocomplete
+                        autoActiveFirstOption
+                        #auto="matAutocomplete"
+                    >
+                        @if (field.options) { @for ( option of
+                        field.options.split(';') ; track option) {
+                        <mat-option [value]="option">{{ option }}</mat-option>
+                        } }
+                    </mat-autocomplete>
+                    @if ( form.controls[field.name]?.touched &&
+                    form.controls[field.name]?.invalid ) {
+                    <mat-error class="flex flex-col gap-2">
+                        <ng-container
+                            [ngTemplateOutlet]="errorTemplate"
+                            [ngTemplateOutletContext]="{ field: field }"
+                        >
+                        </ng-container>
+                    </mat-error>
+                    }
+                </mat-form-field>
+                }
+
+                <!-- Multi Autocomplete -->
+                <!-- @if (field.type === 'multi-autocomplete') {
+                <mat-form-field class="w-full" appearance="fill">
+                    @if (field.name !== '') {
+                    <mat-label>{{ field.name }}</mat-label>
+                    }
+                    <mat-chip-list
+                        #chipList
+                        [attr.aria-label]="field.placeholder ?? field.name"
+                    >
+                         <mat-chip
                                 *ngFor="
                                     let option of field.options.split(
                                         ';'
@@ -533,127 +440,88 @@
                                 <button matChipRemove>
                                     <mat-icon>cancel</mat-icon>
                                 </button>
-                            </mat-chip> -->
-                            <input
-                                placeholder="{{
-                                    field.placeholder ?? field.name
-                                }}"
-                                #fruitInput
-                                [formControlName]="field.name"
-                                [matAutocomplete]="auto"
-                                [matChipInputFor]="chipList"
-                                [matChipInputSeparatorKeyCodes]="
-                                    separatorKeysCodes
-                                "
-                                (matChipInputTokenEnd)="add($event)"
-                            />
-                        </mat-chip-list>
-                        <mat-autocomplete
-                            #auto="matAutocomplete"
-                            (optionSelected)="selected($event)"
+                            </mat-chip> 
+                        <input
+                            placeholder="{{ field.placeholder ?? field.name }}"
+                            #fruitInput
+                            [formControlName]="field.name"
+                            [matAutocomplete]="auto"
+                            [matChipInputFor]="chipList"
+                            [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
+                            (matChipInputTokenEnd)="add($event)"
+                        />
+                    </mat-chip-list>
+                    <mat-autocomplete
+                        #auto="matAutocomplete"
+                        (optionSelected)="selected($event)"
+                    >
+                        @if (field.options) { @for ( option of
+                        field.options.split(';') ; track option) {
+                        <mat-option [value]="option">{{ option }}</mat-option>
+                        } }
+                    </mat-autocomplete>
+                    @if ( form.controls && form.controls[field.name]?.touched &&
+                    form.controls[field.name]?.invalid ) {
+                    <mat-error class="flex flex-col gap-2">
+                        <ng-container
+                            [ngTemplateOutlet]="errorTemplate"
+                            [ngTemplateOutletContext]="{ field: field }"
                         >
-                            <ng-container *ngIf="field.options">
-                                <mat-option
-                                    *ngFor="
-                                        let option of field.options.split(';')
-                                    "
-                                    [value]="option"
-                                    >{{ option }}</mat-option
-                                >
-                            </ng-container>
-                        </mat-autocomplete>
-                        <mat-error
-                            *ngIf="
-                                form.controls &&
-                                form.controls[field.name]?.touched &&
-                                form.controls[field.name]?.invalid
-                            "
-                            class="flex flex-col gap-2"
-                        >
-                            <ng-container
-                                [ngTemplateOutlet]="errorTemplate"
-                                [ngTemplateOutletContext]="{ field: field }"
-                            >
-                            </ng-container>
-                        </mat-error>
-                    </mat-form-field>
-                </div>
-            </ng-container>
+                        </ng-container>
+                    </mat-error>
+                    }
+                </mat-form-field>
+                } -->
+            </div>
+            } }
         </mat-expansion-panel>
     </div>
+    }
 </div>
+}
 
 <ng-template #errorTemplate let-field="field">
+    @if ( form.controls[field.name] && form.controls[field.name].errors &&
+    form.controls[field.name].errors.required ) {
+    <span>{{ field.name }} is mandatory</span>
+    } @if ( form.controls[field.name] && form.controls[field.name].errors &&
+    form.controls[field.name].errors.min ) {
     <span
-        *ngIf="
-            form.controls[field.name] &&
-            form.controls[field.name].errors &&
-            form.controls[field.name].errors.required
-        "
-        >{{ field.name }} is mandatory</span
-    >
-    <span
-        *ngIf="
-            form.controls[field.name] &&
-            form.controls[field.name].errors &&
-            form.controls[field.name].errors.min
-        "
         >{{ field.name }} minimum value is
         {{ form.controls[field.name].errors.min.min }}</span
     >
+    } @if ( form.controls[field.name] && form.controls[field.name].errors &&
+    form.controls[field.name].errors.max ) {
     <span
-        *ngIf="
-            form.controls[field.name] &&
-            form.controls[field.name].errors &&
-            form.controls[field.name].errors.max
-        "
         >{{ field.name }} maximum value is
         {{ form.controls[field.name].errors.max.max }}</span
     >
+    } @if ( form.controls[field.name] && form.controls[field.name].errors &&
+    form.controls[field.name].errors.minlength ) {
     <span
-        *ngIf="
-            form.controls[field.name] &&
-            form.controls[field.name].errors &&
-            form.controls[field.name].errors.minlength
-        "
         >{{ field.name }} minimum length value is
         {{ form.controls[field.name].errors.minlength.requiredLength }}
     </span>
+    } @if ( form.controls[field.name] && form.controls[field.name].errors &&
+    form.controls[field.name].errors.maxlength ) {
     <span
-        *ngIf="
-            form.controls[field.name] &&
-            form.controls[field.name].errors &&
-            form.controls[field.name].errors.maxlength
-        "
         >{{ field.name }} maximum length value is
         {{ form.controls[field.name].errors.maxlength.requiredLength }}</span
     >
+    } @if ( form.controls[field.name] && form.controls[field.name].errors &&
+    form.controls[field.name].errors.pattern ) {
     <span
-        *ngIf="
-            form.controls[field.name] &&
-            form.controls[field.name].errors &&
-            form.controls[field.name].errors.pattern
-        "
         >{{ field.name }} is invalid, please follow this rule "{{
             this.getPatternName(
                 form.controls[field.name].errors.pattern.requiredPattern
             )
         }}"</span
     >
-    <span
-        *ngIf="
-            form.controls[field.name] &&
-            form.controls[field.name].errors &&
-            form.controls[field.name].errors.nullValidator
-        "
-        >{{ field.name }} cannot be null</span
-    >
-    <span
-        *ngIf="
-            form.controls[field.name] &&
-            form.controls[field.name].errors &&
-            form.controls[field.name].errors.email
-        "
-        >{{ field.name }} is incorrect (example&#64;test.com)</span
-    >
+    } @if ( form.controls[field.name] && form.controls[field.name].errors &&
+    form.controls[field.name].errors.nullValidator ) {
+    <span>{{ field.name }} cannot be null</span>
+    } @if ( form.controls[field.name] && form.controls[field.name].errors &&
+    form.controls[field.name].errors.email ) {
+    <span>{{ field.name }} is incorrect (example&#64;test.com)</span>
+    }
 </ng-template>

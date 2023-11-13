@@ -50,7 +50,7 @@ export class TemplateFormComponent {
     private _templateService = inject(TemplatesService);
     private _formBuilder = inject(FormBuilder);
     private dialogRef = inject(MatDialogRef<TemplateFormComponent>);
-    private data = inject(MAT_DIALOG_DATA) as {
+    data = inject(MAT_DIALOG_DATA) as {
         title: string;
         template: Template;
         action: string;

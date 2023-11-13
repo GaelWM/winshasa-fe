@@ -10,7 +10,7 @@ import { FuseAlertComponent } from '@fuse/components/alert';
 import { LeaseAgreementFormComponent } from '../../lease-agreement-form/lease-agreement-form.component';
 
 @Component({
-    selector: 'app-general-details',
+    selector: 'app-lease-general-details',
     templateUrl: './general-details.component.html',
     imports: [
         CommonModule,

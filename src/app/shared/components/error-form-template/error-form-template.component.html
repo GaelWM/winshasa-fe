@@ -1,72 +1,88 @@
-<span
-    *ngIf="
+@if (
         form.controls[field] &&
         form.controls[field].errors &&
         form.controls[field].errors.required
-    "
+    ) {
+<span
+   
     >{{ name ?? field }} is mandatory</span
 >
-<span
-    *ngIf="
+}
+@if (
         form.controls[field] &&
         form.controls[field].errors &&
         form.controls[field].errors.min
-    "
+    ) {
+<span
+   
     >{{ name ?? field }} minimum value is
     {{ form.controls[field].errors.min.min }}</span
 >
-<span
-    *ngIf="
+}
+@if (
         form.controls[field] &&
         form.controls[field].errors &&
         form.controls[field].errors.max
-    "
+    ) {
+<span
+   
     >{{ name ?? field }} maximum value is
     {{ form.controls[field].errors.max.max }}</span
 >
-<span
-    *ngIf="
+}
+@if (
         form.controls[field] &&
         form.controls[field].errors &&
         form.controls[field].errors.minlength
-    "
+    ) {
+<span
+   
     >{{ name ?? field }} minimum length value is
     {{ form.controls[field].errors.minlength.requiredLength }}
 </span>
-<span
-    *ngIf="
+}
+@if (
         form.controls[field] &&
         form.controls[field].errors &&
         form.controls[field].errors.maxlength
-    "
+    ) {
+<span
+   
     >{{ name ?? field }} maximum length value is
     {{ form.controls[field].errors.maxlength.requiredLength }}</span
 >
-<span
-    *ngIf="
+}
+@if (
         form.controls[field] &&
         form.controls[field].errors &&
         form.controls[field].errors.pattern
-    "
+    ) {
+<span
+   
     >{{ name ?? field }} is invalid, please follow this rule "{{
         this.getPatternName(
             form.controls[field].errors.pattern.requiredPattern
         )
     }}"</span
 >
-<span
-    *ngIf="
+}
+@if (
         form.controls[field] &&
         form.controls[field].errors &&
         form.controls[field].errors.nullValidator
-    "
+    ) {
+<span
+   
     >{{ name ?? field }} cannot be null</span
 >
-<span
-    *ngIf="
+}
+@if (
         form.controls[field] &&
         form.controls[field].errors &&
         form.controls[field].errors.email
-    "
+    ) {
+<span
+   
     >{{ name ?? field }} is incorrect (example&#64;test.com)</span
 >
+}

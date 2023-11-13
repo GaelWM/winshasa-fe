@@ -3,7 +3,7 @@ import { Component } from '@angular/core';
 import { ProductFormComponent } from '../../product-form/product-form.component';
 
 @Component({
-    selector: 'app-general-details',
+    selector: 'app-product-general-details',
     templateUrl: './general-details.component.html',
     imports: [CommonModule, ProductFormComponent],
     standalone: true,

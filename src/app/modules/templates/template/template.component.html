@@ -1,7 +1,5 @@
-<div
-    *ngIf="template().data as template"
-    class="absolute inset-0 flex flex-col min-w-0 overflow-hidden"
->
+@if (template().data; as template) {
+<div class="absolute inset-0 flex flex-col min-w-0 overflow-hidden">
     <div
         class="flex flex-col sm:flex-row flex-0 sm:items-center sm:justify-between p-4 sm:py-6 sm:px-8 border-b bg-card dark:bg-transparent"
     >
@@ -27,7 +25,7 @@
             <button
                 class="flex items-center"
                 mat-stroked-button
-                (click)="onPreviewTemplate(template)"
+                (click)="onPreviewTemplate()"
                 [disabled]="template.details?.groups?.length === 0"
             >
                 <mat-icon
@@ -52,205 +50,195 @@
             <!-- Group all cdkDropList's after this point together so that the templateGroupFields can be transferred between templateGroup -->
             <div class="flex items-start" cdkDropListGroup>
                 <!-- Groups -->
-                <ng-container
-                    *ngFor="
-                        let templateGroup of template.details?.groups;
-                        trackBy: trackByFn
-                    "
+                @for ( templateGroup of template.details?.groups; track
+                trackByFn($index, templateGroup)) {
+
+                <div
+                    class="flex-0 w-72 p-2 rounded-2xl bg-default"
+                    cdkDrag
+                    [cdkDragLockAxis]="'x'"
                 >
                     <div
-                        class="flex-0 w-72 p-2 rounded-2xl bg-default"
-                        cdkDrag
-                        [cdkDragLockAxis]="'x'"
+                        class="flex items-center justify-between"
+                        cdkDragHandle
                     >
                         <div
-                            class="flex items-center justify-between"
-                            cdkDragHandle
+                            class="flex items-center w-full py-2 px-3 rounded-md cursor-text border border-transparent focus-within:bg-white focus-within:shadow-sm focus-within:border-primary dark:focus-within:bg-gray-900"
                         >
-                            <div
-                                class="flex items-center w-full py-2 px-3 rounded-md cursor-text border border-transparent focus-within:bg-white focus-within:shadow-sm focus-within:border-primary dark:focus-within:bg-gray-900"
+                            <input
+                                class="w-full font-medium leading-5 bg-transparent"
+                                [spellcheck]="'false'"
+                                [value]="templateGroup.name"
+                                (focusout)="
+                                    updateTemplateGroupTitle(
+                                        $event,
+                                        templateGroup
+                                    )
+                                "
+                                (keydown.enter)="templateGroupTitleInput.blur()"
+                                #templateGroupTitleInput
+                            />
+                        </div>
+                        <div
+                            matTooltip="{{
+                                'Contains ' +
+                                    (templateGroup.fields &&
+                                        (templateGroup.fields.length ?? 0)) +
+                                    ' field(s)'
+                            }}"
+                            class="flex items-center justify-center min-w-6 ml-4 text-sm font-semibold leading-6 rounded-full bg-gray-300 text-secondary dark:bg-gray-700"
+                        >
+                            {{
+                                templateGroup.fields !== undefined
+                                    ? templateGroup.fields.length
+                                    : 0
+                            }}
+                        </div>
+                        <div class="ml-1">
+                            <button
+                                class="w-8 h-8 min-h-8"
+                                mat-icon-button
+                                [matMenuTriggerFor]="listMenu"
                             >
-                                <input
-                                    class="w-full font-medium leading-5 bg-transparent"
-                                    [spellcheck]="'false'"
-                                    [value]="templateGroup.name"
-                                    (focusout)="
-                                        updateTemplateGroupTitle(
-                                            $event,
-                                            templateGroup
+                                <mat-icon
+                                    class="icon-size-5"
+                                    [svgIcon]="
+                                        'heroicons_solid:ellipsis-vertical'
+                                    "
+                                ></mat-icon>
+                            </button>
+                            <mat-menu #listMenu="matMenu">
+                                <button
+                                    mat-menu-item
+                                    (click)="
+                                        renameTemplateGroup(
+                                            templateGroupTitleInput
                                         )
                                     "
-                                    (keydown.enter)="
-                                        templateGroupTitleInput.blur()
-                                    "
-                                    #templateGroupTitleInput
-                                />
-                            </div>
-                            <div
-                                matTooltip="{{
-                                    'Contains ' +
-                                        (templateGroup.fields &&
-                                            (templateGroup.fields.length ??
-                                                0)) +
-                                        ' field(s)'
-                                }}"
-                                class="flex items-center justify-center min-w-6 ml-4 text-sm font-semibold leading-6 rounded-full bg-gray-300 text-secondary dark:bg-gray-700"
-                            >
-                                {{
-                                    templateGroup.fields !== undefined
-                                        ? templateGroup.fields.length
-                                        : 0
-                                }}
-                            </div>
-                            <div class="ml-1">
-                                <button
-                                    class="w-8 h-8 min-h-8"
-                                    mat-icon-button
-                                    [matMenuTriggerFor]="listMenu"
                                 >
                                     <mat-icon
                                         class="icon-size-5"
-                                        [svgIcon]="
-                                            'heroicons_solid:ellipsis-vertical'
-                                        "
+                                        [svgIcon]="'heroicons_solid:pencil'"
                                     ></mat-icon>
+                                    Edit group
                                 </button>
-                                <mat-menu #listMenu="matMenu">
-                                    <button
-                                        mat-menu-item
-                                        (click)="
-                                            renameTemplateGroup(
-                                                templateGroupTitleInput
-                                            )
-                                        "
-                                    >
-                                        <mat-icon
-                                            class="icon-size-5"
-                                            [svgIcon]="'heroicons_solid:pencil'"
-                                        ></mat-icon>
-                                        Edit group
-                                    </button>
-                                    <button
-                                        mat-menu-item
-                                        (click)="
-                                            renameTemplateGroup(
-                                                templateGroupTitleInput
-                                            )
-                                        "
-                                    >
-                                        <mat-icon
-                                            class="icon-size-5"
-                                            [svgIcon]="'heroicons_solid:pencil'"
-                                        ></mat-icon>
-                                        Rename group
-                                    </button>
-                                    <button
-                                        mat-menu-item
-                                        (click)="
-                                            deleteTemplateGroup(templateGroup)
-                                        "
-                                    >
-                                        <mat-icon
-                                            class="icon-size-5"
-                                            [svgIcon]="'heroicons_solid:trash'"
-                                        ></mat-icon>
-                                        Delete group
-                                    </button>
-                                </mat-menu>
-                            </div>
-                        </div>
-
-                        <!-- Fields -->
-                        <div
-                            class="mt-2 rounded-xl bg-gray-400 bg-opacity-12 dark:bg-transparent dark:border"
-                        >
-                            <div
-                                [id]="templateGroup.id"
-                                class="p-3 pb-0"
-                                cdkDropList
-                                [cdkDropListData]="templateGroup.fields"
-                                (cdkDropListDropped)="
-                                    templateGroupFieldDropped($event)
-                                "
-                            >
-                                <!-- Field -->
-                                <ng-container
-                                    *ngFor="
-                                        let field of templateGroup.fields;
-                                        trackBy: trackByFn
+                                <button
+                                    mat-menu-item
+                                    (click)="
+                                        renameTemplateGroup(
+                                            templateGroupTitleInput
+                                        )
                                     "
                                 >
-                                    <a
-                                        class="flex flex-col mb-3 p-5 space-y-3 shadow rounded-lg overflow-hidden bg-card"
-                                        [routerLink]="'.'"
-                                        [queryParams]="{
-                                            groupId: templateGroup.id,
-                                            fieldId: field.id
-                                        }"
-                                        cdkDrag
-                                    >
-                                        <!-- Cover image -->
-                                        <ng-container *ngIf="field.coverImage">
-                                            <div class="-mx-5 -mt-5 mb-2">
-                                                <img
-                                                    class="w-full object-cover"
-                                                    [src]="field.coverImage"
-                                                />
-                                            </div>
-                                        </ng-container>
-                                        <!-- Title -->
-
-                                        <div
-                                            class="text-lg font-medium leading-5"
-                                        >
-                                            {{ field.name }}
-                                            <span class="text-secondary">{{
-                                                field?.type
-                                            }}</span>
-                                        </div>
-                                        <div class="flex justify-end gap-2">
-                                            <mat-icon
-                                                matTooltip="Applies validation rules"
-                                                *ngIf="field?.hasValidators"
-                                                class="text-primary-500"
-                                                svgIcon="heroicons_outline:exclamation-triangle"
-                                            ></mat-icon>
-                                            <mat-icon
-                                                mat-button
-                                                matTooltip="Click to delete field"
-                                                class="text-warn"
-                                                [svgIcon]="
-                                                    'heroicons_outline:trash'
-                                                "
-                                                (click)="
-                                                    onDeleteTemplateGroupField(
-                                                        $event,
-                                                        templateGroup,
-                                                        field
-                                                    )
-                                                "
-                                            ></mat-icon>
-                                        </div>
-                                    </a>
-                                </ng-container>
-                            </div>
-
-                            <!-- New field -->
-                            <template-add-field
-                                (saved)="
-                                    addTemplateGroupField(templateGroup, $event)
-                                "
-                                [buttonTitle]="
-                                    templateGroup.fields !== undefined &&
-                                    templateGroup.fields.length
-                                        ? 'Add another field'
-                                        : 'Add a field'
-                                "
-                            >
-                            </template-add-field>
+                                    <mat-icon
+                                        class="icon-size-5"
+                                        [svgIcon]="'heroicons_solid:pencil'"
+                                    ></mat-icon>
+                                    Rename group
+                                </button>
+                                <button
+                                    mat-menu-item
+                                    (click)="deleteTemplateGroup(templateGroup)"
+                                >
+                                    <mat-icon
+                                        class="icon-size-5"
+                                        [svgIcon]="'heroicons_solid:trash'"
+                                    ></mat-icon>
+                                    Delete group
+                                </button>
+                            </mat-menu>
                         </div>
                     </div>
-                </ng-container>
+
+                    <!-- Fields -->
+                    <div
+                        class="mt-2 rounded-xl bg-gray-400 bg-opacity-12 dark:bg-transparent dark:border"
+                    >
+                        <div
+                            [id]="templateGroup.id"
+                            class="p-3 pb-0"
+                            cdkDropList
+                            [cdkDropListData]="templateGroup.fields"
+                            (cdkDropListDropped)="
+                                templateGroupFieldDropped($event)
+                            "
+                        >
+                            <!-- Field -->
+                            @for ( field of templateGroup.fields; track
+                            trackByFn($index, field)) {
+
+                            <a
+                                class="flex flex-col mb-3 p-5 space-y-3 shadow rounded-lg overflow-hidden bg-card"
+                                [routerLink]="'.'"
+                                [queryParams]="{
+                                    groupId: templateGroup.id,
+                                    fieldId: field.id
+                                }"
+                                cdkDrag
+                            >
+                                <!-- Cover image -->
+                                @if (field.coverImage) {
+
+                                <div class="-mx-5 -mt-5 mb-2">
+                                    <img
+                                        class="w-full object-cover"
+                                        [src]="field.coverImage"
+                                    />
+                                </div>
+
+                                }
+                                <!-- Title -->
+
+                                <div class="text-lg font-medium leading-5">
+                                    {{ field.name }}
+                                    <span class="text-secondary">{{
+                                        field?.type
+                                    }}</span>
+                                </div>
+                                <div class="flex justify-end gap-2">
+                                    @if (field?.hasValidators) {
+                                    <mat-icon
+                                        matTooltip="Applies validation rules"
+                                        class="text-primary-500"
+                                        svgIcon="heroicons_outline:exclamation-triangle"
+                                    ></mat-icon>
+                                    }
+                                    <mat-icon
+                                        mat-button
+                                        matTooltip="Click to delete field"
+                                        class="text-warn"
+                                        [svgIcon]="'heroicons_outline:trash'"
+                                        (click)="
+                                            onDeleteTemplateGroupField(
+                                                $event,
+                                                templateGroup,
+                                                field
+                                            )
+                                        "
+                                    ></mat-icon>
+                                </div>
+                            </a>
+
+                            }
+                        </div>
+
+                        <!-- New field -->
+                        <template-add-field
+                            (saved)="
+                                addTemplateGroupField(templateGroup, $event)
+                            "
+                            [buttonTitle]="
+                                templateGroup.fields !== undefined &&
+                                templateGroup.fields.length
+                                    ? 'Add another field'
+                                    : 'Add a field'
+                            "
+                        >
+                        </template-add-field>
+                    </div>
+                </div>
+
+                }
 
                 <!-- New group -->
                 <template-add-group
@@ -266,6 +254,7 @@
         </div>
     </div>
 </div>
+}
 
 <!-- Invisible router-outlet for template group field component -->
 <div class="absolute invisible w-0 h-0 opacity-0 pointer-events-none">

@@ -1,15 +1,20 @@
+@if ($siteForm(); as siteForm) {
 <form
-    *ngIf="$siteForm() as siteForm"
+   
     #siteNgForm="ngForm"
     (ngSubmit)="onSubmitNewSite(siteNgForm)"
     [formGroup]="siteForm"
     class="w-full flex flex-col flex-auto md:min-w-160 h-full"
 >
     <div class="flex flex-col h-full space-y-3">
-        <fuse-alert [type]="'error'" *ngIf="errors().length > 0" class="w-full">
+        @if (errors().length > 0) {
+<fuse-alert [type]="'error'" class="w-full">
             <span fuseAlertTitle>Error</span>
-            <span *ngFor="let error of errors()"> {{ error.message }}</span>
+            @for (error of errors(); track error) {
+  <span> {{ error.message }}</span>
+}
         </fuse-alert>
+}
 
         <div class="w-full flex items-start gap-2">
             <div [class]="asModal ? 'w-full' : 'w-2/5'" class="space-y-3 p-3">
@@ -23,11 +28,12 @@
                         [placeholder]="'Site name'"
                     />
                     <mat-hint>Please type in the site name</mat-hint>
-                    <mat-error
-                        *ngIf="
+                    @if (
                             siteForm.controls?.name?.touched &&
                             siteForm.controls?.name?.invalid
-                        "
+                        ) {
+<mat-error
+                       
                     >
                         <app-error-form-template
                             [form]="siteForm"
@@ -35,6 +41,7 @@
                             name="Site name"
                         ></app-error-form-template>
                     </mat-error>
+}
                 </mat-form-field>
 
                 <mat-form-field class="w-full">
@@ -45,18 +52,21 @@
                         required
                     >
                         <mat-option>Select</mat-option>
-                        <mat-option
-                            *ngFor="let option of $templateOpts()"
+                        @for (option of $templateOpts(); track option) {
+  <mat-option
+                           
                             [value]="option.id"
                             >{{ option.name }}</mat-option
                         >
+}
                     </mat-select>
                     <mat-hint>Please select a template</mat-hint>
-                    <mat-error
-                        *ngIf="
+                    @if (
                             siteForm.controls?.templateId?.touched &&
                             siteForm.controls?.templateId?.invalid
-                        "
+                        ) {
+<mat-error
+                       
                     >
                         <app-error-form-template
                             [form]="siteForm"
@@ -64,6 +74,7 @@
                             name="Site template"
                         ></app-error-form-template>
                     </mat-error>
+}
                 </mat-form-field>
 
                 <mat-form-field class="w-full">
@@ -74,18 +85,21 @@
                         required
                     >
                         <mat-option>Select</mat-option>
-                        <mat-option
-                            *ngFor="let option of $siteTypeOpts()"
+                        @for (option of $siteTypeOpts(); track option) {
+  <mat-option
+                           
                             [value]="option.name"
                             >{{ option.name }}</mat-option
                         >
+}
                     </mat-select>
                     <mat-hint>Please select a type</mat-hint>
-                    <mat-error
-                        *ngIf="
+                    @if (
                             siteForm.controls?.type?.touched &&
                             siteForm.controls?.type?.invalid
-                        "
+                        ) {
+<mat-error
+                       
                     >
                         <app-error-form-template
                             [form]="siteForm"
@@ -93,6 +107,7 @@
                             name="Site type"
                         ></app-error-form-template>
                     </mat-error>
+}
                 </mat-form-field>
 
                 <mat-form-field class="w-full">
@@ -103,18 +118,21 @@
                         required
                     >
                         <mat-option>Select</mat-option>
-                        <mat-option
-                            *ngFor="let option of $siteStatusOpts()"
+                        @for (option of $siteStatusOpts(); track option) {
+  <mat-option
+                           
                             [value]="option.name"
                             >{{ option.name }}</mat-option
                         >
+}
                     </mat-select>
                     <mat-hint>Please select a status</mat-hint>
-                    <mat-error
-                        *ngIf="
+                    @if (
                             siteForm.controls?.status?.touched &&
                             siteForm.controls?.status?.invalid
-                        "
+                        ) {
+<mat-error
+                       
                     >
                         <app-error-form-template
                             [form]="siteForm"
@@ -122,6 +140,7 @@
                             name="Site status"
                         ></app-error-form-template>
                     </mat-error>
+}
                 </mat-form-field>
                 <mat-form-field class="w-full">
                     <mat-label>Site category</mat-label>
@@ -130,18 +149,21 @@
                         [placeholder]="'Site category'"
                     >
                         <mat-option>Select</mat-option>
-                        <mat-option
-                            *ngFor="let option of $siteCategoryOpts()"
+                        @for (option of $siteCategoryOpts(); track option) {
+  <mat-option
+                           
                             [value]="option.name"
                             >{{ option.name }}</mat-option
                         >
+}
                     </mat-select>
                     <mat-hint>Please select a category</mat-hint>
-                    <mat-error
-                        *ngIf="
+                    @if (
                             siteForm.controls?.category?.touched &&
                             siteForm.controls?.category?.invalid
-                        "
+                        ) {
+<mat-error
+                       
                     >
                         <app-error-form-template
                             [form]="siteForm"
@@ -149,6 +171,7 @@
                             name="Site category"
                         ></app-error-form-template>
                     </mat-error>
+}
                 </mat-form-field>
                 <div class="w-full flex justify-between items-center gap-4">
                     <mat-form-field [ngClass]="formFieldHelpers" class="w-full">
@@ -173,7 +196,8 @@
                     </mat-form-field>
                 </div>
             </div>
-            <div *ngIf="!asModal" class="w-3/5">
+            @if (!asModal) {
+<div class="w-3/5">
                 <app-json-form
                     [template]="$selectedTemplate()"
                     [form]="siteForm"
@@ -181,11 +205,13 @@
                 >
                 </app-json-form>
             </div>
+}
         </div>
 
         <!-- Footer -->
-        <div
-            *ngIf="showSaveButton"
+        @if (showSaveButton) {
+<div
+           
             class="w-full flex items-center justify-end border-t p-2 pb-0 border-gray-50 dark:border-gray-700"
         >
             <button
@@ -198,5 +224,7 @@
                 Save
             </button>
         </div>
+}
     </div>
 </form>
+}

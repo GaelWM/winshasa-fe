@@ -1,5 +1,6 @@
+@if (documentForm(); as documentForm) {
 <form
-    *ngIf="documentForm() as documentForm"
+   
     #documentNgForm="ngForm"
     (ngSubmit)="onSubmitDocument(documentNgForm)"
     [formGroup]="documentForm"
@@ -26,14 +27,18 @@
         <div
             class="flex flex-col flex-1 items-start w-full p-6 sm:p-8 space-y-3 overflow-y-auto"
         >
-            <fuse-alert
+            @if (errors().length > 0) {
+<fuse-alert
                 [type]="'error'"
-                *ngIf="errors().length > 0"
+               
                 class="w-full"
             >
                 <span fuseAlertTitle>Error</span>
-                <span *ngFor="let error of errors()"> {{ error.message }}</span>
+                @for (error of errors(); track error) {
+  <span> {{ error.message }}</span>
+}
             </fuse-alert>
+}
             <mat-form-field [ngClass]="formFieldHelpers" class="w-full mb-4">
                 <mat-label
                     >{{
@@ -55,11 +60,12 @@
                     {{ data.action === "upload" ? "file" : "folder" }}
                     name</mat-hint
                 >
-                <mat-error
-                    *ngIf="
+                @if (
                         documentForm.controls?.name?.touched &&
                         documentForm.controls?.name?.invalid
-                    "
+                    ) {
+<mat-error
+                   
                 >
                     <app-error-form-template
                         [form]="documentForm"
@@ -71,8 +77,10 @@
                         "
                     ></app-error-form-template>
                 </mat-error>
+}
             </mat-form-field>
-            <div class="relative" *ngIf="data.action === 'upload'">
+            @if (data.action === 'upload') {
+<div class="relative">
                 <input
                     type="file"
                     class="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
@@ -96,6 +104,7 @@
                     }}
                 </span>
             </div>
+}
         </div>
         <div
             class="flex items-center justify-end border-t px-8 py-5 bg-gray-50 dark:bg-gray-700"
@@ -113,3 +122,4 @@
         </div>
     </div>
 </form>
+}

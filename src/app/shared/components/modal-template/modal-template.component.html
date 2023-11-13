@@ -23,13 +23,15 @@
     <div
         class="w-full flex items-center justify-end border-t p-3 bg-gray-50 dark:bg-gray-700"
     >
-        <button
-            *ngIf="data?.showCloseButton ?? true"
+        @if (data?.showCloseButton ?? true) {
+<button
+           
             mat-button
             (click)="onCloseModal($event)"
         >
             Close
         </button>
+}
         <button
             type="submit"
             class="px-6 ml-3"

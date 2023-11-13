@@ -65,26 +65,26 @@ import { MatTooltipModule } from '@angular/material/tooltip';
     standalone: true,
 })
 export class TemplateComponent {
-    private _formBuilder = inject(UntypedFormBuilder);
-    private _fuseConfirmationService = inject(FuseConfirmationService);
-    private _templateService = inject(TemplatesService);
-    private _matDialog = inject(MatDialog);
-    private destroyRef = inject(DestroyRef);
-    private _route = inject(ActivatedRoute);
-    private _router = inject(Router);
+    #formBuilder = inject(UntypedFormBuilder);
+    #fuseConfirmationService = inject(FuseConfirmationService);
+    #templateService = inject(TemplatesService);
+    #matDialog = inject(MatDialog);
+    #destroyRef = inject(DestroyRef);
+    #route = inject(ActivatedRoute);
+    #router = inject(Router);
 
     private readonly _positionStep: number = 65536;
     private readonly _maxTemplateGroupCount: number = 200;
     private readonly _maxPosition: number = this._positionStep * 500;
 
     private template$: Observable<ApiResult<Template>> =
-        this._route.params.pipe(
+        this.#route.params.pipe(
             switchMap((params) =>
-                this._templateService.get<Template>(params['id'])
+                this.#templateService.get<Template>(params['id'])
             ),
             tap((template: ApiResult<Template>) => {
                 if (template) {
-                    this._templateService.selectedTemplate.set(template);
+                    this.#templateService.selectedTemplate.set(template);
                 }
             }),
             catchError(() => of(undefined)),
@@ -93,16 +93,16 @@ export class TemplateComponent {
     temp = toSignal(this.template$, {
         initialValue: {} as ApiResult<Template>,
     });
-
-    template = signal({} as ApiResult<Template>);
+    template = this.#templateService.selectedTemplate;
 
     constructor() {
         effect(() => {
-            this.temp();
-            this.template = this._templateService.selectedTemplate;
+            if (!this.template().data?.id) {
+                this.temp();
+            }
         });
 
-        this._route.queryParams
+        this.#route.queryParams
             .pipe(
                 map((queryParams) => {
                     const groupId = queryParams.groupId;
@@ -111,7 +111,7 @@ export class TemplateComponent {
                 }),
                 filter(({ groupId, fieldId }) => groupId && fieldId),
                 tap(({ groupId, fieldId }) => {
-                    this._matDialog
+                    this.#matDialog
                         .open(TemplateFieldFormComponent, {
                             autoFocus: false,
                             data: {
@@ -123,9 +123,9 @@ export class TemplateComponent {
                         })
                         .afterClosed()
                         .subscribe(() => {
-                            this._router.navigate([], {
+                            this.#router.navigate([], {
                                 queryParams: undefined,
-                                relativeTo: this._route,
+                                relativeTo: this.#route,
                             });
                         });
                 }),
@@ -135,7 +135,7 @@ export class TemplateComponent {
     }
 
     templateGroupTitleForm: Signal<UntypedFormGroup> = computed(() => {
-        return this._formBuilder.group({
+        return this.#formBuilder.group({
             title: [''],
         });
     });
@@ -171,12 +171,12 @@ export class TemplateComponent {
         const templateGroup = new TemplateGroup({ name: name });
 
         // Save the template group
-        this._templateService
+        this.#templateService
             .createTemplateGroup(
                 (this.template().data as Template).id,
                 templateGroup
             )
-            .pipe(takeUntilDestroyed(this.destroyRef))
+            .pipe(takeUntilDestroyed(this.#destroyRef))
             .subscribe();
     }
 
@@ -204,12 +204,12 @@ export class TemplateComponent {
         templateGroup.name = element.value = newTitle;
 
         // Update the templateGroup
-        this._templateService
+        this.#templateService
             .updateTemplateGroup(
                 (this.template().data as Template).id,
                 templateGroup
             )
-            .pipe(takeUntilDestroyed(this.destroyRef))
+            .pipe(takeUntilDestroyed(this.#destroyRef))
             .subscribe();
     }
 
@@ -220,7 +220,7 @@ export class TemplateComponent {
      */
     deleteTemplateGroup(templateGroup: TemplateGroup): void {
         // Open the confirmation dialog
-        const confirmation = this._fuseConfirmationService.open({
+        const confirmation = this.#fuseConfirmationService.open({
             title: 'Delete template group',
             message:
                 'Are you sure you want to delete this group and its fields? This action cannot be undone!',
@@ -234,12 +234,12 @@ export class TemplateComponent {
         confirmation.afterClosed().subscribe((result) => {
             if (result === 'confirmed') {
                 // Delete the template group
-                this._templateService
+                this.#templateService
                     .deleteTemplateGroup(
                         (this.template().data as Template).id,
                         templateGroup.id
                     )
-                    .pipe(takeUntilDestroyed(this.destroyRef))
+                    .pipe(takeUntilDestroyed(this.#destroyRef))
                     .subscribe();
             }
         });
@@ -265,13 +265,13 @@ export class TemplateComponent {
         });
 
         // Save the template group field
-        this._templateService
+        this.#templateService
             .createTemplateGroupField(
                 (this.template().data as Template).id,
                 templateGroup.id,
                 templateGroupField
             )
-            .pipe(takeUntilDestroyed(this.destroyRef))
+            .pipe(takeUntilDestroyed(this.#destroyRef))
             .subscribe();
     }
 
@@ -290,7 +290,7 @@ export class TemplateComponent {
         event.preventDefault();
         event.stopImmediatePropagation();
         // Open the confirmation dialog
-        const confirmation = this._fuseConfirmationService.open({
+        const confirmation = this.#fuseConfirmationService.open({
             title: 'Delete template group field',
             message:
                 'Are you sure you want to delete this field? This action cannot be undone!',
@@ -306,7 +306,7 @@ export class TemplateComponent {
             // If the confirm button pressed...
             if (result === 'confirmed') {
                 // Delete the templateGroup
-                this._templateService
+                this.#templateService
                     .deleteTemplateGroupField(
                         (this.template().data as Template).id,
                         templateGroup.id,
@@ -321,7 +321,7 @@ export class TemplateComponent {
      * Preview template
      */
     onPreviewTemplate(): void {
-        this._matDialog.open(PreviewComponent);
+        this.#matDialog.open(PreviewComponent);
     }
 
     /**
@@ -342,12 +342,12 @@ export class TemplateComponent {
 
         if (event.currentIndex !== event.previousIndex) {
             // Update the templateGroups
-            this._templateService
+            this.#templateService
                 .updateTemplateGroupsOrder(
                     (this.template().data as Template).id,
                     updated
                 )
-                .pipe(takeUntilDestroyed(this.destroyRef))
+                .pipe(takeUntilDestroyed(this.#destroyRef))
                 .subscribe();
         }
     }
@@ -394,13 +394,13 @@ export class TemplateComponent {
                 event.previousIndex === event.currentIndex
             )
         ) {
-            this._templateService
+            this.#templateService
                 .updateTemplateGroupFieldsOrder(
                     (this.template().data as Template).id,
                     landedGroup.id,
                     updated
                 )
-                .pipe(takeUntilDestroyed(this.destroyRef))
+                .pipe(takeUntilDestroyed(this.#destroyRef))
                 .subscribe();
         }
     }

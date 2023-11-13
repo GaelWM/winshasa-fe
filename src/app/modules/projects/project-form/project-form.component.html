@@ -1,15 +1,20 @@
+@if ($projectForm(); as projectForm) {
 <form
-    *ngIf="$projectForm() as projectForm"
+   
     #projectNgForm="ngForm"
     (ngSubmit)="onSubmitNewProject(projectNgForm)"
     [formGroup]="projectForm"
     class="w-full flex flex-col flex-auto md:min-w-160 h-full"
 >
     <div class="flex flex-col h-full space-y-3">
-        <fuse-alert [type]="'error'" *ngIf="errors().length > 0" class="w-full">
+        @if (errors().length > 0) {
+<fuse-alert [type]="'error'" class="w-full">
             <span fuseAlertTitle>Error</span>
-            <span *ngFor="let error of errors()"> {{ error.message }}</span>
+            @for (error of errors(); track error) {
+  <span> {{ error.message }}</span>
+}
         </fuse-alert>
+}
 
         <div class="w-full flex items-start gap-2">
             <div [class]="asModal ? 'w-full' : 'w-2/5'" class="space-y-3 p-3">
@@ -23,11 +28,12 @@
                         [placeholder]="'Project name'"
                     />
                     <mat-hint>Please type in the site name</mat-hint>
-                    <mat-error
-                        *ngIf="
+                    @if (
                             projectForm.controls?.name?.touched &&
                             projectForm.controls?.name?.invalid
-                        "
+                        ) {
+<mat-error
+                       
                     >
                         <app-error-form-template
                             [form]="projectForm"
@@ -35,6 +41,7 @@
                             name="Site name"
                         ></app-error-form-template>
                     </mat-error>
+}
                 </mat-form-field>
 
                 <div class="w-full flex items-center gap-3">
@@ -46,18 +53,21 @@
                             required
                         >
                             <mat-option>Select</mat-option>
-                            <mat-option
-                                *ngFor="let option of $types()"
+                            @for (option of $types(); track option) {
+  <mat-option
+                               
                                 [value]="option.name"
                                 >{{ option.name }}</mat-option
                             >
+}
                         </mat-select>
                         <mat-hint>Pproject select a Project Type</mat-hint>
-                        <mat-error
-                            *ngIf="
+                        @if (
                                 projectForm.controls?.type?.touched &&
                                 projectForm.controls?.type?.invalid
-                            "
+                            ) {
+<mat-error
+                           
                         >
                             <app-error-form-template
                                 [form]="projectForm"
@@ -65,6 +75,7 @@
                                 name="Project Type"
                             ></app-error-form-template>
                         </mat-error>
+}
                     </mat-form-field>
 
                     <mat-form-field class="w-full">
@@ -75,18 +86,21 @@
                             required
                         >
                             <mat-option>Select</mat-option>
-                            <mat-option
-                                *ngFor="let option of $owners()"
+                            @for (option of $owners(); track option) {
+  <mat-option
+                               
                                 [value]="option.id"
                                 >{{ option.fullName }}</mat-option
                             >
+}
                         </mat-select>
                         <mat-hint>Select a Project owner</mat-hint>
-                        <mat-error
-                            *ngIf="
+                        @if (
                                 projectForm.controls?.ownerId?.touched &&
                                 projectForm.controls?.ownerId?.invalid
-                            "
+                            ) {
+<mat-error
+                           
                         >
                             <app-error-form-template
                                 [form]="projectForm"
@@ -94,6 +108,7 @@
                                 name="Project owner"
                             ></app-error-form-template>
                         </mat-error>
+}
                     </mat-form-field>
                 </div>
 
@@ -105,18 +120,21 @@
                         required
                     >
                         <mat-option>Select</mat-option>
-                        <mat-option
-                            *ngFor="let option of $statuses()"
+                        @for (option of $statuses(); track option) {
+  <mat-option
+                           
                             [value]="option.name"
                             >{{ option.name }}</mat-option
                         >
+}
                     </mat-select>
                     <mat-hint>Project select a Project Status</mat-hint>
-                    <mat-error
-                        *ngIf="
+                    @if (
                             projectForm.controls?.status?.touched &&
                             projectForm.controls?.status?.invalid
-                        "
+                        ) {
+<mat-error
+                       
                     >
                         <app-error-form-template
                             [form]="projectForm"
@@ -124,6 +142,7 @@
                             name="Project Status"
                         ></app-error-form-template>
                     </mat-error>
+}
                 </mat-form-field>
 
                 <mat-form-field class="w-full">
@@ -146,22 +165,26 @@
                         [for]="picker"
                     ></mat-datepicker-toggle>
                     <mat-date-range-picker #picker></mat-date-range-picker>
-                    <mat-error
-                        *ngIf="
+                    @if (
                             projectForm.controls.startDate.hasError(
                                 'matStartDateInvalid'
                             )
-                        "
+                        ) {
+<mat-error
+                       
                         >Invalid start date</mat-error
                     >
-                    <mat-error
-                        *ngIf="
+}
+                    @if (
                             projectForm.controls.endDate.hasError(
                                 'matEndDateInvalid'
                             )
-                        "
+                        ) {
+<mat-error
+                       
                         >Invalid end date</mat-error
                     >
+}
                 </mat-form-field>
 
                 <mat-form-field [ngClass]="formFieldHelpers" class="w-full">
@@ -173,11 +196,12 @@
                         placeholder="Cost"
                     />
                     <mat-hint>Project cost </mat-hint>
-                    <mat-error
-                        *ngIf="
+                    @if (
                             projectForm.controls?.cost?.touched &&
                             projectForm.controls?.cost?.invalid
-                        "
+                        ) {
+<mat-error
+                       
                     >
                         <app-error-form-template
                             [form]="projectForm"
@@ -185,6 +209,7 @@
                             name="Cost"
                         ></app-error-form-template>
                     </mat-error>
+}
                 </mat-form-field>
 
                 <mat-form-field class="w-full">
@@ -207,18 +232,21 @@
                         placeholder="Project Template"
                     >
                         <mat-option>Select</mat-option>
-                        <mat-option
-                            *ngFor="let option of $templateOpts()"
+                        @for (option of $templateOpts(); track option) {
+  <mat-option
+                           
                             [value]="option.id"
                             >{{ option.name }}</mat-option
                         >
+}
                     </mat-select>
                     <mat-hint>Project select a Project Template</mat-hint>
-                    <mat-error
-                        *ngIf="
+                    @if (
                             projectForm.controls?.templateId?.touched &&
                             projectForm.controls?.templateId?.invalid
-                        "
+                        ) {
+<mat-error
+                       
                     >
                         <app-error-form-template
                             [form]="projectForm"
@@ -226,9 +254,11 @@
                             name="Project Template"
                         ></app-error-form-template>
                     </mat-error>
+}
                 </mat-form-field>
             </div>
-            <div *ngIf="!asModal" class="w-3/5">
+            @if (!asModal) {
+<div class="w-3/5">
                 <app-json-form
                     [template]="$selectedTemplate()"
                     [form]="projectForm"
@@ -236,12 +266,14 @@
                 >
                 </app-json-form>
             </div>
+}
         </div>
     </div>
 
     <!-- Footer -->
-    <div
-        *ngIf="showSaveButton"
+    @if (showSaveButton) {
+<div
+       
         class="w-full flex items-center justify-end border-t p-2 pb-0 border-gray-50 dark:border-gray-700"
     >
         <button
@@ -254,4 +286,6 @@
             Save
         </button>
     </div>
+}
 </form>
+}

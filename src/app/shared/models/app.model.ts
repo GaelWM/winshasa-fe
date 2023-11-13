@@ -1,6 +1,14 @@
 export type WithWildcards<T> = T & { [key: string]: unknown };
 export interface ApiResult<T> {
-    data?: T[] | T;
+    data?: T;
+    message?: string;
+    success?: boolean;
+    links?: ApiResultLink;
+    meta?: ApiResultMetaData;
+}
+
+export interface ApiObjResult<T> {
+    data?: T;
     message?: string;
     success?: boolean;
     links?: ApiResultLink;

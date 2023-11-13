@@ -28,7 +28,8 @@
             </div>
             <!-- Panel links -->
             <div class="flex flex-col divide-y border-t border-b">
-                <ng-container *ngFor="let panel of panels; trackBy: trackByFn">
+                @for (panel of panels; track trackByFn($index, panel)) {
+  
                     <div
                         class="flex px-8 py-5 cursor-pointer"
                         [ngClass]="{
@@ -65,7 +66,8 @@
                             </div>
                         </div>
                     </div>
-                </ng-container>
+                
+}
             </div>
         </mat-drawer>
 
@@ -91,37 +93,48 @@
                         class="flex gap-4 ml-2 lg:ml-0 text-3xl font-bold tracking-tight leading-none"
                     >
                         {{ getPanelInfo(selectedPanel).title }}
-                        <span *ngIf="getPanelInfo(selectedPanel)?.data?.total"
+                        @if (getPanelInfo(selectedPanel)?.data?.total) {
+<span
                             >({{
                                 getPanelInfo(selectedPanel)?.data?.total
                             }})</span
                         >
+}
                     </div>
                 </div>
 
                 <!-- Load settings panel -->
                 <div class="mt-8">
-                    <ng-container [ngSwitch]="selectedPanel">
-                        <ng-container *ngSwitchCase="'user-info'">
+                    
+@switch (selectedPanel) {
+                        @case ('user-info') {
+  
                             <settings-account></settings-account>
-                        </ng-container>
+                        
+}
 
-                        <ng-container *ngSwitchCase="'permissions'">
+                        @case ('permissions') {
+  
                             <mat-chip-listbox
                                 aria-label="User permissions"
                                 class=""
                             >
-                                <mat-chip-option
+                                @for (
+                                        permission of user().permissions
+                                    ; track 
+                                        permission) {
+  <mat-chip-option
                                     color="secondary"
                                     [selected]="true"
-                                    *ngFor="
-                                        let permission of user().permissions
-                                    "
+                                   
                                     >{{ permission.name }}</mat-chip-option
                                 >
+}
                             </mat-chip-listbox>
-                        </ng-container>
-                    </ng-container>
+                        
+}
+                    }
+
                 </div>
             </div>
         </mat-drawer-content>

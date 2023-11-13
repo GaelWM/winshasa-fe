@@ -150,6 +150,7 @@ export class TemplatesComponent {
     }
 
     onRowClick(event: Template): void {
+        this._templatesService.selectedTemplate.set({ data: event });
         this._router.navigate(['templates', event.id]);
     }
 

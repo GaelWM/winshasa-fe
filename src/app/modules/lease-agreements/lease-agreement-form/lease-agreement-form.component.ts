@@ -105,6 +105,7 @@ export class LeaseAgreementFormComponent
     #toastService = inject(ToastService);
 
     @Input() showSaveButton = false;
+    @Input() asModal = false;
 
     @ViewChild('leaseAgreementNgForm') _form: NgForm;
     form: NgForm = {} as NgForm;

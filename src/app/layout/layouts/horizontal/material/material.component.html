@@ -2,7 +2,8 @@
 <fuse-loading-bar></fuse-loading-bar>
 
 <!-- Navigation -->
-<ng-container *ngIf="isScreenSmall">
+@if (isScreenSmall) {
+
     <fuse-vertical-navigation
         class="dark bg-gray-900 print:hidden"
         [mode]="'over'"
@@ -20,7 +21,8 @@
             </div>
         </ng-container>
     </fuse-vertical-navigation>
-</ng-container>
+
+}
 
 <!-- Wrapper -->
 <div class="flex flex-col flex-auto items-center w-full min-w-0 bg-gray-200 dark:bg-card">
@@ -31,7 +33,8 @@
             <!-- Top bar -->
             <div class="relative flex flex-auto flex-0 items-center h-16 px-4 md:px-6">
                 <!-- Logo -->
-                <ng-container *ngIf="!isScreenSmall">
+                @if (!isScreenSmall) {
+
                     <div class="flex items-center mx-2">
                         <!-- Light version -->
                         <img
@@ -44,15 +47,18 @@
                             src="assets/images/logo/logo-text-on-dark.svg"
                             alt="Logo image">
                     </div>
-                </ng-container>
+                
+}
                 <!-- Navigation toggle button -->
-                <ng-container *ngIf="isScreenSmall">
+                @if (isScreenSmall) {
+
                     <button
                         mat-icon-button
                         (click)="toggleNavigation('mainNavigation')">
                         <mat-icon [svgIcon]="'heroicons_outline:bars-3'"></mat-icon>
                     </button>
-                </ng-container>
+                
+}
                 <!-- Components -->
                 <div class="flex items-center pl-2 ml-auto space-x-1 sm:space-x-2">
                     <languages></languages>
@@ -65,13 +71,15 @@
                 </div>
             </div>
             <!-- Bottom bar -->
-            <ng-container *ngIf="!isScreenSmall">
+            @if (!isScreenSmall) {
+
                 <div class="relative flex flex-auto flex-0 items-center h-16 px-4">
                     <fuse-horizontal-navigation
                         [name]="'mainNavigation'"
                         [navigation]="navigation.horizontal"></fuse-horizontal-navigation>
                 </div>
-            </ng-container>
+            
+}
         </div>
     </div>
 
@@ -80,7 +88,9 @@
         <div class="flex flex-col flex-auto w-full sm:max-w-360 sm:shadow-xl sm:overflow-hidden bg-default">
             <!-- *ngIf="true" hack is required here for router-outlet to work correctly.
                  Otherwise, layout changes won't be registered and the view won't be updated! -->
-            <router-outlet *ngIf="true"></router-outlet>
+            @if (true) {
+<router-outlet></router-outlet>
+}
         </div>
     </div>
 

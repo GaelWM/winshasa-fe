@@ -1,19 +1,25 @@
-<mat-form-field *ngIf="field.type === 'number'" class="w-full">
-    <mat-label *ngIf="field.name !== ''">{{ field.name }}</mat-label>
+@if (field.type === 'number') {
+<mat-form-field class="w-full">
+    @if (field.name !== '') {
+<mat-label>{{ field.name }}</mat-label>
+}
     <input
         matInput
         [type]="field.type"
         [formControlName]="field.name"
         [placeholder]="field.placeholder ?? field.name"
     />
-    <mat-hint *ngIf="field?.hintMessage">{{ field.hintMessage }}</mat-hint>
+    @if (field?.hintMessage) {
+<mat-hint>{{ field.hintMessage }}</mat-hint>
+}
 
-    <mat-error
-        *ngIf="
+    @if (
             form.controls &&
             form.controls[field.name]?.touched &&
             form.controls[field.name]?.invalid
-        "
+        ) {
+<mat-error
+       
         class="flex flex-col gap-2"
     >
         <app-error-form-template
@@ -21,4 +27,6 @@
             [field]="field.name"
         ></app-error-form-template>
     </mat-error>
+}
 </mat-form-field>
+}
