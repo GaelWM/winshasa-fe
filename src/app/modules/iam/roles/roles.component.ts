@@ -19,6 +19,7 @@ import { MatDrawer, MatSidenavModule } from '@angular/material/sidenav';
 import { FuseMediaWatcherService } from '@fuse/services/media-watcher';
 import { Subject, takeUntil } from 'rxjs';
 import { UserRoleComponent } from './user-role/user-role.component';
+import { RolePermissionComponent } from './role-permission/role-permission.component';
 
 @Component({
     selector: 'app-roles',
@@ -35,6 +36,7 @@ import { UserRoleComponent } from './user-role/user-role.component';
         NgSwitch,
         NgSwitchCase,
         UserRoleComponent,
+        RolePermissionComponent,
     ],
 })
 export class RolesComponent implements OnInit, OnDestroy {

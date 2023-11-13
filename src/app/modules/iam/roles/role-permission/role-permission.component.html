@@ -1,0 +1,103 @@
+<div class="w-full h-full flex flex-col overflow-hidden">
+    <div class="w-full overflow-hidden">
+        <mat-form-field class="w-full" [subscriptSizing]="'dynamic'">
+            <mat-label>Search role</mat-label>
+            <mat-icon
+                class="icon-size-5"
+                [svgIcon]="'heroicons_solid:role'"
+                matPrefix
+            ></mat-icon>
+            <input matInput [placeholder]="'Email address'" />
+            <button mat-icon-button matSuffix>
+                <mat-icon
+                    class="icon-size-5"
+                    [svgIcon]="'heroicons_solid:plus-circle'"
+                ></mat-icon>
+            </button>
+        </mat-form-field>
+    </div>
+
+    <div
+        class="flex flex-col mt-8 divide-y border-t border-b flex-1 overflow-y-auto"
+    >
+        <ng-container *ngFor="let role of $roles().data; trackBy: trackByFn">
+            <div class="flex justify-between items-center gap-3">
+                <div class="w-5/12 flex items-center">
+                    <div
+                        class="flex flex-0 items-center justify-center w-10 h-10 rounded-full overflow-hidden"
+                    >
+                        <ng-container *ngIf="role.avatar">
+                            <img
+                                class="object-cover w-full h-full"
+                                [src]="role.avatar"
+                                alt="Contact avatar"
+                            />
+                        </ng-container>
+                        <ng-container *ngIf="!role.avatar">
+                            <div
+                                class="flex items-center justify-center w-full h-full rounded-full text-lg uppercase bg-gray-200 text-gray-600 dark:bg-gray-700 dark:text-gray-200"
+                            >
+                                {{ role.name.charAt(0) }}
+                            </div>
+                        </ng-container>
+                    </div>
+                    <div class="ml-4">
+                        <div class="font-medium">{{ role.name }}</div>
+                        <div class="text-secondary"></div>
+                    </div>
+                </div>
+                <div class="w-7/12 flex items-center mt-4">
+                    <form [formGroup]="chipForm" class="w-full">
+                        <mat-form-field class="w-full">
+                            <mat-chip-grid
+                                #chipGrid
+                                aria-label="Role selection"
+                            >
+                                <mat-chip-row
+                                    *ngFor="
+                                        let perm of selectedPermissions[role.id]
+                                    "
+                                    (removed)="remove(role.id, perm)"
+                                >
+                                    {{ perm }}
+                                    <button
+                                        matChipRemove
+                                        [attr.aria-label]="'remove ' + perm"
+                                    >
+                                        <mat-icon>cancel</mat-icon>
+                                    </button>
+                                </mat-chip-row>
+                                <input
+                                    placeholder="New Permission..."
+                                    formControlName="permCtrl"
+                                    [matChipInputFor]="chipGrid"
+                                    [matAutocomplete]="auto"
+                                    [matChipInputSeparatorKeyCodes]="
+                                        separatorKeysCodes
+                                    "
+                                    (matChipInputTokenEnd)="
+                                        add(role.id, $event)
+                                    "
+                                />
+                                <mat-autocomplete
+                                    #auto="matAutocomplete"
+                                    (optionSelected)="selected(role.id, $event)"
+                                >
+                                    <mat-option
+                                        *ngFor="
+                                            let perm of filteredPermissions
+                                                | async
+                                        "
+                                        [value]="perm"
+                                    >
+                                        {{ perm }}
+                                    </mat-option>
+                                </mat-autocomplete>
+                            </mat-chip-grid>
+                        </mat-form-field>
+                    </form>
+                </div>
+            </div>
+        </ng-container>
+    </div>
+</div>

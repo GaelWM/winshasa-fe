@@ -1,5 +1,6 @@
 import { Routes } from '@angular/router';
 import { IamComponent } from './iam.component';
+import { canActivatePage } from 'app/guards/permission.guard';
 
 export default [
     {
@@ -10,6 +11,10 @@ export default [
     {
         path: '',
         component: IamComponent,
+        canActivate: [canActivatePage],
+        data: {
+            requiredPermission: 'iam.read',
+        },
         children: [
             {
                 path: 'dashboard',

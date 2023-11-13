@@ -11,6 +11,7 @@ import { catchError, tap, throwError } from 'rxjs';
 import { PaymentsComponent } from './payments.component';
 import { PaymentsListComponent } from 'app/shared/components/payments/list/list.component';
 import { Payment } from 'app/shared/models';
+import { canActivatePage } from 'app/guards/permission.guard';
 
 /**
  * Payment resolver
@@ -88,6 +89,10 @@ export default [
     {
         path: '',
         component: PaymentsComponent,
+        canActivate: [canActivatePage],
+        data: {
+            requiredPermission: 'payments.read',
+        },
         children: [
             {
                 path: '',

@@ -10,6 +10,7 @@ import { DocumentationComponent } from './documentation.component';
 import { FileManagerService } from 'app/shared/components/file-manager/file-manager.service';
 import { FileManagerDetailsComponent } from 'app/shared/components/file-manager/details/details.component';
 import { FileManagerListComponent } from 'app/shared/components/file-manager/list/list.component';
+import { canActivatePage } from 'app/guards/permission.guard';
 
 /**
  * Folder resolver
@@ -131,6 +132,10 @@ export default [
     {
         path: '',
         component: DocumentationComponent,
+        canActivate: [canActivatePage],
+        data: {
+            requiredPermission: 'documents.read',
+        },
         children: [
             {
                 path: 'folders/:folderId',

@@ -9,7 +9,7 @@ export interface IUser {
     image?: string;
     isActive: boolean;
     roles?: string[];
-    permissions?: Record<string, unknown>;
+    permissions?: { name: string; type: string }[];
     details?: {
         settings?: {
             layout?: string;
@@ -42,7 +42,7 @@ export class User {
     avatar: string;
     isActive: boolean;
     roles?: string[];
-    permissions?: Record<string, unknown>;
+    permissions?: { name: string; type: string }[];
     details?: {
         settings?: {
             layout?: string;

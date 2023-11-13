@@ -1,4 +1,5 @@
-import { Injectable, WritableSignal, signal } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { Injectable, WritableSignal, inject, signal } from '@angular/core';
 import { BaseService } from 'app/services/base.service';
 import { ApiResult, Role } from 'app/shared/models';
 import { toWritableSignal } from 'app/shared/utils/common.util';
@@ -8,6 +9,8 @@ import { BehaviorSubject, Observable, tap } from 'rxjs';
     providedIn: 'root',
 })
 export class RolesService extends BaseService {
+    #httpClient = inject(HttpClient);
+
     constructor() {
         super('roles');
     }
@@ -20,6 +23,24 @@ export class RolesService extends BaseService {
     selectedRole: WritableSignal<ApiResult<Role>> = signal(
         {} as ApiResult<Role>
     );
+
+    assignPermissions(roleId: string, permissions: string): Observable<any> {
+        return this.#httpClient.post(
+            `${this.apiUrl}/${roleId}/assign-permissions`,
+            {
+                permissions,
+            }
+        );
+    }
+
+    revokePermissions(roleId: string, permissions: string): Observable<any> {
+        return this.#httpClient.post(
+            `${this.apiUrl}/${roleId}/revoke-permissions`,
+            {
+                permissions,
+            }
+        );
+    }
 
     storeRole(payload: Role): Observable<ApiResult<Role>> {
         return this.post<Role>(payload).pipe(

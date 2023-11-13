@@ -1,10 +1,15 @@
 import { Routes } from '@angular/router';
 import { LeaseAgreementsComponent } from './lease-agreements.component';
+import { canActivatePage } from 'app/guards/permission.guard';
 
 export default [
     {
         path: '',
         component: LeaseAgreementsComponent,
+        canActivate: [canActivatePage],
+        data: {
+            requiredPermission: 'leases.read',
+        },
     },
     {
         path: ':id',

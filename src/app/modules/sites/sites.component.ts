@@ -31,6 +31,7 @@ import { Observable, map, switchMap } from 'rxjs';
 import { toWritableSignal } from 'app/shared/utils/common.util';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { ModalTemplateComponent } from 'app/shared/components/modal-template/modal-template.component';
+import { PermissionsService } from 'app/services/permissions.service';
 
 @Component({
     selector: 'app-site',
@@ -45,6 +46,7 @@ import { ModalTemplateComponent } from 'app/shared/components/modal-template/mod
         IsActivePipe,
         MatTooltipModule,
     ],
+    providers: [PermissionsService],
     templateUrl: './sites.component.html',
 })
 export class SitesComponent {
@@ -54,6 +56,7 @@ export class SitesComponent {
     #route = inject(ActivatedRoute);
     #dialog = inject(MatDialog);
     #fuseConfirmationService = inject(FuseConfirmationService);
+    #permissionService = inject(PermissionsService);
     #destroyRef = inject(DestroyRef);
 
     @ViewChild('actionsTpl', { static: true }) actionsTpl!: TemplateRef<any>;
@@ -143,13 +146,20 @@ export class SitesComponent {
     onAddSite(event: Event) {
         event.preventDefault();
         event.stopPropagation();
-        this.#dialog.open(ModalTemplateComponent, {
-            data: {
-                form: SiteFormComponent,
-                title: 'Add Site',
-                inputs: { asModal: true },
-            },
-        });
+
+        const canPerform = this.#permissionService.hasPermission(
+            'sites.create',
+            'You are not allowed to perform this action'
+        );
+        if (canPerform) {
+            this.#dialog.open(ModalTemplateComponent, {
+                data: {
+                    form: SiteFormComponent,
+                    title: 'Add Site',
+                    inputs: { asModal: true },
+                },
+            });
+        }
     }
 
     onEditSite(event: Event, site: ISite) {

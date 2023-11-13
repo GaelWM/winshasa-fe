@@ -26,15 +26,16 @@ import { MatSidenavModule } from '@angular/material/sidenav';
 import { Observable, map, startWith } from 'rxjs';
 import { COMMA, ENTER } from '@angular/cdk/keycodes';
 import { LiveAnnouncer } from '@angular/cdk/a11y';
-import { UserService } from 'app/services/user.service';
 import { RolesService } from 'app/services/roles.service';
-import { ApiResult, Role, User } from 'app/shared/models';
+import { ApiResult, Role } from 'app/shared/models';
 import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
+import { Permission } from 'app/shared/models/permission.model';
+import { PermissionsService } from 'app/services/permissions.service';
 import { AuthService } from 'app/services/auth.service';
 
 @Component({
-    selector: 'app-user-role',
-    templateUrl: './user-role.component.html',
+    selector: 'app-role-permission',
+    templateUrl: './role-permission.component.html',
     encapsulation: ViewEncapsulation.None,
     changeDetection: ChangeDetectionStrategy.OnPush,
     standalone: true,
@@ -55,38 +56,38 @@ import { AuthService } from 'app/services/auth.service';
         AsyncPipe,
     ],
 })
-export class UserRoleComponent {
-    #userService = inject(UserService);
+export class RolePermissionComponent {
     #rolesService = inject(RolesService);
+    #permissionsService = inject(PermissionsService);
     #authService = inject(AuthService);
     #fb = inject(FormBuilder);
     #destroyRef = inject(DestroyRef);
 
-    $roles = this.#rolesService.$roles;
+    $permissions = this.#permissionsService.$permissions;
 
     separatorKeysCodes: number[] = [ENTER, COMMA];
 
     chipForm = this.#fb.group({
-        roleCtrl: [''],
+        permCtrl: [''],
     });
-    filteredRoles: Observable<string[]>;
-    selectedRoles: { [userId: string]: string[] } = {};
-    $allRoles = computed(() =>
-        (this.$roles().data as Role[])?.map((role) => role.name)
+    filteredPermissions: Observable<string[]>;
+    selectedPermissions: { [roleId: string]: string[] } = {};
+    $allPermissions = computed(() =>
+        (this.$permissions().data as Permission[])?.map((perm) => perm.name)
     );
 
-    #users$: Observable<ApiResult<User[]>> = this.#userService
-        .all<User[]>({ perPage: 100 })
+    #roles$: Observable<ApiResult<Role[]>> = this.#rolesService
+        .all<Role[]>({ perPage: 100 })
         .pipe(
-            map((result: ApiResult<User[]>) => {
+            map((result: ApiResult<Role[]>) => {
                 if (result.data) {
-                    this.#userService.users.set(result);
+                    this.#rolesService.$roles.set(result);
                 }
                 return result;
             }),
             takeUntilDestroyed()
         );
-    $users = toSignal(this.#users$, { initialValue: [] as ApiResult<User[]> });
+    $roles = toSignal(this.#roles$, { initialValue: [] as ApiResult<Role[]> });
 
     @ViewChild('roleInput') roleInput: ElementRef<HTMLInputElement>;
 
@@ -94,63 +95,71 @@ export class UserRoleComponent {
 
     constructor() {
         effect(() => {
-            this.filteredRoles = this.chipForm
-                .get('roleCtrl')
+            this.filteredPermissions = this.chipForm
+                .get('permCtrl')
                 ?.valueChanges.pipe(
                     startWith(null),
-                    map((role: string | null) =>
-                        role ? this._filter(role) : this.$allRoles().slice()
+                    map((permission: string | null) =>
+                        permission
+                            ? this._filter(permission)
+                            : this.$allPermissions().slice()
                     )
                 );
         });
 
         effect(() => {
-            (this.$users().data as User[])?.forEach((user) => {
-                this.selectedRoles[user.id] = user.roles ?? [];
+            (this.$roles().data as Role[])?.forEach((role) => {
+                this.selectedPermissions[role.id] =
+                    role.permissions.flat().map((perm) => perm.name) ?? [];
             });
         });
     }
 
-    add(userId: string, event: MatChipInputEvent): void {
+    add(roleId: string, event: MatChipInputEvent): void {
         const value = (event.value || '').trim();
 
         // Add our role
         if (value) {
-            this.selectedRoles[userId].push(value);
+            this.selectedPermissions[roleId].push(value);
         }
 
         // Clear the input value
         event.chipInput!.clear();
 
-        this.chipForm.get('roleCtrl')?.setValue(null);
+        this.chipForm.get('permCtrl')?.setValue(null);
     }
 
-    remove(userId: string, role: string): void {
-        const index = this.selectedRoles[userId].indexOf(role);
+    remove(roleId: string, role: string): void {
+        const index = this.selectedPermissions[roleId].indexOf(role);
 
         if (index >= 0) {
-            this.selectedRoles[userId].splice(index, 1);
+            this.selectedPermissions[roleId].splice(index, 1);
 
             this.announcer.announce(`Removed ${role}`);
         }
 
-        this.#userService
-            .revokeRoles(userId, this.selectedRoles[userId].join(','))
+        this.#rolesService
+            .revokePermissions(
+                roleId,
+                this.selectedPermissions[roleId].join(',')
+            )
             .pipe(takeUntilDestroyed(this.#destroyRef))
             .subscribe();
-
         this.#authService
             .check()
             .pipe(takeUntilDestroyed(this.#destroyRef))
             .subscribe();
     }
 
-    selected(userId: string, event: MatAutocompleteSelectedEvent): void {
-        this.selectedRoles[userId].push(event.option.value);
-        this.chipForm.get('roleCtrl')?.setValue(null);
+    selected(roleId: string, event: MatAutocompleteSelectedEvent): void {
+        this.selectedPermissions[roleId].push(event.option.value);
+        this.chipForm.get('permCtrl')?.setValue(null);
 
-        this.#userService
-            .assignRoles(userId, this.selectedRoles[userId].join(','))
+        this.#rolesService
+            .assignPermissions(
+                roleId,
+                this.selectedPermissions[roleId].join(',')
+            )
             .pipe(takeUntilDestroyed(this.#destroyRef))
             .subscribe();
 
@@ -163,8 +172,8 @@ export class UserRoleComponent {
     private _filter(value: string): string[] {
         const filterValue = value.toLowerCase();
 
-        return this.$allRoles().filter((role) =>
-            role.toLowerCase().includes(filterValue)
+        return this.$allPermissions().filter((perm) =>
+            perm.toLowerCase().includes(filterValue)
         );
     }
 

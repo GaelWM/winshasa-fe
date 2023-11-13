@@ -107,16 +107,6 @@ export class UsersComponent {
                     pipe: { class: { obj: IsActivePipe } },
                 },
                 {
-                    title: 'Last Connected',
-                    key: 'lastConnected',
-                    clickEvent: true,
-                    sortKey: 'lastConnected',
-                    pipe: {
-                        class: { obj: DatePipe, constructor: 'en-US' },
-                        args: 'y-MM-dd, hh:mm:ss',
-                    },
-                },
-                {
                     title: 'Created At',
                     key: 'createdAt',
                     clickEvent: true,
@@ -153,10 +143,7 @@ export class UsersComponent {
 
     onSort(event: ColumnSetting): void {
         this._router.navigate([], {
-            queryParams: {
-                sortBy: event.sortKey,
-                sortOrder: event.sortOrder,
-            },
+            queryParams: { orderBy: `${event.sortKey}:${event.sortOrder}` },
             queryParamsHandling: 'merge',
             relativeTo: this._route,
         });

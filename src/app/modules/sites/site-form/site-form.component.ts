@@ -165,7 +165,7 @@ export class SiteFormComponent extends WinFormBuilder implements AfterViewInit {
     onSubmitNewSite(siteForm: NgForm): void {
         this.submitted = true;
         const site = this.#siteService.selectedSite().data as Site;
-        if (site.id) {
+        if (site && site.id) {
             this.editSite(siteForm);
         } else {
             this.addSite(siteForm);

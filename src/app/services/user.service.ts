@@ -39,6 +39,18 @@ export class UserService extends BaseService {
         return this.all<User[]>({ roles, perPage: 1000 });
     }
 
+    assignRoles(userId: string, roles: string): Observable<any> {
+        return this._httpClient.post(`${this.apiUrl}/${userId}/assign-roles`, {
+            roles,
+        });
+    }
+
+    revokeRoles(userId: string, roles: string): Observable<any> {
+        return this._httpClient.post(`${this.apiUrl}/${userId}/revoke-roles`, {
+            roles,
+        });
+    }
+
     update(user: User): Observable<any> {
         return this.patch<User>(user.id, user).pipe(
             map((response) => {

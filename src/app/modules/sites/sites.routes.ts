@@ -1,10 +1,15 @@
 import { Routes } from '@angular/router';
 import { SitesComponent } from './sites.component';
+import { canActivatePage } from 'app/guards/permission.guard';
 
 export default [
     {
         path: '',
         component: SitesComponent,
+        canActivate: [canActivatePage],
+        data: {
+            requiredPermission: 'sites.read',
+        },
     },
     {
         path: ':id',
