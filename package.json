@@ -65,6 +65,6 @@
         "lodash": "4.17.21",
         "postcss": "8.4.24",
         "tailwindcss": "3.3.2",
-        "typescript": "5.0.4"
+        "typescript": "^5.2.2"
     }
 }
