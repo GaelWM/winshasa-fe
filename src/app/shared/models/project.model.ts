@@ -1,6 +1,7 @@
 import { DocModel } from './file-manager.model';
 import { v4 as uuidv4 } from 'uuid';
 import { User } from './user.model';
+import { PaymentFrequency, PaymentMethod } from './payment.model';
 
 export interface IProject {
     id?: string;
@@ -105,6 +106,64 @@ export enum ProjectType {
     DEVELOPMENT = 'DEVELOPMENT',
     ADMINISTRATION = 'ADMINISTRATION',
     TESTING = 'TESTING',
+}
+
+export interface IProjectUser {
+    userId: string;
+    projectId: string;
+    roleId: string;
+    salary: number;
+    firstName: string;
+    lastName: string;
+    roleName: string;
+    projectName: string;
+    email?: string;
+    phone?: string;
+    paymentMethod?: PaymentMethod;
+    paymentFrequency?: PaymentFrequency;
+}
+
+export class ProjectUser {
+    user: {
+        id: string;
+        fullName: string;
+        email?: string;
+        phone?: string;
+    };
+    project: {
+        id: string;
+        name: string;
+    };
+    role: {
+        id: string;
+        name: string;
+    };
+    payment?: {
+        method: PaymentMethod;
+        frequency: PaymentFrequency;
+    };
+    salary: number;
+    constructor(model: IProjectUser) {
+        this.user = {
+            id: model.userId,
+            fullName: `${model.firstName} ${model.lastName}`,
+            email: model.email,
+            phone: model.phone,
+        };
+        this.project = {
+            id: model.projectId,
+            name: model.projectName,
+        };
+        this.role = {
+            id: model.roleId,
+            name: model.roleName,
+        };
+        this.payment = {
+            method: model.paymentMethod,
+            frequency: model.paymentFrequency,
+        };
+        this.salary = model.salary;
+    }
 }
 
 export const ProjectTypes = Object.values(ProjectType);

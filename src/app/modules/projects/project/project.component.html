@@ -1,12 +1,9 @@
 @if ($project().data; as project) {
-<div
-    class="relative w-full flex flex-col min-w-0 overflow-hidden"
-   
->
+<div class="w-full h-full flex flex-col">
     <div
         class="flex flex-col sm:flex-row flex-0 sm:items-center sm:justify-between p-4 sm:py-4 sm:px-6 border-b bg-card dark:bg-transparent"
     >
-        <div class="flex-1 min-w-0">
+        <div class="min-w-0">
             <div>
                 <div class="hidden sm:flex flex-wrap items-center font-medium">
                     <div>
@@ -63,6 +60,12 @@
                 routerLink="general-details"
                 routerLinkActive="mat-tab-label-active"
                 >General Details
+            </a>
+            <a
+                mat-tab-link
+                routerLink="project-users"
+                routerLinkActive="mat-tab-label-active"
+                >Users
             </a>
             <a
                 mat-tab-link

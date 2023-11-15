@@ -1,12 +1,29 @@
-import { Injectable, WritableSignal, signal } from '@angular/core';
-import { BaseService } from 'app/services/base.service';
-import { ApiResult, Project } from 'app/shared/models';
-import { BehaviorSubject, Observable, tap } from 'rxjs';
+import { HttpClient } from '@angular/common/http';
+import {
+    DestroyRef,
+    Injectable,
+    WritableSignal,
+    inject,
+    signal,
+} from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { BaseService, baseUrl } from 'app/services/base.service';
+import {
+    ApiResult,
+    IProjectUser,
+    Project,
+    ProjectUser,
+    User,
+} from 'app/shared/models';
+import { BehaviorSubject, Observable, filter, map, switchMap, tap } from 'rxjs';
 
 @Injectable({
     providedIn: 'root',
 })
 export class ProjectsService extends BaseService {
+    #destroyRef = inject(DestroyRef);
+    #http = inject(HttpClient);
+
     constructor() {
         super('projects');
     }
@@ -23,8 +40,45 @@ export class ProjectsService extends BaseService {
         {} as ApiResult<Project>
     );
 
+    $allUsers: WritableSignal<User[]> = signal([] as User[]);
+    $assignedUsers: WritableSignal<ProjectUser[]> = signal([] as ProjectUser[]);
+    $selectedProjectUser: WritableSignal<ProjectUser> = signal(
+        {} as ProjectUser
+    );
+
     submitProjectForm(flag: boolean): void {
         this._submitted.next(flag);
+    }
+
+    getProjectUsers(): Observable<ProjectUser[]> {
+        const url = `${baseUrl}projects/${
+            this.selectedProject().data?.id
+        }/assigned-users`;
+        return this.#http.get<IProjectUser[]>(url).pipe(
+            filter((result) => result['data'].length > 0),
+            map((result) =>
+                result['data'].map((user) => new ProjectUser(user))
+            ),
+            takeUntilDestroyed(this.#destroyRef)
+        );
+    }
+
+    assignUserToProject(payload: any): Observable<unknown> {
+        const url = `${baseUrl}projects/${
+            this.selectedProject().data?.id
+        }/assign-users`;
+        return this.#http
+            .post(url, payload)
+            .pipe(takeUntilDestroyed(this.#destroyRef));
+    }
+
+    removeUserFromProject(payload: any): Observable<unknown> {
+        const url = `${baseUrl}projects/${
+            this.selectedProject().data?.id
+        }/remove-users`;
+        return this.#http
+            .post(url, payload)
+            .pipe(takeUntilDestroyed(this.#destroyRef));
     }
 
     storeProject(payload: Project): Observable<ApiResult<Project>> {
@@ -38,7 +92,8 @@ export class ProjectsService extends BaseService {
                     projects.meta.total++;
                     return projects;
                 });
-            })
+            }),
+            takeUntilDestroyed(this.#destroyRef)
         );
     }
 
@@ -58,7 +113,8 @@ export class ProjectsService extends BaseService {
                     ];
                     return projects;
                 });
-            })
+            }),
+            takeUntilDestroyed(this.#destroyRef)
         );
     }
 
@@ -72,7 +128,8 @@ export class ProjectsService extends BaseService {
                     projects.meta.total--;
                     return projects;
                 });
-            })
+            }),
+            takeUntilDestroyed(this.#destroyRef)
         );
     }
 }

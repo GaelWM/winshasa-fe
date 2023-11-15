@@ -1,0 +1,161 @@
+@if ($assignUserForm(); as assignUserForm) {
+<form
+    #projectNgForm="ngForm"
+    (ngSubmit)="onAssignUserToProject(projectNgForm)"
+    [formGroup]="assignUserForm"
+    class="w-full flex flex-col flex-auto md:min-w-120 h-full"
+>
+    <div class="flex flex-col h-full space-y-3">
+        @if (errors().length > 0) {
+        <fuse-alert [type]="'error'" class="w-full">
+            <span fuseAlertTitle>Error</span>
+            @for (error of errors(); track error) {
+            <span> {{ error.message }}</span>
+            }
+        </fuse-alert>
+        }
+
+        <div class="w-full flex flex-col items-center gap-2 space-y-3 p-3">
+            <mat-form-field class="w-full">
+                <mat-label>User</mat-label>
+                <mat-select
+                    formControlName="userId"
+                    placeholder="User"
+                    required
+                >
+                    <mat-option>Select</mat-option>
+                    @for (option of $userOpts(); track option) {
+                    <mat-option [value]="option.id">{{
+                        option.name
+                    }}</mat-option>
+                    }
+                </mat-select>
+                <mat-hint> select a User</mat-hint>
+                @if ( assignUserForm.controls?.userId?.touched &&
+                assignUserForm.controls?.userId?.invalid ) {
+                <mat-error>
+                    <app-error-form-template
+                        [form]="assignUserForm"
+                        field="userId"
+                        name="User"
+                    ></app-error-form-template>
+                </mat-error>
+                }
+            </mat-form-field>
+
+            <mat-form-field class="w-full">
+                <mat-label>Role</mat-label>
+                <mat-select
+                    formControlName="roleId"
+                    placeholder="Role"
+                    required
+                >
+                    <mat-option>Select</mat-option>
+                    @for (option of $roleOpts(); track option) {
+                    <mat-option [value]="option.id">{{
+                        option.name
+                    }}</mat-option>
+                    }
+                </mat-select>
+                <mat-hint>Select a Role</mat-hint>
+                @if ( assignUserForm.controls?.roleId?.touched &&
+                assignUserForm.controls?.roleId?.invalid ) {
+                <mat-error>
+                    <app-error-form-template
+                        [form]="assignUserForm"
+                        field="roleId"
+                        name="Role"
+                    ></app-error-form-template>
+                </mat-error>
+                }
+            </mat-form-field>
+
+            <mat-form-field class="w-full">
+                <mat-label>Salary</mat-label>
+                <input
+                    type="number"
+                    formControlName="salary"
+                    matInput
+                    [placeholder]="'Salary'"
+                />
+                <mat-hint>Please type in the salary</mat-hint>
+                @if ( assignUserForm.controls?.salary?.touched &&
+                assignUserForm.controls?.salary?.invalid ) {
+                <mat-error>
+                    <app-error-form-template
+                        [form]="assignUserForm"
+                        field="salary"
+                        name="Salary"
+                    ></app-error-form-template>
+                </mat-error>
+                }
+            </mat-form-field>
+
+            <mat-form-field class="w-full">
+                <mat-label>Payment Method</mat-label>
+                <mat-select
+                    formControlName="paymentMethod"
+                    placeholder="Payment Method"
+                >
+                    <mat-option>Select</mat-option>
+                    @for (option of paymentMethodOpts; track option) {
+                    <mat-option [value]="option">{{ option }}</mat-option>
+                    }
+                </mat-select>
+                <mat-hint>Select a Payment Method</mat-hint>
+                @if ( assignUserForm.controls?.paymentMethod?.touched &&
+                assignUserForm.controls?.paymentMethod?.invalid ) {
+                <mat-error>
+                    <app-error-form-template
+                        [form]="assignUserForm"
+                        field="paymentMethod"
+                        name="Payment Method"
+                    ></app-error-form-template>
+                </mat-error>
+                }
+            </mat-form-field>
+
+            <mat-form-field class="w-full">
+                <mat-label>Payment Frequency</mat-label>
+                <mat-select
+                    formControlName="paymentFrequency"
+                    placeholder="Payment Frequency"
+                >
+                    <mat-option>Select</mat-option>
+                    @for (option of paymentFrequencyOpts; track option) {
+                    <mat-option [value]="option">{{ option }}</mat-option>
+                    }
+                </mat-select>
+                <mat-hint>Select a Payment Frequency</mat-hint>
+                @if ( assignUserForm.controls?.paymentFrequency?.touched &&
+                assignUserForm.controls?.paymentFrequency?.invalid ) {
+                <mat-error>
+                    <app-error-form-template
+                        [form]="assignUserForm"
+                        field="paymentFrequency"
+                        name="Payment Frequency"
+                    ></app-error-form-template>
+                </mat-error>
+                }
+            </mat-form-field>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    @if (showSaveButton) {
+    <div
+        class="w-full flex items-center justify-end border-t p-2 pb-0 border-gray-50 dark:border-gray-700"
+    >
+        <button
+            type="submit"
+            class=""
+            mat-flat-button
+            [color]="'primary'"
+            [disabled]="!assignUserForm.valid"
+        >
+            Save
+        </button>
+    </div>
+    }
+</form>
+}

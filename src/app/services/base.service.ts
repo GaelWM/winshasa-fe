@@ -14,7 +14,7 @@ import {
     map,
 } from 'rxjs';
 
-const baseUrl = environment.apiBaseUrl;
+export const baseUrl = environment.apiBaseUrl;
 
 @Injectable({
     providedIn: 'root',

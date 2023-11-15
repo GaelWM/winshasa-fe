@@ -45,6 +45,22 @@ export class ToastService {
         this.showsToast$.next(true);
     }
 
+    error(toastMsg: string, title?: string): void {
+        this.showToast(TOAST_STATE.ERROR, toastMsg);
+    }
+
+    success(toastMsg: string, title?: string): void {
+        this.showToast(TOAST_STATE.SUCCESS, toastMsg);
+    }
+
+    warning(toastMsg: string, title?: string): void {
+        this.showToast(TOAST_STATE.WARNING, toastMsg);
+    }
+
+    info(toastMsg: string, title?: string): void {
+        this.showToast(TOAST_STATE.INFO, toastMsg);
+    }
+
     // This updates the showsToast behavior subject to 'false'
     dismissToast(): void {
         this.showsToast$.next(false);

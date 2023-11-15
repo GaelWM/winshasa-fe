@@ -1,0 +1,21 @@
+<div class="z-20 flex items-center px-6 py-4 md:px-8 cursor-pointer border-b">
+    <div
+        class="flex flex-0 items-center justify-center w-10 h-10 rounded-full overflow-hidden"
+    >
+        <ng-container *ngIf="user.avatar">
+            <img
+                class="object-cover w-full h-full"
+                [src]="user.avatar"
+                alt="User avatar"
+            />
+        </ng-container>
+        <ng-container *ngIf="!user.avatar">
+            <div
+                class="flex items-center justify-center w-full h-full rounded-full text-lg uppercase bg-gray-200 text-gray-600 dark:bg-gray-700 dark:text-gray-200"
+            >
+                {{ user.fullName.charAt(0) }}
+            </div>
+        </ng-container>
+    </div>
+    <ng-content></ng-content>
+</div>

@@ -26,6 +26,13 @@ export default [
                     ).then((m) => m.GeneralDetailsComponent),
             },
             {
+                path: 'project-users',
+                loadComponent: () =>
+                    import(
+                        './project/project-user/project-user.component'
+                    ).then((m) => m.ProjectUserComponent),
+            },
+            {
                 path: 'documentation',
                 loadChildren: () =>
                     import('./project/documentation/documentation.routes'),
