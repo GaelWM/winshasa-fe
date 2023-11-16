@@ -19,10 +19,8 @@ import { AssignUserFormComponent } from './assign-user-form/assign-user-form.com
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { OnNullPipe } from 'app/shared/pipes/on-null-pipe/on-null.pipe';
-import {
-    TOAST_STATE,
-    ToastService,
-} from 'app/shared/components/toast/toast.service';
+import { ToastService } from 'app/shared/components/toast/toast.service';
+import { FuseConfirmationService } from '@fuse/services/confirmation';
 
 @Component({
     selector: 'app-project-user',
@@ -44,6 +42,7 @@ export class ProjectUserComponent {
     #dialog = inject(MatDialog);
     #destroyRef = inject(DestroyRef);
     #toastService = inject(ToastService);
+    #fuseConfirmationService = inject(FuseConfirmationService);
 
     users$ = this.#userService.all<User[]>().pipe(
         takeUntilDestroyed(),
@@ -107,34 +106,49 @@ export class ProjectUserComponent {
     onRemoveUser(event: Event, projectUser: ProjectUser): void {
         event.stopPropagation();
         event.preventDefault();
-        this.#projectService
-            .removeUserFromProject({ userId: projectUser.user.id })
-            .pipe(takeUntilDestroyed(this.#destroyRef))
-            .subscribe({
-                next: () => {
-                    this.#projectService.$assignedUsers.set(
-                        this.#$assignedUsers().filter(
-                            (assignedUser) =>
-                                assignedUser.user.id !== projectUser.user.id
-                        )
-                    );
 
-                    this.#projectService.$allUsers.update((users) => [
-                        ...users,
-                        new User({
-                            id: projectUser.user.id,
-                            firstName: projectUser.user.fullName.split(' ')[0],
-                            lastName: projectUser.user.fullName.split(' ')[1],
-                            fullName: projectUser.user.fullName,
-                            email: projectUser.user.email,
-                            phone: projectUser.user.phone,
-                        }),
-                    ]);
+        const confirmation = this.#fuseConfirmationService.open({
+            title: 'Remove User',
+            message:
+                'Are you sure you want to remove this user from this project? This action cannot be undone.',
+            actions: {
+                confirm: {
+                    label: 'Remove User',
                 },
-                error: (error) => {
-                    this.#toastService.error(error.error.message);
+            },
+        });
+
+        confirmation.afterClosed().subscribe((result) => {
+            if (result === 'confirmed') {
+                this.#projectService
+                    .removeUserFromProject({ userId: projectUser.user.id })
+                    .pipe(takeUntilDestroyed(this.#destroyRef))
+                    .subscribe({
+                        next: () => {
+                            this.updateAssignedUsers(projectUser);
+                        },
+                        error: (error) => {
+                            this.#toastService.error(error.error.message);
+                        },
+                    });
+            }
+        });
+    }
+
+    onGeneratePayment(event: Event, projectUser: ProjectUser): void {
+        event.stopPropagation();
+        event.preventDefault();
+
+        const confirmation = this.#fuseConfirmationService.open({
+            title: 'Generate Payment(s)',
+            message:
+                'Are you sure you want to generate payment(s) for this user? This action cannot be undone.',
+            actions: {
+                confirm: {
+                    label: 'Generate Payment(s)',
                 },
-            });
+            },
+        });
     }
 
     /**
@@ -145,5 +159,24 @@ export class ProjectUserComponent {
      */
     trackByFn(index: number, item: any): any {
         return item.id || index;
+    }
+
+    private updateAssignedUsers(projectUser: ProjectUser): void {
+        this.#projectService.$assignedUsers.set(
+            this.#$assignedUsers().filter(
+                (assignedUser) => assignedUser.user.id !== projectUser.user.id
+            )
+        );
+        this.#projectService.$allUsers.update((users) => [
+            ...users,
+            new User({
+                id: projectUser.user.id,
+                firstName: projectUser.user.fullName.split(' ')[0],
+                lastName: projectUser.user.fullName.split(' ')[1],
+                fullName: projectUser.user.fullName,
+                email: projectUser.user.email,
+                phone: projectUser.user.phone,
+            }),
+        ]);
     }
 }

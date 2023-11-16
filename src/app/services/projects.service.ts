@@ -15,7 +15,15 @@ import {
     ProjectUser,
     User,
 } from 'app/shared/models';
-import { BehaviorSubject, Observable, filter, map, switchMap, tap } from 'rxjs';
+import {
+    BehaviorSubject,
+    Observable,
+    filter,
+    finalize,
+    map,
+    switchMap,
+    tap,
+} from 'rxjs';
 
 @Injectable({
     providedIn: 'root',
@@ -51,34 +59,37 @@ export class ProjectsService extends BaseService {
     }
 
     getProjectUsers(): Observable<ProjectUser[]> {
-        const url = `${baseUrl}projects/${
-            this.selectedProject().data?.id
-        }/assigned-users`;
-        return this.#http.get<IProjectUser[]>(url).pipe(
+        this.updateResource(
+            `projects/${this.selectedProject().data?.id}/assigned-users`
+        );
+        return this.all<IProjectUser[]>().pipe(
             filter((result) => result['data'].length > 0),
             map((result) =>
                 result['data'].map((user) => new ProjectUser(user))
             ),
+            finalize(() => this.updateResource('projects')),
             takeUntilDestroyed(this.#destroyRef)
         );
     }
 
     assignUserToProject(payload: any): Observable<unknown> {
-        const url = `${baseUrl}projects/${
-            this.selectedProject().data?.id
-        }/assign-users`;
-        return this.#http
-            .post(url, payload)
-            .pipe(takeUntilDestroyed(this.#destroyRef));
+        this.updateResource(
+            `projects/${this.selectedProject().data?.id}/assign-users`
+        );
+        return this.post(payload).pipe(
+            takeUntilDestroyed(this.#destroyRef),
+            finalize(() => this.updateResource('projects'))
+        );
     }
 
     removeUserFromProject(payload: any): Observable<unknown> {
-        const url = `${baseUrl}projects/${
-            this.selectedProject().data?.id
-        }/remove-users`;
-        return this.#http
-            .post(url, payload)
-            .pipe(takeUntilDestroyed(this.#destroyRef));
+        this.updateResource(
+            `projects/${this.selectedProject().data?.id}/remove-users`
+        );
+        return this.post(payload).pipe(
+            takeUntilDestroyed(this.#destroyRef),
+            finalize(() => this.updateResource('projects'))
+        );
     }
 
     storeProject(payload: Project): Observable<ApiResult<Project>> {
