@@ -9,8 +9,8 @@ export interface IProject {
     type: ProjectType;
     status: ProjectStatus;
     description?: string;
-    startDate: Date;
-    endDate?: Date;
+    startDate: string;
+    endDate?: string;
     cost?: number;
     ownerId?: string;
     owner: {
@@ -37,8 +37,8 @@ export class Project {
     type: ProjectType;
     status: ProjectStatus;
     description?: string;
-    startDate: Date;
-    endDate?: Date;
+    startDate: string;
+    endDate?: string;
     cost?: number;
     ownerId?: string;
     owner: {
@@ -109,6 +109,7 @@ export enum ProjectType {
 }
 
 export interface IProjectUser {
+    projectUserId?: string;
     userId: string;
     projectId: string;
     roleId: string;
@@ -124,6 +125,7 @@ export interface IProjectUser {
 }
 
 export class ProjectUser {
+    id?: string;
     user: {
         id: string;
         fullName: string;
@@ -144,6 +146,7 @@ export class ProjectUser {
     };
     salary: number;
     constructor(model: IProjectUser) {
+        this.id = model.projectUserId;
         this.user = {
             id: model.userId,
             fullName: `${model.firstName} ${model.lastName}`,

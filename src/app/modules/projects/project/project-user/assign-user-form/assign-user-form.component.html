@@ -16,32 +16,41 @@
         }
 
         <div class="w-full flex flex-col items-center gap-2 space-y-3 p-3">
-            <mat-form-field class="w-full">
-                <mat-label>User</mat-label>
-                <mat-select
-                    formControlName="userId"
-                    placeholder="User"
-                    required
-                >
-                    <mat-option>Select</mat-option>
-                    @for (option of $userOpts(); track option) {
-                    <mat-option [value]="option.id">{{
-                        option.name
-                    }}</mat-option>
+            <div class="w-full flex items-center gap-2">
+                <mat-form-field class="w-full">
+                    <mat-label>User</mat-label>
+                    <mat-select
+                        formControlName="userId"
+                        placeholder="User"
+                        required
+                    >
+                        <mat-option>Select</mat-option>
+                        @for (option of $userOpts(); track option) {
+                        <mat-option [value]="option.id">{{
+                            option.name
+                        }}</mat-option>
+                        }
+                    </mat-select>
+                    <mat-hint> select a User</mat-hint>
+                    @if ( assignUserForm.controls?.userId?.touched &&
+                    assignUserForm.controls?.userId?.invalid ) {
+                    <mat-error>
+                        <app-error-form-template
+                            [form]="assignUserForm"
+                            field="userId"
+                            name="User"
+                        ></app-error-form-template>
+                    </mat-error>
                     }
-                </mat-select>
-                <mat-hint> select a User</mat-hint>
-                @if ( assignUserForm.controls?.userId?.touched &&
-                assignUserForm.controls?.userId?.invalid ) {
-                <mat-error>
-                    <app-error-form-template
-                        [form]="assignUserForm"
-                        field="userId"
-                        name="User"
-                    ></app-error-form-template>
-                </mat-error>
-                }
-            </mat-form-field>
+                </mat-form-field>
+                <mat-checkbox
+                    class="w-full justify-center"
+                    [color]="'primary'"
+                    [formControlName]="'generatePayments'"
+                >
+                    Generate Payment(s) based on project duration
+                </mat-checkbox>
+            </div>
 
             <mat-form-field class="w-full">
                 <mat-label>Role</mat-label>

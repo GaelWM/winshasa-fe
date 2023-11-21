@@ -143,9 +143,15 @@ export class ProjectUserComponent {
             title: 'Generate Payment(s)',
             message:
                 'Are you sure you want to generate payment(s) for this user? This action cannot be undone.',
+            icon: {
+                show: true,
+                name: 'heroicons_outline:banknotes',
+                color: 'primary',
+            },
             actions: {
                 confirm: {
                     label: 'Generate Payment(s)',
+                    color: 'primary',
                 },
             },
         });

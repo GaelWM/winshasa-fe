@@ -14,7 +14,7 @@
         </app-toolbar>
     </div>
     @if ($projects(); as projects) {
-<div class="w-full p-3">
+    <div class="w-full p-3">
         <win-table
             [columns]="columns"
             [data]="projects.data"
@@ -32,14 +32,16 @@
             </win-paginator>
         </div>
     </div>
-}
+    }
 </div>
 
 <ng-template #actionsTpl let-row="row">
-    <div class="inline-flex items-center gap-1">
+    <div
+        class="flex items-center justify-center h-full gap-1 first:border-l-none border-l border-t border-gray-800"
+    >
         <button
             mat-icon-button
-            matTooltip="Quick edit project"
+            matTooltip="Edit project"
             color="primary"
             aria-label="Edit project"
             (click)="onEditProject($event, row)"

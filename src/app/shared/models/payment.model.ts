@@ -8,14 +8,15 @@ export interface IPayment {
     paymentMethod: PaymentMethod;
     amount: number;
     currency: Currency;
-    paymentDate: string;
+    paymentDate?: string;
     dueDate: string;
     status: PaymentStatus;
     paymentReference?: string;
+    paymentFrequency?: PaymentFrequency;
     paymentSlip?: string;
     generatedBy: string;
     notes?: string;
-    owner: LeaseAgreement;
+    owner?: LeaseAgreement;
     createdAt?: Date;
     createdBy?: string;
     updatedAt?: Date;
@@ -28,6 +29,7 @@ export class Payment {
     ownerId: string;
     ownerType: PaymentOwnerType;
     paymentMethod: PaymentMethod;
+    paymentFrequency?: PaymentFrequency;
     amount: number;
     currency: Currency;
     paymentDate: string;
@@ -37,7 +39,7 @@ export class Payment {
     paymentSlip?: string;
     generatedBy?: string;
     notes?: string;
-    owner: LeaseAgreement;
+    owner?: LeaseAgreement;
     createdAt?: Date;
     createdBy?: string;
     updatedAt?: Date;
@@ -50,6 +52,7 @@ export class Payment {
         this.ownerId = model.ownerId;
         this.ownerType = model.ownerType;
         this.paymentMethod = model.paymentMethod;
+        this.paymentFrequency = model.paymentFrequency;
         this.amount = model.amount;
         this.currency = model.currency;
         this.paymentDate = model.paymentDate;
@@ -145,5 +148,18 @@ export const PaymentFrequencyMap = new Map([
 export enum PaymentOwnerType {
     LEASE = 'lease_agreements',
     PROJECT = 'projects',
+    PROJECT_USER = 'project_user_roles',
+    USER = 'users',
     OTHER = 'other',
 }
+
+// payment frequency to days
+export const PAYMENT_FREQUENCY_TO_DAYS = new Map([
+    [PaymentFrequency.DAILY, 1],
+    [PaymentFrequency.WEEKLY, 7],
+    [PaymentFrequency['BI-WEEKLY'], 14],
+    [PaymentFrequency.MONTHLY, 30],
+    [PaymentFrequency.QUARTERLY, 90],
+    [PaymentFrequency.ANNUALLY, 365],
+    [PaymentFrequency['BI-ANNUALLY'], 730],
+]);

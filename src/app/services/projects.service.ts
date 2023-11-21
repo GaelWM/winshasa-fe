@@ -1,5 +1,14 @@
 import { HttpClient } from '@angular/common/http';
 import {
+    addDays,
+    addWeeks,
+    addMonths,
+    addYears,
+    format,
+    addQuarters,
+    parseISO,
+} from 'date-fns';
+import {
     DestroyRef,
     Injectable,
     WritableSignal,
@@ -10,7 +19,14 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { BaseService, baseUrl } from 'app/services/base.service';
 import {
     ApiResult,
+    Currency,
+    IPayment,
     IProjectUser,
+    PAYMENT_FREQUENCY_TO_DAYS,
+    Payment,
+    PaymentFrequency,
+    PaymentOwnerType,
+    PaymentStatus,
     Project,
     ProjectUser,
     User,
@@ -18,12 +34,16 @@ import {
 import {
     BehaviorSubject,
     Observable,
+    concatMap,
     filter,
     finalize,
+    forkJoin,
     map,
+    range,
     switchMap,
     tap,
 } from 'rxjs';
+import { PaymentsService } from './payments.service';
 
 @Injectable({
     providedIn: 'root',
@@ -31,6 +51,7 @@ import {
 export class ProjectsService extends BaseService {
     #destroyRef = inject(DestroyRef);
     #http = inject(HttpClient);
+    #paymentService = inject(PaymentsService);
 
     constructor() {
         super('projects');
@@ -92,6 +113,22 @@ export class ProjectsService extends BaseService {
         );
     }
 
+    generateUserPayments(
+        projectUser: ProjectUser,
+        project: Project
+    ): Observable<ApiResult<Payment | Payment[]>> {
+        const payments: IPayment[] = this.definePayments(projectUser, project);
+        console.log('payments: ', payments);
+
+        if (payments.length === 0) {
+            throw new Error('No payments to generate');
+        }
+
+        return this.#paymentService
+            .storePayment({ payments })
+            .pipe(takeUntilDestroyed(this.#destroyRef));
+    }
+
     storeProject(payload: Project): Observable<ApiResult<Project>> {
         return this.post<Project>(payload).pipe(
             tap((result) => {
@@ -142,5 +179,66 @@ export class ProjectsService extends BaseService {
             }),
             takeUntilDestroyed(this.#destroyRef)
         );
+    }
+
+    private definePayments(
+        projectUser: ProjectUser,
+        project: Project
+    ): IPayment[] {
+        const payments: IPayment[] = [];
+
+        const addFunction = {
+            [PaymentFrequency.DAILY]: addDays,
+            [PaymentFrequency.WEEKLY]: addWeeks,
+            [PaymentFrequency.BI_WEEKLY]: addWeeks(
+                parseISO(project.startDate),
+                2
+            ),
+            [PaymentFrequency.MONTHLY]: addMonths,
+            [PaymentFrequency.QUARTERLY]: addQuarters,
+            [PaymentFrequency.ANNUALLY]: addYears,
+            [PaymentFrequency.BI_ANNUALLY]: addYears(
+                parseISO(project.startDate),
+                2
+            ),
+        }[projectUser.payment?.frequency];
+
+        if (!addFunction) {
+            throw new Error(
+                `Invalid payment frequency: ${projectUser.payment?.frequency}`
+            );
+        }
+
+        const projectDurationInDays = Math.floor(
+            (new Date(project.endDate).getTime() -
+                new Date(project.startDate).getTime()) /
+                (1000 * 3600 * 24)
+        );
+        console.log('projectDurationInDays: ', projectDurationInDays);
+        // calculate total payments based on project duration and payment frequency
+        const totalPayments = Math.floor(
+            projectDurationInDays /
+                PAYMENT_FREQUENCY_TO_DAYS.get(projectUser.payment?.frequency)
+        );
+        console.log('addFunction: ', addFunction);
+        console.log('totalPayments: ', totalPayments);
+
+        for (let i = 0; i < totalPayments; i++) {
+            const dueDate = addFunction(parseISO(project.startDate), i);
+            const payment: IPayment = {
+                ownerId: projectUser.user.id,
+                ownerType: PaymentOwnerType.PROJECT_USER,
+                paymentMethod: projectUser.payment?.method,
+                amount: projectUser.salary,
+                currency: Currency.USD,
+                dueDate: format(dueDate, 'yyyy-MM-dd'),
+                status: PaymentStatus.PENDING,
+                generatedBy: projectUser.project.name,
+            };
+
+            payments.push(payment);
+        }
+
+        return payments;
     }
 }

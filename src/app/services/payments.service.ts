@@ -1,6 +1,6 @@
 import { Injectable, WritableSignal, signal } from '@angular/core';
 import { BaseService } from 'app/services/base.service';
-import { ApiResult, Payment } from 'app/shared/models';
+import { ApiResult, IPayment, Payment } from 'app/shared/models';
 import { BehaviorSubject, Observable, tap } from 'rxjs';
 
 @Injectable({
@@ -22,9 +22,19 @@ export class PaymentsService extends BaseService {
         {} as ApiResult<Payment>
     );
 
-    storePayment(payload: Payment): Observable<ApiResult<Payment>> {
-        return this.post<Payment>(payload).pipe(
+    storePayment(
+        payload:
+            | Payment
+            | Payment[]
+            | IPayment
+            | IPayment[]
+            | Record<string, unknown>
+    ): Observable<ApiResult<Payment | Payment[]>> {
+        return this.post<Payment | Payment[]>(payload).pipe(
             tap((result) => {
+                if (Array.isArray(result.data)) {
+                    this.payments.set(result as ApiResult<Payment[]>);
+                }
                 this.payments.update((payments: ApiResult<Payment[]>) => {
                     payments.data = [
                         result.data as Payment,
