@@ -154,6 +154,11 @@ export const appRoutes: Route[] = [
                     import('app/modules/payments/payments.routes'),
             },
             {
+                path: 'invoices',
+                loadChildren: () =>
+                    import('app/modules/invoices/invoices.routes'),
+            },
+            {
                 path: 'documentation',
                 loadChildren: () =>
                     import('app/modules/documentation/documentation.routes'),

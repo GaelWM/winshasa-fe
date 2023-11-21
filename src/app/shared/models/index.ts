@@ -11,3 +11,4 @@ export * from './user.model';
 export * from './app.model';
 export * from './payment.model';
 export * from './project.model';
+export * from './invoice.model';
