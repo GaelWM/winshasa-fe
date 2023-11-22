@@ -6,13 +6,13 @@ import {
     Routes,
 } from '@angular/router';
 import { catchError, throwError } from 'rxjs';
-import { ProductsService } from 'app/services/products.service';
-import { Product } from 'app/shared/models';
 import { FileManagerService } from 'app/shared/components/file-manager/file-manager.service';
 import { DocumentOwnerType } from 'app/shared/components/file-manager/file-manager.types';
 import { FileManagerDetailsComponent } from 'app/shared/components/file-manager/details/details.component';
 import { FileManagerListComponent } from 'app/shared/components/file-manager/list/list.component';
-import { DocumentationComponent } from './documentation.component';
+import { InvoiceDocumentationComponent } from './documentation.component';
+import { InvoicesService } from 'app/services/invoices.service';
+import { Invoice } from 'app/shared/models';
 
 /**
  * Folder resolver
@@ -26,11 +26,11 @@ const folderResolver = (
 ) => {
     const fileManagerService = inject(FileManagerService);
     const router = inject(Router);
-    const productId = route.params.id;
+    const invoiceId = route.params.id;
     const folderId = route.params.folderId;
 
     return fileManagerService
-        .getItems(folderId, productId, DocumentOwnerType.PRODUCT)
+        .getItems(folderId, invoiceId, DocumentOwnerType.INVOICE)
         .pipe(
             // Error here means the requested folder is not available
             catchError((error) => {
@@ -128,15 +128,15 @@ const settingsResolver = (
     route: ActivatedRouteSnapshot,
     state: RouterStateSnapshot
 ) => {
-    const productId = route.params.id;
-    const productsService = inject(ProductsService);
-    const product = productsService.selectedProduct();
+    const invoiceId = route.params.id;
+    const invoicesService = inject(InvoicesService);
+    const invoice = invoicesService.selectedInvoice();
     return {
         folderId: route.params.folderId,
-        ownerId: (product?.data as Product)?.id ?? productId,
-        ownerType: DocumentOwnerType.PRODUCT,
-        routePrefix: `products/${
-            (product?.data as Product)?.id ?? productId
+        ownerId: (invoice?.data as Invoice)?.id ?? invoiceId,
+        ownerType: DocumentOwnerType.INVOICE,
+        routePrefix: `invoices/${
+            (invoice?.data as Invoice)?.id ?? invoiceId
         }/documentation`,
     };
 };
@@ -144,7 +144,7 @@ const settingsResolver = (
 export default [
     {
         path: '',
-        component: DocumentationComponent,
+        component: InvoiceDocumentationComponent,
         children: [
             {
                 path: 'folders/:folderId',
@@ -168,22 +168,19 @@ export default [
             {
                 path: '',
                 component: FileManagerListComponent,
-                data: {
-                    ownerType: DocumentOwnerType.PRODUCT,
-                },
                 resolve: {
                     items: (
                         route: ActivatedRouteSnapshot,
                         state: RouterStateSnapshot
                     ) => {
                         const { url } = state;
-                        const productId = route.params.id ?? url.split('/')[2];
-                        const productsService = inject(ProductsService);
-                        const product = productsService.selectedProduct();
+                        const invoiceId = route.params.id ?? url.split('/')[2];
+                        const invoicesService = inject(InvoicesService);
+                        const invoice = invoicesService.selectedInvoice();
                         return inject(FileManagerService).getItems(
                             undefined,
-                            (product?.data as Product)?.id ?? productId,
-                            DocumentOwnerType.PRODUCT
+                            (invoice?.data as Invoice)?.id ?? invoiceId,
+                            DocumentOwnerType.INVOICE
                         );
                     },
                     fileManagerSettings: settingsResolver,

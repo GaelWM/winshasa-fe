@@ -34,6 +34,7 @@ export class WinTableComponent {
     @Input() serverSideSorting: boolean = false;
     @Input() allowRowClick: boolean = false;
     @Input() allowCellClick: boolean = false;
+    @Input() tableAutoWidth: boolean = false;
 
     currentOrderByParam: string = '';
 

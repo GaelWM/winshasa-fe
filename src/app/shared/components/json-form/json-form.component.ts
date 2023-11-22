@@ -4,6 +4,7 @@ import {
     EventEmitter,
     Input,
     OnChanges,
+    OnInit,
     Output,
     inject,
 } from '@angular/core';
@@ -99,14 +100,16 @@ export class JsonFormComponent implements OnChanges {
                 (group) => group.fields
             );
 
-            const merged = controls.flat(1);
-            merged.map((control) => {
+            const merged = controls?.flat(1);
+            merged?.map((control) => {
                 control.value = this.values?.details?.[control.name]
                     ? this.values.details[control.name]
                     : null;
                 return control;
             });
-            this.createForm(merged);
+            if (merged && merged.length > 0) {
+                this.createForm(merged);
+            }
         }
     }
 

@@ -170,8 +170,13 @@ export default [
                 path: '',
                 component: FileManagerListComponent,
                 resolve: {
-                    items: (route: ActivatedRouteSnapshot) => {
-                        const leaseAgreementId = route.params.id;
+                    items: (
+                        route: ActivatedRouteSnapshot,
+                        state: RouterStateSnapshot
+                    ) => {
+                        const { url } = state;
+                        const leaseAgreementId =
+                            route.params.id ?? url.split('/')[2];
                         const leaseAgreementsService = inject(
                             LeaseAgreementsService
                         );

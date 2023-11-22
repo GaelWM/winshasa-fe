@@ -1,0 +1,51 @@
+<div class="w-full flex flex-col">
+    <div class="w-full">
+        <app-toolbar [title]="'Invoices'"> </app-toolbar>
+    </div>
+    @if ($invoices(); as invoices) {
+    <div class="w-full p-3">
+        <win-table
+            [columns]="columns"
+            [data]="invoices.data"
+            [allowSort]="true"
+            [tableAutoWidth]="true"
+            [allowRowClick]="true"
+            [serverSideSorting]="true"
+            (sort)="onSort($event)"
+            (tableRow)="onRowClick($event)"
+        ></win-table>
+        <div class="flex justify-center items-center py-2">
+            <win-paginator
+                [meta]="invoices.meta"
+                (pageChange)="onPageChange($event)"
+            >
+            </win-paginator>
+        </div>
+    </div>
+    }
+</div>
+
+<ng-template #actionsTpl let-row="row">
+    <div
+        class="flex items-center justify-center h-full gap-1 first:border-l-none border-l border-t border-gray-800"
+    >
+        <button
+            mat-icon-button
+            matTooltip="Edit invoice"
+            color="primary"
+            aria-label="Edit invoice"
+            (click)="onEditInvoice($event, row)"
+        >
+            <mat-icon class="text-blue-500">edit</mat-icon>
+        </button>
+        <button
+            mat-icon-button
+            matTooltip="Delete invoice"
+            color="warn"
+            aria-label="Delete invoice"
+            (click)="onDeleteInvoice($event, row)"
+        >
+            <mat-icon class="text-red-500">delete</mat-icon>
+        </button>
+    </div>
+</ng-template>

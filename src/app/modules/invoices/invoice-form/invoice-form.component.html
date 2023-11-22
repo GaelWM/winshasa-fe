@@ -1,0 +1,374 @@
+@if ($invoiceForm(); as invoiceForm) {
+<form
+    #invoiceNgForm="ngForm"
+    (ngSubmit)="onSubmitNewInvoice(invoiceNgForm)"
+    [formGroup]="invoiceForm"
+    class="w-full flex flex-col flex-auto md:min-w-160 h-full"
+>
+    <div class="flex flex-col h-full space-y-3">
+        @if (errors().length > 0) {
+        <fuse-alert [type]="'error'" class="w-full">
+            <span fuseAlertTitle>Error</span>
+            @for (error of errors(); track error) {
+            <span> {{ error.message }}</span>
+            }
+        </fuse-alert>
+        }
+
+        <div class="w-full flex items-start gap-2">
+            <div [class]="asModal ? 'w-full' : 'w-3/5'" class="space-y-3 p-3">
+                <div class="w-full flex items-start gap-3">
+                    <div class="w-full flex flex-col items-start space-y-3">
+                        <mat-form-field
+                            [ngClass]="formFieldHelpers"
+                            class="w-full"
+                        >
+                            <mat-label>Invoice Number</mat-label>
+                            <input
+                                type="text"
+                                formControlName="invoiceNumber"
+                                matInput
+                                required
+                                [placeholder]="'Invoice number'"
+                            />
+                            <mat-hint>Please type in the site name</mat-hint>
+                            @if ( invoiceForm.controls?.invoiceNumber?.touched
+                            && invoiceForm.controls?.invoiceNumber?.invalid ) {
+                            <mat-error>
+                                <app-error-form-template
+                                    [form]="invoiceForm"
+                                    field="invoiceNumber"
+                                    name="Invoice number"
+                                ></app-error-form-template>
+                            </mat-error>
+                            }
+                        </mat-form-field>
+
+                        <mat-form-field
+                            [ngClass]="formFieldHelpers"
+                            class="w-full"
+                        >
+                            <mat-label>Invoice Date</mat-label>
+                            <input
+                                matInput
+                                [matDatepicker]="datepicker"
+                                formControlName="invoiceDate"
+                            />
+                            <mat-hint>MM/DD/YYYY</mat-hint>
+                            <mat-datepicker-toggle
+                                matIconSuffix
+                                [for]="datepicker"
+                            ></mat-datepicker-toggle>
+                            <mat-datepicker #datepicker>
+                                <mat-datepicker-actions>
+                                    <button mat-button matDatepickerCancel>
+                                        Cancel
+                                    </button>
+                                    <button
+                                        mat-raised-button
+                                        color="primary"
+                                        matDatepickerApply
+                                    >
+                                        Apply
+                                    </button>
+                                </mat-datepicker-actions>
+                            </mat-datepicker>
+                            @if ( invoiceForm.controls?.invoiceDate?.touched &&
+                            invoiceForm.controls?.invoiceDate?.invalid ) {
+                            <mat-error>
+                                <app-error-form-template
+                                    [form]="invoiceForm"
+                                    field="invoiceDate"
+                                    name="Invoice Date"
+                                ></app-error-form-template>
+                            </mat-error>
+                            }
+                        </mat-form-field>
+
+                        <mat-form-field
+                            [ngClass]="formFieldHelpers"
+                            class="w-full"
+                        >
+                            <mat-label>Due Date</mat-label>
+                            <input
+                                matInput
+                                [matDatepicker]="datepicker"
+                                formControlName="dueDate"
+                            />
+                            <mat-hint>MM/DD/YYYY</mat-hint>
+                            <mat-datepicker-toggle
+                                matIconSuffix
+                                [for]="datepicker"
+                            ></mat-datepicker-toggle>
+                            <mat-datepicker #datepicker>
+                                <mat-datepicker-actions>
+                                    <button mat-button matDatepickerCancel>
+                                        Cancel
+                                    </button>
+                                    <button
+                                        mat-raised-button
+                                        color="primary"
+                                        matDatepickerApply
+                                    >
+                                        Apply
+                                    </button>
+                                </mat-datepicker-actions>
+                            </mat-datepicker>
+                            @if ( invoiceForm.controls?.dueDate?.touched &&
+                            invoiceForm.controls?.dueDate?.invalid ) {
+                            <mat-error>
+                                <app-error-form-template
+                                    [form]="invoiceForm"
+                                    field="dueDate"
+                                    name="Due Date"
+                                ></app-error-form-template>
+                            </mat-error>
+                            }
+                        </mat-form-field>
+
+                        <mat-form-field class="w-full">
+                            <mat-label>Invoice Status</mat-label>
+                            <mat-select
+                                formControlName="invoiceStatus"
+                                placeholder="Invoice Status"
+                                required
+                            >
+                                <mat-option>Select</mat-option>
+                                @for (option of invoiceStatusOpts; track option)
+                                {
+                                <mat-option [value]="option">{{
+                                    option
+                                }}</mat-option>
+                                }
+                            </mat-select>
+                            <mat-hint>Please select an invoice status</mat-hint>
+                            @if ( invoiceForm.controls?.invoiceStatus?.touched
+                            && invoiceForm.controls?.invoiceStatus?.invalid ) {
+                            <mat-error>
+                                <app-error-form-template
+                                    [form]="invoiceForm"
+                                    field="invoiceStatus"
+                                    name="Invoice Status"
+                                ></app-error-form-template>
+                            </mat-error>
+                            }
+                        </mat-form-field>
+
+                        <mat-form-field class="w-full">
+                            <mat-label>Billing Address</mat-label>
+                            <textarea
+                                matInput
+                                placeholder="Billing Address"
+                                name="billingAddress"
+                                formControlName="billingAddress"
+                                [rows]="2"
+                            >
+                            </textarea>
+                            <mat-hint>Please enter billing address</mat-hint>
+                        </mat-form-field>
+
+                        <mat-form-field class="w-full">
+                            <mat-label>Shipping Address</mat-label>
+                            <textarea
+                                matInput
+                                placeholder="Shipping Address"
+                                name="shippingAddress"
+                                formControlName="shippingAddress"
+                                [rows]="2"
+                            >
+                            </textarea>
+                            <mat-hint>Please enter shipping address</mat-hint>
+                        </mat-form-field>
+                    </div>
+
+                    <div class="w-full flex flex-col items-start space-y-3">
+                        <mat-form-field class="w-full">
+                            <mat-label>Currency</mat-label>
+                            <mat-select
+                                formControlName="currency"
+                                placeholder="Currency"
+                                required
+                            >
+                                <mat-option>Select</mat-option>
+                                @for (option of currencyOpts; track option) {
+                                <mat-option [value]="option">{{
+                                    option
+                                }}</mat-option>
+                                }
+                            </mat-select>
+                            <mat-hint>Please select an Currency</mat-hint>
+                            @if ( invoiceForm.controls?.currency?.touched &&
+                            invoiceForm.controls?.currency?.invalid ) {
+                            <mat-error>
+                                <app-error-form-template
+                                    [form]="invoiceForm"
+                                    field="currency"
+                                    name="Currency"
+                                ></app-error-form-template>
+                            </mat-error>
+                            }
+                        </mat-form-field>
+
+                        <mat-form-field
+                            [ngClass]="formFieldHelpers"
+                            class="w-full"
+                        >
+                            <mat-label>Total Amount</mat-label>
+                            <input
+                                type="number"
+                                formControlName="totalAmount"
+                                matInput
+                                required
+                                [placeholder]="'Total Amount'"
+                            />
+                            <mat-hint>Please type in total amount</mat-hint>
+                            @if ( invoiceForm.controls?.totalAmount?.touched &&
+                            invoiceForm.controls?.totalAmount?.invalid ) {
+                            <mat-error>
+                                <app-error-form-template
+                                    [form]="invoiceForm"
+                                    field="totalAmount"
+                                    name="Total Amount"
+                                ></app-error-form-template>
+                            </mat-error>
+                            }
+                        </mat-form-field>
+
+                        <mat-form-field
+                            [ngClass]="formFieldHelpers"
+                            class="w-full"
+                        >
+                            <mat-label>Tax Amount</mat-label>
+                            <input
+                                type="number"
+                                formControlName="taxAmount"
+                                matInput
+                                required
+                                [placeholder]="'Tax Amount'"
+                            />
+                            <mat-hint>Please type in tax amount</mat-hint>
+                            @if ( invoiceForm.controls?.taxAmount?.touched &&
+                            invoiceForm.controls?.taxAmount?.invalid ) {
+                            <mat-error>
+                                <app-error-form-template
+                                    [form]="invoiceForm"
+                                    field="taxAmount"
+                                    name="Tax Amount"
+                                ></app-error-form-template>
+                            </mat-error>
+                            }
+                        </mat-form-field>
+
+                        <mat-form-field
+                            [ngClass]="formFieldHelpers"
+                            class="w-full"
+                        >
+                            <mat-label>Discount Amount</mat-label>
+                            <input
+                                type="number"
+                                formControlName="discountAmount"
+                                matInput
+                                required
+                                [placeholder]="'Discount Amount'"
+                            />
+                            <mat-hint>Please type in discount amount</mat-hint>
+                            @if ( invoiceForm.controls?.discountAmount?.touched
+                            && invoiceForm.controls?.discountAmount?.invalid ) {
+                            <mat-error>
+                                <app-error-form-template
+                                    [form]="invoiceForm"
+                                    field="discountAmount"
+                                    name="Discount Amount"
+                                ></app-error-form-template>
+                            </mat-error>
+                            }
+                        </mat-form-field>
+
+                        <mat-form-field
+                            [ngClass]="formFieldHelpers"
+                            class="w-full"
+                        >
+                            <mat-label>Grand Total</mat-label>
+                            <input
+                                type="number"
+                                formControlName="discountAmount"
+                                matInput
+                                required
+                                [placeholder]="'Grand Total'"
+                            />
+                            <mat-hint>Please type in Grand Total</mat-hint>
+                            @if ( invoiceForm.controls?.grandTotal?.touched &&
+                            invoiceForm.controls?.grandTotal?.invalid ) {
+                            <mat-error>
+                                <app-error-form-template
+                                    [form]="invoiceForm"
+                                    field="grandTotal"
+                                    name="Grand Total"
+                                ></app-error-form-template>
+                            </mat-error>
+                            }
+                        </mat-form-field>
+                    </div>
+
+                    <div class="w-full flex flex-col items-start space-y-3">
+                        <mat-form-field
+                            [ngClass]="formFieldHelpers"
+                            class="w-full"
+                        >
+                            <mat-label>Customer/Recipient Name</mat-label>
+                            <input
+                                type="text"
+                                formControlName="customerName"
+                                matInput
+                                required
+                                [placeholder]="'Customer/Recipient Name'"
+                            />
+                            <mat-hint
+                                >Please type in the customer or recipient
+                                name</mat-hint
+                            >
+                            @if ( invoiceForm.controls?.customerName?.touched &&
+                            invoiceForm.controls?.customerName?.invalid ) {
+                            <mat-error>
+                                <app-error-form-template
+                                    [form]="invoiceForm"
+                                    field="customerName"
+                                    name="Customer/Recipient Name"
+                                ></app-error-form-template>
+                            </mat-error>
+                            }
+                        </mat-form-field>
+                    </div>
+                </div>
+            </div>
+            @if (!asModal) {
+            <div class="w-3/5">
+                <app-json-form
+                    [template]="$selectedTemplate()"
+                    [form]="invoiceForm"
+                    [values]="$invoice().data"
+                >
+                </app-json-form>
+            </div>
+            }
+        </div>
+    </div>
+
+    <!-- Footer -->
+    @if (showSaveButton) {
+    <div
+        class="w-full flex items-center justify-end border-t p-2 pb-0 border-gray-50 dark:border-gray-700"
+    >
+        <button
+            type="submit"
+            class=""
+            mat-flat-button
+            [color]="'primary'"
+            [disabled]="!invoiceForm.valid"
+        >
+            Save
+        </button>
+    </div>
+    }
+</form>
+}

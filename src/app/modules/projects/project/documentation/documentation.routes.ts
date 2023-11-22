@@ -169,8 +169,12 @@ export default [
                 path: '',
                 component: FileManagerListComponent,
                 resolve: {
-                    items: (route: ActivatedRouteSnapshot) => {
-                        const projectId = route.params.id;
+                    items: (
+                        route: ActivatedRouteSnapshot,
+                        state: RouterStateSnapshot
+                    ) => {
+                        const { url } = state;
+                        const projectId = route.params.id ?? url.split('/')[2];
                         const projectsService = inject(ProjectsService);
                         const project = projectsService.selectedProject();
                         return inject(FileManagerService).getItems(

@@ -1,4 +1,7 @@
-<div class="table-auto md:table w-full border border-gray-800 overflow-auto">
+<div
+    class="w-full border border-gray-800 overflow-auto"
+    [class]="tableAutoWidth ? 'table-auto' : 'table'"
+>
     <div class="table-header-group">
         <div class="table-row">
             @for (column of columns; track column) {
